@@ -1,0 +1,11 @@
+[train] 500/5160 utts, 49s
+[train] 1000/5160 utts, 89s
+[train] 1500/5160 utts, 174s
+[train] 2000/5160 utts, 186s
+[train] 2500/5160 utts, 196s
+[train] 3000/5160 utts, 213s
+[train] 3500/5160 utts, 223s
+[train] 4000/5160 utts, 264s
+[train] 4500/5160 utts, 301s
+[train] 5000/5160 utts, 310s
+[train] wrote 5160 utts x 11 conditions to C:\Users\rrsri\Desktop\PeakAlways\xjob\builds\gnani-antispoof\data\proc\asv19\train in 321s
