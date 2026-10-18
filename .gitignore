@@ -1,0 +1,14 @@
+# Secrets: never commit
+.env
+.env.*
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+data/
+third_party/
+artifacts/cache/
+artifacts/features/
+artifacts/gnani_cache/
+artifacts/gnani_usage.jsonl
+.agy/

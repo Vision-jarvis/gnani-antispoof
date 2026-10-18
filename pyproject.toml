@@ -1,0 +1,16 @@
+[project]
+name = "gnani-antispoof"
+version = "0.1.0"
+description = "Telephony-native voice anti-spoofing (Armour365-style) on 8 kHz codecs, with a Gnani Prisma/Timbre IVR flow"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: calls the real Gnani API and spends credits (run with: pytest -m live)",
+    "slow: longer data-dependent checks",
+]
+addopts = "-m 'not live' -q"
+
+[tool.ruff]
+line-length = 120

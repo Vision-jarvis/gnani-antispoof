@@ -1,0 +1,143 @@
+{
+  "date": "2026-10-18 22:20:51 +0530",
+  "tts": {
+    "bytes": 76844,
+    "sr": 8000,
+    "seconds": 4.8,
+    "chars": 77,
+    "latency_s": 2.06
+  },
+  "stt_rest": {
+    "keys": [
+      "end_to_end_latency",
+      "model",
+      "processing_time",
+      "request_id",
+      "success",
+      "transcript"
+    ],
+    "transcript": "मेरी आवाज़ ही मेरी पहचान है, कृपया इस वाक्य को ध्यान से सुनिए और फिर दोहराइए।",
+    "reference": "मेरी आवाज़ ही मेरी पहचान है, कृपया इस वाक्य को ध्यान से सुनिए और फिर दोहराइए।"
+  },
+  "stt_ws": {
+    "segments": [
+      {
+        "type": "transcript",
+        "text": "मेरी आवाज़ ही मेरी पहचान है, कृपया इस वाक्य को ध्यान से सुनिए और फिर दोहराइए।",
+        "audio_duration_ms": 5056.0,
+        "segment_id": "01a14fec-35ea-7a55-8dba-955a7eeb7dd3-seg-1",
+        "segment_index": 1,
+        "utterance_id": "u0f8eed08",
+        "is_final": true,
+        "latency": 265,
+        "timestamp": "2026-10-18T16:50:49.714226+00:00",
+        "output": {
+          "literal": "मेरी आवाज़ ही मेरी पहचान है, कृपया इस वाक्य को ध्यान से सुनिए और फिर दोहराइए।"
+        }
+      }
+    ],
+    "end_of_audio_to_transcript_s": 0.9044220000505447
+  },
+  "vc_embedding": {
+    "shape": [
+      1,
+      768
+    ],
+    "dtype": "torch.bfloat16",
+    "embedding_chars": 4096
+  },
+  "vc_tts_mulaw": {
+    "bytes": 3689,
+    "seconds_if_8k_1byte": 0.46,
+    "starts_with_riff": false
+  },
+  "http": [
+    {
+      "path": "/api/v1/tts/inference",
+      "status": 200,
+      "content_type": "audio/wav",
+      "headers_of_interest": {
+        "x-api-request-id": "01a14fec-2c66-72b9-9049-bd96f7523d47"
+      },
+      "all_header_names": [
+        "alt-svc",
+        "cf-cache-status",
+        "cf-ray",
+        "connection",
+        "content-disposition",
+        "content-length",
+        "content-type",
+        "date",
+        "nel",
+        "report-to",
+        "server",
+        "x-api-request-id",
+        "x-audio-container"
+      ]
+    },
+    {
+      "path": "/stt/v3",
+      "status": 200,
+      "content_type": "application/json",
+      "headers_of_interest": {},
+      "all_header_names": [
+        "alt-svc",
+        "cf-cache-status",
+        "cf-ray",
+        "connection",
+        "content-encoding",
+        "content-type",
+        "date",
+        "nel",
+        "report-to",
+        "server",
+        "transfer-encoding"
+      ]
+    },
+    {
+      "path": "/api/v1/tts/voice-clone/embeddings",
+      "status": 200,
+      "content_type": "application/json",
+      "headers_of_interest": {
+        "x-api-request-id": "01a14fec-66f6-7a08-a901-204ea5deab5e"
+      },
+      "all_header_names": [
+        "alt-svc",
+        "cf-cache-status",
+        "cf-ray",
+        "connection",
+        "content-encoding",
+        "content-type",
+        "date",
+        "nel",
+        "report-to",
+        "server",
+        "transfer-encoding",
+        "x-api-request-id"
+      ]
+    },
+    {
+      "path": "/api/v1/tts/inference",
+      "status": 200,
+      "content_type": "audio/basic",
+      "headers_of_interest": {
+        "x-api-request-id": "01a14fec-68c6-76cd-a514-36e85cc3e13b"
+      },
+      "all_header_names": [
+        "alt-svc",
+        "cf-cache-status",
+        "cf-ray",
+        "connection",
+        "content-disposition",
+        "content-length",
+        "content-type",
+        "date",
+        "nel",
+        "report-to",
+        "server",
+        "x-api-request-id",
+        "x-audio-container"
+      ]
+    }
+  ]
+}
