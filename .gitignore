@@ -5,7 +5,8 @@
 __pycache__/
 *.pyc
 .pytest_cache/
-data/
+data/*
+!data/README.md
 third_party/
 artifacts/cache/
 artifacts/features/

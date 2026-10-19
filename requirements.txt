@@ -18,3 +18,4 @@ torch==2.14.1  # install from https://download.pytorch.org/whl/cpu (run.ps1 setu
 transformers==5.20.1
 uvicorn==0.54.0
 websockets==17.2
+tabulate==0.10.0
