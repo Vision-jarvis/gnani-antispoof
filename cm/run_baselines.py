@@ -108,10 +108,14 @@ def run_gmm(name: str) -> None:
         dev_feats, dev_rows = pool_8k("dev", augmented=True)
         dev_ids, dev_conds = [r["utt_id"] for r in dev_rows], [r["condition"] for r in dev_rows]
     assert_protocol(tr_rows, eval_rows("any"))
-    gmm = LFCCGMM.train([f for f, b in zip(tr_feats, tr_lab, strict=True) if b], [f for f, b in zip(tr_feats, tr_lab, strict=True) if not b])
-    gmm.save(MODELS / f"{name}.npz")
+    gmm_path = MODELS / f"{name}.npz"
+    if gmm_path.exists():
+        gmm = LFCCGMM.load(gmm_path)
+    else:
+        gmm = LFCCGMM.train([f for f, b in zip(tr_feats, tr_lab, strict=True) if b], [f for f, b in zip(tr_feats, tr_lab, strict=True) if not b])
+        gmm.save(gmm_path)
     train_s = time.time() - t0
-    scorer = lambda feats: np.array([gmm.score(f) for f in feats])  # noqa: E731
+    scorer = gmm.score_many
     dev = [{"utt_id": u, "condition": c, "score": s} for u, c, s in zip(dev_ids, dev_conds, scorer(dev_feats), strict=True)]
     recs = score_feature_model(name, scorer, eight_k=name != "gmm16_clean", streaming=name == "gmm8_aug")
     write_scores(name, recs, dev, {"model": name, "train_seconds": train_s, "components": 128, "n_train": len(tr_feats)})

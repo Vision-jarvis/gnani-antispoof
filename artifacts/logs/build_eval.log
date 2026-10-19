@@ -2,3 +2,5 @@
 [eval] 1000/2560 utts, 652s
 [eval] 1500/2560 utts, 842s
 [eval] 2000/2560 utts, 1146s
+[eval] 2500/2560 utts, 9628s
+[eval] wrote 2560 utts x 15 conditions to C:\Users\rrsri\Desktop\PeakAlways\xjob\builds\gnani-antispoof\data\proc\asv19\eval in 9642s

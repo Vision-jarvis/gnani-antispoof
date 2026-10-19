@@ -49,7 +49,15 @@ class LFCCGMM:
         )
 
     def score(self, feat: np.ndarray) -> float:
-        return float(np.mean(self.bona.score_samples(feat) - self.spoof.score_samples(feat)))
+        return float(self.score_many([feat])[0])
+
+    def score_many(self, feats: Sequence[np.ndarray], chunk: int = 200_000) -> np.ndarray:
+        """Vectorised: one score_samples pass over all frames, then a per-utterance mean."""
+        allf = np.concatenate(feats)
+        llr = np.concatenate([self.bona.score_samples(allf[i : i + chunk]) - self.spoof.score_samples(allf[i : i + chunk])
+                              for i in range(0, len(allf), chunk)])
+        starts = np.concatenate([[0], np.cumsum([len(f) for f in feats])[:-1]])
+        return np.add.reduceat(llr, starts) / np.array([len(f) for f in feats])
 
     def save(self, path: Path) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)
