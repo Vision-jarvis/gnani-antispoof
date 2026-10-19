@@ -1,0 +1,6 @@
+language  label   
+hi-IN     bonafide    300
+          spoof       300
+kn-IN     bonafide    300
+          spoof       300
+dtype: int64
