@@ -1,0 +1,37 @@
+# PENDING (needs a GPU): XLS-R 300M + AASIST teacher, fine-tuned for 8 kHz telephony.
+# Launch: modal run cm/teacher/modal_train.py   (or locally on a CUDA box: python -m cm.teacher.train --config cm/teacher/ssl_aasist_8k.yaml)
+# Budget (statement rule 8): <= $50 of GPU. Estimate: one L40S/A100 for 10 to 12 h (about $15 to 25).
+
+front_end: facebook/wav2vec2-xls-r-300m      # loaded with transformers; upsample 8k -> 16k before it
+back_end: aasist (TakHemlata/SSL_Anti-spoofing, unchanged)
+input:
+  sample_rate: 8000                            # every training clip passes the channel simulator first
+  crop_seconds: [1.0, 4.0]                     # random crop length per batch: trains the 1/2/4 s streaming horizons
+  normalise: true                              # factory.normalise (VAD trim + -23 LUFS) on every clip
+data:
+  train:
+    - asvspoof2019_la/train                    # A01-A06, English (ODC-By)
+    - mlaad_subset                             # PENDING: gated on HF (accept terms); CC-BY-NC, research use only
+    - indicsynth_subset                        # G4 (CC-BY-NC), Hindi + Kannada shards downloaded
+    - kathbath_bonafide_train                  # PENDING: gated on HF; bona fide Indic
+  dev: asvspoof2019_la/dev + kathbath_dev
+  never_in_training: [G2, G3, G6, amrnb_4k75, gsm_fr, chain_amrnb_g711u, chain_gsm_g711a_plc2]   # eval.protocol.assert_protocol enforces this
+augmentation:
+  channel: on_the_fly                          # one of factory.channel_sim.TRAIN_CONDITIONS per clip, seed = hash(utt, epoch)
+  rawboost: {algo: 5, prob: 0.7}               # RawBoost series (1)+(2), as in the SSL_Anti-spoofing LA recipe
+optim:
+  optimizer: adam
+  lr: 1.0e-6                                   # recipe value for full fine-tuning of XLS-R
+  weight_decay: 1.0e-4
+  batch_size: 14
+  epochs: 20
+  loss: weighted_ce                            # class weights [0.1, 0.9] (spoof, bona fide), recipe default
+  early_stop: dev_eer, patience 4
+ablations:                                     # statement section 7
+  - no_codec_aug                               # augmentation.channel: none
+  - no_rawboost
+  - wideband_16k_front_end                     # train on clean 16 kHz, test on telephony
+outputs:
+  checkpoint: artifacts/models/teacher_ssl_aasist_8k.pt
+  dev_scores: artifacts/scores/teacher_dev.csv
+  eval_scores: artifacts/scores/teacher.csv    # same format as the CPU baselines -> python -m eval.report
