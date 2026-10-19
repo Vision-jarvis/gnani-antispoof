@@ -119,3 +119,14 @@ def test_normalise_equalises_silence_and_loudness(speech: np.ndarray) -> None:
     assert meter.integrated_loudness(a.astype(float)) == pytest.approx(-23.0, abs=0.5)
     assert meter.integrated_loudness(b.astype(float)) == pytest.approx(-23.0, abs=0.5)
     assert np.max(np.abs(loudness_normalise(speech * 0.001, SR, -3.0))) <= 0.99
+
+
+def test_replay_adds_reverb_deterministically(speech: np.ndarray) -> None:
+    from factory.replay_sim import simulate_replay
+
+    a, b, c = simulate_replay(speech, SR, 1), simulate_replay(speech, SR, 1), simulate_replay(speech, SR, 2)
+    assert np.array_equal(a, b) and not np.array_equal(a, c)
+    assert a.shape == speech.shape and np.max(np.abs(a)) == pytest.approx(np.max(np.abs(speech)), rel=1e-3)
+    # Reverberation smears energy into the pauses: the envelope minimum rises.
+    env = lambda z: np.convolve(np.abs(z), np.ones(320) / 320, "same")  # noqa: E731
+    assert np.percentile(env(a), 5) > np.percentile(env(speech), 5)
