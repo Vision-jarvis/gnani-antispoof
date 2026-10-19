@@ -3,7 +3,7 @@
 Everything under `data/` except this file is git-ignored. Licences were checked on the dataset pages
 on 18 Oct 2026.
 
-## Downloaded automatically (`data/logs/dl.sh`, `data/logs/dl2.sh`, resumable curl)
+## Downloaded automatically (`bash scripts/download_data.sh`, resumable curl)
 
 | Dataset | Source used | Licence | Status | Used for |
 |---|---|---|---|---|
@@ -17,8 +17,7 @@ on 18 Oct 2026.
 Resume the interrupted downloads:
 
 ```bash
-curl -L -C - -o data/raw/asvspoof2021_la/ASVspoof2021_LA_eval.tar.gz "https://zenodo.org/api/records/4837263/files/ASVspoof2021_LA_eval.tar.gz/content"
-curl -L -C - -o data/raw/in_the_wild/release_in_the_wild.zip "https://huggingface.co/datasets/mueller91/In-The-Wild/resolve/main/release_in_the_wild.zip"
+bash scripts/download_data.sh   # finished files are skipped by curl -C -, partial ones resume
 ```
 
 ## Needs a manual step (do not script around these)
