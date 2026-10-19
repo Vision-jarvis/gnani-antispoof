@@ -1,0 +1,7 @@
+  epoch 1 batch 0 loss 0.6897 (66s)
+  epoch 1 batch 40 loss 0.4761 (196s)
+  epoch 1 batch 80 loss 0.2907 (231s)
+  epoch 1 batch 120 loss 0.4721 (658s)
+  epoch 1 batch 160 loss 0.3946 (697s)
+epoch 1/8 loss 0.4251 dev EER 14.47% (890s)
+  epoch 2 batch 0 loss 0.2495 (10s)

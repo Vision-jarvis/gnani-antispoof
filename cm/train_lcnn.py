@@ -50,7 +50,7 @@ def train_lcnn(
     dev_feats: Sequence[np.ndarray],
     dev_labels: np.ndarray,
     cfg: TrainConfig = TrainConfig(),
-    log: Callable[[str], None] = print,
+    log: Callable[[str], None] = lambda m: print(m, flush=True),
 ) -> tuple[LCNN, list[dict[str, float]]]:
     """labels: 1 = bona fide, 0 = spoof."""
     torch.manual_seed(cfg.seed)
@@ -79,7 +79,9 @@ def train_lcnn(
             opt.zero_grad()
             loss.backward()
             opt.step()
-            losses.append(float(loss))
+            losses.append(float(loss.detach()))
+            if (b // cfg.batch_size) % 40 == 0:
+                log(f"  epoch {epoch + 1} batch {b // cfg.batch_size} loss {float(loss.detach()):.4f} ({time.time() - t0:.0f}s)")
         sched.step()
         s = score_lcnn(model, dev_feats)
         dev_eer = eer(s[dev_bona], s[~dev_bona])
