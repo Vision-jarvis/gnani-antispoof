@@ -12,11 +12,14 @@ step() { echo "$(date '+%F %T') $*" >> $L/pipeline.log; }
 [ -f data/proc/asv19/train/manifest.csv ] || { step build train; $PY -m factory.asvspoof --split train --n-bona 2580 --n-spoof-per-attack 430 > $L/build_train.log 2>&1; }
 [ -f data/proc/asv19/dev/manifest.csv ] || { step build dev; $PY -m factory.asvspoof --split dev --n-bona 1000 --n-spoof-per-attack 170 > $L/build_dev.log 2>&1; }
 [ -f data/proc/asv19/eval/manifest.csv ] || { step build eval; $PY -m factory.asvspoof --split eval --n-bona 1000 --n-spoof-per-attack 120 > $L/build_eval.log 2>&1 || { step FAIL build eval; exit 1; }; }
-for m in gmm8_aug gmm16_clean aasist_l lcnn8_noaug lcnn8_aug aasist; do
+for m in gmm8_aug lcnn8_aug aasist gmm16_clean lcnn8_noaug aasist_l; do
   [ -f artifacts/scores/$m.csv ] && continue
   step run $m
   $PY -m cm.run_baselines --models $m > $L/run_$m.log 2>&1 || step FAIL $m
 done
 $PY -m cm.calibrate --model lcnn8_aug >> $L/pipeline.log 2>&1
 $PY -m eval.report > $L/report.log 2>&1 || step FAIL report
+$PY -m eval.det >> $L/report.log 2>&1
+$PY -m cm.export_onnx > $L/export_onnx.log 2>&1 || step FAIL onnx
+$PY -m eval.indic_report > $L/indic_report.log 2>&1 || step FAIL indic
 step PIPELINE_DONE

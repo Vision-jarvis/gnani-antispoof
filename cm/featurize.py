@@ -8,7 +8,6 @@ audio up to t).
 
 from __future__ import annotations
 
-from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -42,7 +41,7 @@ def feature_path(split_dir: Path, condition: str, horizon_s: float | None) -> Pa
     return split_dir / "feats" / f"{condition}{suffix}.npz"
 
 
-def load_features(split_dir: Path, condition: str, horizon_s: float | None = None, workers: int = 16, resample_to: int | None = None) -> FeatureSet:
+def load_features(split_dir: Path, condition: str, horizon_s: float | None = None, resample_to: int | None = None) -> FeatureSet:
     """LFCC for ``condition``; computed once and cached. ``resample_to`` re-rates audio first (e.g. 8k -> 16k)."""
     tag = condition if resample_to is None else f"{condition}@{resample_to}"
     path = feature_path(split_dir, tag, horizon_s)
@@ -57,8 +56,8 @@ def load_features(split_dir: Path, condition: str, horizon_s: float | None = Non
             if horizon_s:
                 x = x[: int(horizon_s * sr)]
             clips.append(x)
-        with ProcessPoolExecutor(workers) as pool:
-            feats = list(pool.map(_lfcc_job, [(c, sr) for c in clips], chunksize=32))
+        # In-process: LFCC costs ~5 ms per clip, less than spawning workers on Windows.
+        feats = [_lfcc_job((c, sr)) for c in clips]
         path.parent.mkdir(parents=True, exist_ok=True)
         offsets = np.concatenate([[0], np.cumsum([len(f) for f in feats])]).astype(np.int64)
         np.savez(path, utt_ids=packed.utt_ids, offsets=offsets, feats=np.concatenate(feats))

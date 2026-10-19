@@ -1,0 +1,6 @@
+{
+  "model": "gmm8_aug",
+  "train_seconds": 3.102055072784424,
+  "components": 128,
+  "n_train": 10320
+}
