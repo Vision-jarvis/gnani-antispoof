@@ -30,6 +30,7 @@ from cm.lcnn import LCNN, n_params
 from cm.train_lcnn import TrainConfig, score_lcnn, train_lcnn
 from eval.protocol import assert_protocol
 from factory.channel_sim import CONDITIONS, resample
+from factory.normalise import cm_input
 from factory.store import load_packed
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -155,7 +156,7 @@ def run_aasist(name: str) -> None:
 
     def clips(split: str, cond: str) -> tuple[list[str], list[np.ndarray]]:
         p = load_packed(PROC / split / f"{cond}.npz")
-        return [str(u) for u in p.utt_ids], [resample(p.get(i), p.sr, 16000) for i in range(len(p))]
+        return [str(u) for u in p.utt_ids], [resample(cm_input(p.get(i), p.sr), p.sr, 16000) for i in range(len(p))]
 
     ids, xs = clips("dev", "clean16k")
     dev = [{"utt_id": u, "condition": "clean16k", "score": float(s)} for u, s in zip(ids, score_aasist(model, xs), strict=True)]

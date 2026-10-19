@@ -20,7 +20,7 @@ import torch
 
 from cm.features import LFCCConfig, lfcc
 from cm.lcnn import LCNN
-from factory.normalise import normalise
+from factory.normalise import cm_input, normalise
 
 ROOT = Path(__file__).resolve().parents[1]
 SR = 8000
@@ -76,7 +76,7 @@ class CMScorer:
 
     def score(self, x8k: np.ndarray, horizons: tuple[float, ...] = HORIZONS_S) -> CMResult:
         t0 = time.perf_counter()
-        speech = normalise(np.asarray(x8k, dtype=np.float32), SR)
+        speech = cm_input(normalise(np.asarray(x8k, dtype=np.float32), SR), SR)
         partial = [{"t": h, "llr": round(self.llr(speech[: int(h * SR)]), 3)} for h in horizons if len(speech) >= h * SR]
         llr = self.llr(speech)
         # Posterior with the bank prior pi_spf: logit P(bona) = llr + log((1 - pi)/pi).

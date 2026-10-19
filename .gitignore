@@ -13,3 +13,7 @@ artifacts/features/
 artifacts/gnani_cache/
 artifacts/gnani_usage.jsonl
 .agy/
+artifacts/models/
+artifacts/scores/*.csv
+artifacts/scores/indic/
+artifacts/superseded_v1/

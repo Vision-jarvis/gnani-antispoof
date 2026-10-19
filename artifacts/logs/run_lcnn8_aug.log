@@ -5,3 +5,60 @@
   epoch 1 batch 160 loss 0.3946 (697s)
 epoch 1/8 loss 0.4251 dev EER 14.47% (890s)
   epoch 2 batch 0 loss 0.2495 (10s)
+  epoch 2 batch 40 loss 0.4616 (36s)
+  epoch 2 batch 80 loss 0.1688 (53s)
+  epoch 2 batch 120 loss 0.1860 (115s)
+  epoch 2 batch 160 loss 0.2001 (154s)
+epoch 2/8 loss 0.2620 dev EER 13.56% (678s)
+  epoch 3 batch 0 loss 0.1650 (7s)
+  epoch 3 batch 40 loss 0.1244 (109s)
+  epoch 3 batch 80 loss 0.2474 (215s)
+  epoch 3 batch 120 loss 0.2399 (332s)
+  epoch 3 batch 160 loss 0.2686 (445s)
+epoch 3/8 loss 0.2051 dev EER 14.48% (944s)
+  epoch 4 batch 0 loss 0.1515 (6s)
+  epoch 4 batch 40 loss 0.1599 (53s)
+  epoch 4 batch 80 loss 0.1421 (76s)
+  epoch 4 batch 120 loss 0.1299 (102s)
+  epoch 4 batch 160 loss 0.1738 (133s)
+epoch 4/8 loss 0.1741 dev EER 13.44% (766s)
+  epoch 5 batch 0 loss 0.1104 (4s)
+  epoch 5 batch 40 loss 0.1078 (258s)
+  epoch 5 batch 80 loss 0.1210 (388s)
+  epoch 5 batch 120 loss 0.0967 (702s)
+  epoch 5 batch 160 loss 0.1330 (765s)
+epoch 5/8 loss 0.1227 dev EER 12.90% (1055s)
+  epoch 6 batch 0 loss 0.1336 (5s)
+  epoch 6 batch 40 loss 0.1052 (41s)
+  epoch 6 batch 80 loss 0.0565 (64s)
+  epoch 6 batch 120 loss 0.0490 (102s)
+  epoch 6 batch 160 loss 0.0073 (155s)
+epoch 6/8 loss 0.0802 dev EER 12.84% (1074s)
+  epoch 7 batch 0 loss 0.0413 (10s)
+  epoch 7 batch 40 loss 0.0154 (168s)
+  epoch 7 batch 80 loss 0.0424 (313s)
+  epoch 7 batch 120 loss 0.0596 (466s)
+  epoch 7 batch 160 loss 0.1115 (586s)
+epoch 7/8 loss 0.0546 dev EER 12.33% (1338s)
+  epoch 8 batch 0 loss 0.0204 (46s)
+  epoch 8 batch 40 loss 0.0438 (168s)
+  epoch 8 batch 80 loss 0.0267 (280s)
+  epoch 8 batch 120 loss 0.0169 (366s)
+  epoch 8 batch 160 loss 0.0291 (436s)
+epoch 8/8 loss 0.0366 dev EER 11.89% (661s)
+[lcnn8_aug] scored eval/nb_pcm
+[lcnn8_aug] scored eval/g711u
+[lcnn8_aug] scored eval/g711a
+[lcnn8_aug] scored eval/amrnb_12k2
+[lcnn8_aug] scored eval/amrnb_7k95
+[lcnn8_aug] scored eval/amrnb_4k75
+[lcnn8_aug] scored eval/amrwb_12k65
+[lcnn8_aug] scored eval/opus_8k
+[lcnn8_aug] scored eval/opus_16k
+[lcnn8_aug] scored eval/opus_6k_plc3
+[lcnn8_aug] scored eval/g711u_plc5
+[lcnn8_aug] scored eval/gsm_fr
+[lcnn8_aug] scored eval/chain_amrnb_g711u
+[lcnn8_aug] scored eval/chain_gsm_g711a_plc2
+== lcnn8_aug done in 15266s
+exit=0

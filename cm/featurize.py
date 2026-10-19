@@ -15,6 +15,7 @@ import numpy as np
 
 from cm.features import LFCCConfig, lfcc
 from factory.channel_sim import resample
+from factory.normalise import cm_input
 from factory.store import load_packed
 
 
@@ -38,7 +39,7 @@ def _lfcc_job(args: tuple[np.ndarray, int]) -> np.ndarray:
 
 def feature_path(split_dir: Path, condition: str, horizon_s: float | None) -> Path:
     suffix = f"_{horizon_s:g}s" if horizon_s else ""
-    return split_dir / "feats" / f"{condition}{suffix}.npz"
+    return split_dir / "feats_v2" / f"{condition}{suffix}.npz"  # v2: features of the CM-input trim
 
 
 def load_features(split_dir: Path, condition: str, horizon_s: float | None = None, resample_to: int | None = None) -> FeatureSet:
@@ -53,6 +54,7 @@ def load_features(split_dir: Path, condition: str, horizon_s: float | None = Non
             x = packed.get(i)
             if resample_to is not None and resample_to != packed.sr:
                 x = resample(x, packed.sr, resample_to)
+            x = cm_input(x, sr)
             if horizon_s:
                 x = x[: int(horizon_s * sr)]
             clips.append(x)

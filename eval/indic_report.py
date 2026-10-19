@@ -24,6 +24,7 @@ from eval.metrics import eer, far_frr, threshold_at_far
 from eval.shortcut_audit import cue_table
 from factory.channel_sim import resample
 from factory.indic_pilot import CONDITIONS
+from factory.normalise import cm_input
 from factory.store import load_packed
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,7 +55,7 @@ def score_model(name: str) -> pd.DataFrame | None:
         model = load_aasist("AASIST" if name == "aasist" else "AASIST-L")
         for c in CONDS:
             p = load_packed(PILOT / f"{c}.npz")
-            s = score_aasist(model, [resample(p.get(i), p.sr, 16000) for i in range(len(p))])
+            s = score_aasist(model, [resample(cm_input(p.get(i), p.sr), p.sr, 16000) for i in range(len(p))])
             recs += [(str(u), c, float(v)) for u, v in zip(p.utt_ids, s, strict=True)]
     else:
         return None

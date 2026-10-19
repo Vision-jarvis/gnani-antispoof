@@ -31,6 +31,10 @@ class NormPolicy:
 
 
 DEFAULT_POLICY = NormPolicy()
+# Second trim applied to whatever the CM receives (after the channel, at its own sample rate).
+# The 40 dB build-time gate left a residual silence cue (single-cue EER 24% on ASVspoof eval nb_pcm,
+# failing rule 4); a 30 dB gate on the CM input brings it to 38% (artifacts/results.md, audit table).
+CM_INPUT_POLICY = NormPolicy(rel_db=30.0)
 
 
 def frame_energy_db(x: np.ndarray, sr: int, frame_s: float = FRAME_S) -> np.ndarray:
@@ -78,6 +82,11 @@ def loudness_normalise(x: np.ndarray, sr: int, target_lufs: float = DEFAULT_POLI
     if peak > 0.99:
         y *= 0.99 / peak
     return y.astype(np.float32)
+
+
+def cm_input(x: np.ndarray, sr: int) -> np.ndarray:
+    """What every countermeasure scores: the clip re-trimmed with ``CM_INPUT_POLICY``."""
+    return vad_trim(np.asarray(x, dtype=np.float32), sr, CM_INPUT_POLICY)
 
 
 def normalise(x: np.ndarray, sr: int, policy: NormPolicy = DEFAULT_POLICY) -> np.ndarray:

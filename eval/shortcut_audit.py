@@ -15,7 +15,7 @@ import pandas as pd
 import pyloudnorm
 
 from eval.metrics import eer
-from factory.normalise import silence_stats
+from factory.normalise import cm_input, silence_stats
 from factory.store import PackedAudio
 
 AUDIT_THRESHOLD = 0.35
@@ -34,10 +34,11 @@ class AuditResult:
 
 
 def cue_table(packed: PackedAudio) -> pd.DataFrame:
-    """Silence, loudness and duration of each clip in a packed store (what the CM actually sees)."""
+    """Silence, loudness and duration of each clip as the CM receives it (after ``cm_input``)."""
     meter = pyloudnorm.Meter(packed.sr)
     rows = []
     for u, x in packed:
+        x = cm_input(x, packed.sr)
         lead, trail = silence_stats(x, packed.sr)
         lufs = meter.integrated_loudness(x.astype(np.float64)) if len(x) >= 0.4 * packed.sr else np.nan
         rows.append({"utt_id": u, "silence_s": lead + trail, "lufs": lufs, "dur_s": len(x) / packed.sr})
