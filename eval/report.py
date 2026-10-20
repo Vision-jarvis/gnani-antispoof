@@ -18,7 +18,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from eval.metrics import DCF_PARAMS, AffineCalibration, evaluate, threshold_at_far
+from eval.metrics import DCF_PARAMS, AffineCalibration, eer, evaluate, threshold_at_far
+from cm.release import manifest_path
 from eval.points import points_matrix
 from eval.shortcut_audit import AUDIT_COLS, cue_table, run_audit
 from factory.channel_sim import HELDOUT_CONDITIONS, TRAIN_CONDITIONS
@@ -31,6 +32,7 @@ OUT_JSON = ROOT / "artifacts" / "results.json"
 OUT_MD = ROOT / "artifacts" / "results.md"
 SEEN = [c for c in TRAIN_CONDITIONS if c != "nb_pcm"]
 HELDOUT = sorted(HELDOUT_CONDITIONS)
+BOOT = 200  # bootstrap resamples per pooled cell
 EIGHT_K_MODELS = {"gmm8_aug", "lcnn8_aug", "lcnn8_noaug", "lcnn8_distil", "teacher"}
 
 
@@ -39,13 +41,30 @@ def _cell(df: pd.DataFrame, cal: AffineCalibration, tau: float) -> dict[str, flo
     s = df.score.to_numpy(float)
     r = evaluate(s[b], s[~b], dev_tau_far1=tau).as_dict()
     llr = cal(s)
-    r["cllr"] = evaluate(llr[b], llr[~b], llr=True).cllr
+    cal_r = evaluate(llr[b], llr[~b], llr=True)
+    r["cllr"], r["min_cllr"] = cal_r.cllr, cal_r.min_cllr
     return r
+
+
+def bootstrap_eer_ci(df: pd.DataFrame, n_boot: int = BOOT, seed: int = 0) -> tuple[float, float]:
+    """95% CI of the pooled EER, resampling utterances (all of an utterance's conditions move together)."""
+    rng = np.random.default_rng(seed)
+    utts = df.utt_id.unique()
+    groups = {u: g for u, g in df.groupby("utt_id")}
+    sb = {u: (g.score.to_numpy(float), g.label.iloc[0] == "bonafide") for u, g in groups.items()}
+    vals = []
+    for _ in range(n_boot):
+        pick = rng.choice(utts, len(utts), replace=True)
+        bona = np.concatenate([sb[u][0] for u in pick if sb[u][1]])
+        spoof = np.concatenate([sb[u][0] for u in pick if not sb[u][1]])
+        vals.append(eer(bona, spoof))
+    lo, hi = np.percentile(vals, [2.5, 97.5])
+    return float(lo), float(hi)
 
 
 def model_tables(name: str, man: pd.DataFrame) -> dict[str, object]:
     sc = pd.read_csv(SCORES / f"{name}.csv").merge(man[["utt_id", "label", "attack"]], on="utt_id")
-    dev = pd.read_csv(SCORES / f"{name}_dev.csv").merge(pd.read_csv(PROC / "dev" / "manifest.csv")[["utt_id", "label"]], on="utt_id")
+    dev = pd.read_csv(SCORES / f"{name}_dev.csv").merge(pd.read_csv(manifest_path("dev"))[["utt_id", "label"]], on="utt_id")
     db = dev.label.eq("bonafide").to_numpy()
     ds = dev.score.to_numpy(float)
     cal = AffineCalibration.fit(ds[db], ds[~db])
@@ -56,6 +75,8 @@ def model_tables(name: str, man: pd.DataFrame) -> dict[str, object]:
     out["per_condition"] = {c: _cell(g, cal, tau) for c, g in full.groupby("condition")}
     pools = {"clean": [clean], "seen": SEEN, "heldout": HELDOUT}
     out["pools"] = {k: _cell(full[full.condition.isin(v)], cal, tau) for k, v in pools.items()}
+    for k, v in pools.items():
+        out["pools"][k]["eer_ci95"] = bootstrap_eer_ci(full[full.condition.isin(v)])
     out["delta_nb"] = out["pools"]["heldout"]["eer"] - out["pools"]["clean"]["eer"]  # type: ignore[index]
     bona_ho = full[full.condition.isin(HELDOUT) & full.label.eq("bonafide")]
     bona_cl = full[full.condition.eq(clean) & full.label.eq("bonafide")]
@@ -66,11 +87,20 @@ def model_tables(name: str, man: pd.DataFrame) -> dict[str, object]:
             "heldout": _cell(pd.concat([bona_ho, g[g.condition.isin(HELDOUT)]]), cal, tau)["eer"],
         }
     out["per_attack_eer"] = per_attack
+    # Streaming (critique M2, M8): causal prefixes, only clips with >= t s of trimmed speech; "full" is the
+    # full-clip EER on exactly the same trials, so the difference is the cost of deciding at t.
     streaming = {}
     for h, g in sc[sc.horizon > 0].groupby("horizon"):
-        streaming[f"{h:g}s"] = {k: _cell(g[g.condition.isin(v)], cal, tau)["eer"] for k, v in pools.items()}
+        row: dict[str, object] = {}
+        for k, v in pools.items():
+            gp = g[g.condition.isin(v)]
+            same = full[full.condition.isin(v)].merge(gp[["utt_id", "condition"]], on=["utt_id", "condition"])
+            row[k] = _cell(gp, cal, tau)["eer"] if len(gp) else None
+            row[f"{k}_full_same_trials"] = _cell(same, cal, tau)["eer"] if len(same) else None
+        gc = g[g.condition.eq(clean)]
+        row["n_bona_clean"], row["n_spoof_clean"] = int(gc.label.eq("bonafide").sum()), int(gc.label.eq("spoof").sum())
+        streaming[f"{h:g}s"] = row
     if streaming:
-        streaming["full"] = {k: out["pools"][k]["eer"] for k in pools}  # type: ignore[index]
         out["streaming_eer"] = streaming
     meta_path = SCORES / f"{name}.json"
     out["meta"] = json.loads(meta_path.read_text()) if meta_path.exists() else {}
@@ -80,6 +110,9 @@ def model_tables(name: str, man: pd.DataFrame) -> dict[str, object]:
 
 
 def shortcut_audit(man_eval: pd.DataFrame) -> list[dict[str, object]]:
+    if not (PROC / "eval" / "nb_pcm.npz").exists():
+        # Fresh clone without the audio: show the audit computed when release/ was built (cm.release build).
+        return json.loads((ROOT / "release" / "shortcut_audit.json").read_text())
     man_dev = pd.read_csv(PROC / "dev" / "manifest.csv")
     for m in (man_eval, man_dev):
         m["raw_silence_s"] = m.raw_lead_sil_s + m.raw_trail_sil_s
@@ -98,12 +131,13 @@ def _pct(v: object) -> str:
 def to_markdown(res: dict[str, object]) -> str:
     models: dict[str, dict] = res["models"]  # type: ignore[assignment]
     lines = [f"Metrics: EER %, minDCF ({DCF_PARAMS}), Cllr (bits, dev-calibrated), FRR@FAR1 % (dev-fixed threshold).", ""]
-    lines += ["### Pooled results", "", "| model | pool | EER % | minDCF | Cllr | FRR@FAR1 % | FAR at dev tau % |", "|---|---|---|---|---|---|---|"]
+    lines += ["### Pooled results (EER with a 95% utterance-bootstrap interval)", "", "| model | pool | EER % | EER 95% CI | minDCF | Cllr | minCllr | FRR@FAR1 % | FAR at dev tau % |", "|---|---|---|---|---|---|---|---|---|"]
     for n, m in models.items():
         for p in ("clean", "seen", "heldout"):
             c = m["pools"][p]
             label = f"{p} ({m['clean_pool']})" if p == "clean" else p
-            lines.append(f"| {n} | {label} | {_pct(c['eer'])} | {c['min_dcf']:.3f} | {c['cllr']:.3f} | {_pct(c['frr_at_far1'])} | {_pct(c['far_at_dev_tau'])} |")
+            ci = c.get("eer_ci95") or (np.nan, np.nan)
+            lines.append(f"| {n} | {label} | {_pct(c['eer'])} | {_pct(ci[0])} to {_pct(ci[1])} | {c['min_dcf']:.3f} | {c['cllr']:.3f} | {c['min_cllr']:.3f} | {_pct(c['frr_at_far1'])} | {_pct(c['far_at_dev_tau'])} |")
     lines += ["", "### delta-NB (EER held-out codecs minus EER clean pool, same utterances)", "", "| model | delta-NB (EER points) |", "|---|---|"]
     lines += [f"| {n} | {100 * m['delta_nb']:+.2f} |" for n, m in models.items()]
     conds = sorted({c for m in models.values() for c in m["per_condition"]})
@@ -115,10 +149,13 @@ def to_markdown(res: dict[str, object]) -> str:
     lines += ["", "### EER % per ASVspoof 2019 eval attack (clean pool / held-out codec pool)", "", "| attack | " + " | ".join(models) + " |", "|---|" + "---|" * len(models)]
     for a in attacks:
         lines.append(f"| {a} | " + " | ".join(f"{_pct(m['per_attack_eer'][a]['clean'])} / {_pct(m['per_attack_eer'][a]['heldout'])}" for m in models.values()) + " |")
-    lines += ["", "### Streaming EER % (decision on the first t seconds of trimmed speech only)", "", "| model | horizon | clean | seen | held-out |", "|---|---|---|---|---|"]
+    lines += ["", "### Streaming EER % (causal: decision on the first t s of received audio, trim and loudness from that prefix only)", "",
+              "Only clips with at least t s of trimmed speech; in brackets the full-clip EER on the same trials.", "",
+              "| model | horizon | n bona / spoof (clean pool) | clean | seen | held-out |", "|---|---|---|---|---|---|"]
     for n, m in models.items():
         for h, v in m.get("streaming_eer", {}).items():
-            lines.append(f"| {n} | {h} | {_pct(v['clean'])} | {_pct(v['seen'])} | {_pct(v['heldout'])} |")
+            cells = " | ".join(f"{_pct(v[k])} ({_pct(v[k + '_full_same_trials'])})" for k in ("clean", "seen", "heldout"))
+            lines.append(f"| {n} | {h} | {v['n_bona_clean']} / {v['n_spoof_clean']} | {cells} |")
     lines += ["", "### Shortcut audit (single-cue classifiers, direction fixed on dev; rule: must be >= 35% EER)", "", "| stage | cue | eval EER % | passes |", "|---|---|---|---|"]
     lines += [f"| {a['stage']} | {a['cue']} | {_pct(a['eval_eer'])} | {'yes' if a['passes_35pct_rule'] else 'NO'} |" for a in res["shortcut_audit"]]  # type: ignore[union-attr]
     lines += ["", "### Points matrix (statement section 7)", "", "| KPI | weight | status | value | note |", "|---|---|---|---|---|"]
@@ -127,7 +164,7 @@ def to_markdown(res: dict[str, object]) -> str:
 
 
 def main() -> None:
-    man = pd.read_csv(PROC / "eval" / "manifest.csv")
+    man = pd.read_csv(manifest_path("eval"))
     names = sorted(p.stem for p in SCORES.glob("*.csv") if not p.stem.endswith("_dev"))
     order = ["aasist", "aasist_l", "ssl_aasist", "teacher", "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug"]
     names = [n for n in order if n in names] + [n for n in names if n not in order]

@@ -49,16 +49,18 @@ def load_cm(operating_point: str = "far1") -> CMScorer:
 
 
 def real_scenario_audio() -> dict[str, np.ndarray] | None:
-    """Genuine, replay and clone audio from ASVspoof 2019 LA eval (AMR-NB 12.2), same target speaker."""
+    """Genuine, replay and clone audio from ASVspoof 2019 LA eval (AMR-NB 12.2, or the G.711 release pack), same target speaker."""
     import pandas as pd
 
     from factory.store import load_packed
 
-    d = ROOT / "data" / "proc" / "asv19" / "eval"
-    if not (d / "amrnb_12k2.npz").exists():
+    for d, cond in ((ROOT / "data" / "proc" / "asv19" / "eval", "amrnb_12k2"), (ROOT / "release" / "demo_pack", "g711u")):
+        if (d / f"{cond}.npz").exists():
+            break
+    else:
         return None
     man = pd.read_csv(d / "manifest.csv")
-    packed = load_packed(d / "amrnb_12k2.npz")
+    packed = load_packed(d / f"{cond}.npz")
     pos = {str(u): i for i, u in enumerate(packed.utt_ids)}
     for spk, g in man.groupby("speaker", sort=True):
         bona, spoof = g[g.label == "bonafide"].utt_id.astype(str).tolist(), g[g.label == "spoof"].utt_id.astype(str).tolist()

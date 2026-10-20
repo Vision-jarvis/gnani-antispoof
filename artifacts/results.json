@@ -21,8 +21,8 @@
           "n_spoof": 1560,
           "eer": 0.3006019015488422,
           "min_dcf": 0.688723076923077,
-          "cllr": 0.8750379826110106,
-          "min_cllr": null,
+          "cllr": 0.8750379799351471,
+          "min_cllr": 0.7849676380001163,
           "frr_at_far1": 0.932,
           "far_at_dev_tau": 0.015384615384615385
         },
@@ -31,8 +31,8 @@
           "n_spoof": 1560,
           "eer": 0.34813167259786476,
           "min_dcf": 0.8031948717948718,
-          "cllr": 0.8875510686414632,
-          "min_cllr": null,
+          "cllr": 0.8875510693842319,
+          "min_cllr": 0.8708761504019318,
           "frr_at_far1": 0.998,
           "far_at_dev_tau": 0.0
         },
@@ -41,8 +41,8 @@
           "n_spoof": 1560,
           "eer": 0.30922977296967846,
           "min_dcf": 0.7486153846153846,
-          "cllr": 0.8489905212715207,
-          "min_cllr": null,
+          "cllr": 0.8489905193863614,
+          "min_cllr": 0.8230571613097833,
           "frr_at_far1": 0.983,
           "far_at_dev_tau": 0.001282051282051282
         },
@@ -51,8 +51,8 @@
           "n_spoof": 1560,
           "eer": 0.30488929889298894,
           "min_dcf": 0.6713461538461538,
-          "cllr": 0.8944030243741938,
-          "min_cllr": null,
+          "cllr": 0.8944030223719664,
+          "min_cllr": 0.7870466793346994,
           "frr_at_far1": 0.915,
           "far_at_dev_tau": 0.017948717948717947
         },
@@ -61,8 +61,8 @@
           "n_spoof": 1560,
           "eer": 0.3491559256302042,
           "min_dcf": 0.8046333333333333,
-          "cllr": 0.903212481591116,
-          "min_cllr": null,
+          "cllr": 0.9032124842105276,
+          "min_cllr": 0.8768323256244546,
           "frr_at_far1": 0.993,
           "far_at_dev_tau": 0.0
         },
@@ -71,8 +71,8 @@
           "n_spoof": 1560,
           "eer": 0.3241946617579383,
           "min_dcf": 0.7523461538461538,
-          "cllr": 0.8676049619329714,
-          "min_cllr": null,
+          "cllr": 0.8676049606986616,
+          "min_cllr": 0.8398944126176948,
           "frr_at_far1": 0.995,
           "far_at_dev_tau": 0.0019230769230769232
         },
@@ -81,8 +81,8 @@
           "n_spoof": 1560,
           "eer": 0.28546477205447013,
           "min_dcf": 0.6443820512820513,
-          "cllr": 0.8171211973955739,
-          "min_cllr": null,
+          "cllr": 0.8171211961532638,
+          "min_cllr": 0.7603987436303812,
           "frr_at_far1": 0.92,
           "far_at_dev_tau": 0.017948717948717947
         },
@@ -91,8 +91,8 @@
           "n_spoof": 1560,
           "eer": 0.29050991501416434,
           "min_dcf": 0.6377641025641025,
-          "cllr": 0.8148940572432485,
-          "min_cllr": null,
+          "cllr": 0.8148940560298513,
+          "min_cllr": 0.7622038614747675,
           "frr_at_far1": 0.923,
           "far_at_dev_tau": 0.01987179487179487
         },
@@ -101,8 +101,8 @@
           "n_spoof": 1560,
           "eer": 0.2872368421052631,
           "min_dcf": 0.6469923076923076,
-          "cllr": 0.8065486316514593,
-          "min_cllr": null,
+          "cllr": 0.8065486304626477,
+          "min_cllr": 0.7652133554262273,
           "frr_at_far1": 0.945,
           "far_at_dev_tau": 0.01282051282051282
         },
@@ -111,8 +111,8 @@
           "n_spoof": 1560,
           "eer": 0.30405149051490515,
           "min_dcf": 0.6878794871794872,
-          "cllr": 0.8361969785388357,
-          "min_cllr": null,
+          "cllr": 0.8361969751627107,
+          "min_cllr": 0.7863537660800732,
           "frr_at_far1": 0.985,
           "far_at_dev_tau": 0.004487179487179487
         },
@@ -121,8 +121,8 @@
           "n_spoof": 1560,
           "eer": 0.25593967993434547,
           "min_dcf": 0.5972871794871795,
-          "cllr": 0.8043087885373938,
-          "min_cllr": null,
+          "cllr": 0.8043087868948907,
+          "min_cllr": 0.7130249545263101,
           "frr_at_far1": 0.841,
           "far_at_dev_tau": 0.03397435897435897
         },
@@ -131,8 +131,8 @@
           "n_spoof": 1560,
           "eer": 0.2750294637595757,
           "min_dcf": 0.6614589743589744,
-          "cllr": 0.8392508604099544,
-          "min_cllr": null,
+          "cllr": 0.8392508582971331,
+          "min_cllr": 0.750590637532436,
           "frr_at_far1": 0.893,
           "far_at_dev_tau": 0.023717948717948717
         },
@@ -141,8 +141,8 @@
           "n_spoof": 1560,
           "eer": 0.3094993581514763,
           "min_dcf": 0.7567128205128205,
-          "cllr": 1.0133649316546187,
-          "min_cllr": null,
+          "cllr": 1.0133649295806828,
+          "min_cllr": 0.8419931333984987,
           "frr_at_far1": 0.951,
           "far_at_dev_tau": 0.011538461538461539
         },
@@ -151,8 +151,8 @@
           "n_spoof": 1560,
           "eer": 0.2809476940382452,
           "min_dcf": 0.6867435897435897,
-          "cllr": 0.9570644033905467,
-          "min_cllr": null,
+          "cllr": 0.9570644006505149,
+          "min_cllr": 0.7791494305486608,
           "frr_at_far1": 0.919,
           "far_at_dev_tau": 0.01730769230769231
         }
@@ -163,30 +163,42 @@
           "n_spoof": 1560,
           "eer": 0.25593967993434547,
           "min_dcf": 0.5972871794871795,
-          "cllr": 0.8043087885373938,
-          "min_cllr": null,
+          "cllr": 0.8043087868948907,
+          "min_cllr": 0.7130249545263101,
           "frr_at_far1": 0.841,
-          "far_at_dev_tau": 0.03397435897435897
+          "far_at_dev_tau": 0.03397435897435897,
+          "eer_ci95": [
+            0.24083473771574854,
+            0.27193794557505446
+          ]
         },
         "seen": {
           "n_bona": 9000,
           "n_spoof": 14040,
           "eer": 0.30375996291929913,
           "min_dcf": 0.7145643874643874,
-          "cllr": 0.874075067778014,
-          "min_cllr": null,
+          "cllr": 0.8740750658741743,
+          "min_cllr": 0.8074616236589963,
           "frr_at_far1": 0.9312222222222222,
-          "far_at_dev_tau": 0.015313390313390313
+          "far_at_dev_tau": 0.015313390313390313,
+          "eer_ci95": [
+            0.29239121046961164,
+            0.31530181854919803
+          ]
         },
         "heldout": {
           "n_bona": 4000,
           "n_spoof": 6240,
           "eer": 0.3363328721401267,
           "min_dcf": 0.7811692307692308,
-          "cllr": 0.8736413726760968,
-          "min_cllr": null,
+          "cllr": 0.8736413723640329,
+          "min_cllr": 0.8597108774560944,
           "frr_at_far1": 0.99275,
-          "far_at_dev_tau": 0.0016025641025641025
+          "far_at_dev_tau": 0.0016025641025641025,
+          "eer_ci95": [
+            0.3229242107547608,
+            0.34806742398554497
+          ]
         }
       },
       "delta_nb": 0.08039319220578123,
@@ -246,29 +258,39 @@
       },
       "streaming_eer": {
         "1s": {
-          "clean": 0.27476821192052975,
-          "seen": 0.3210343802898366,
-          "heldout": 0.3546288046619149
+          "clean": 0.2898142973683027,
+          "clean_full_same_trials": 0.2547816035667716,
+          "seen": 0.34168324411139683,
+          "seen_full_same_trials": 0.3034115278458968,
+          "heldout": 0.3673093252348941,
+          "heldout_full_same_trials": 0.3367603467180789,
+          "n_bona_clean": 934,
+          "n_spoof_clean": 1483
         },
         "2s": {
-          "clean": 0.2639155251141552,
-          "seen": 0.31079429795145136,
-          "heldout": 0.3413730038109064
+          "clean": 0.2691141658706757,
+          "clean_full_same_trials": 0.24245117645606498,
+          "seen": 0.3191836293102116,
+          "seen_full_same_trials": 0.292948047386157,
+          "heldout": 0.34277347021477783,
+          "heldout_full_same_trials": 0.3242545513381108,
+          "n_bona_clean": 346,
+          "n_spoof_clean": 852
         },
         "4s": {
-          "clean": 0.25483870967741934,
-          "seen": 0.30392423357445597,
-          "heldout": 0.3357158398607485
-        },
-        "full": {
-          "clean": 0.25593967993434547,
-          "seen": 0.30375996291929913,
-          "heldout": 0.3363328721401267
+          "clean": 0.2,
+          "clean_full_same_trials": 0.19892473118279572,
+          "seen": 0.2550089361301853,
+          "seen_full_same_trials": 0.2765472609607146,
+          "heldout": 0.2236406619385343,
+          "heldout_full_same_trials": 0.21670702179176754,
+          "n_bona_clean": 4,
+          "n_spoof_clean": 184
         }
       },
       "meta": {
         "model": "gmm8_aug",
-        "train_seconds": 319.627876996994,
+        "train_seconds": 2.2184557914733887,
         "components": 128,
         "n_train": 10320
       }
@@ -291,8 +313,8 @@
           "n_spoof": 1560,
           "eer": 0.31093750000000003,
           "min_dcf": 0.6941923076923077,
-          "cllr": 0.9924999162305717,
-          "min_cllr": null,
+          "cllr": 0.9924999192605108,
+          "min_cllr": 0.7912367415678886,
           "frr_at_far1": 0.839,
           "far_at_dev_tau": 0.04230769230769231
         },
@@ -301,8 +323,8 @@
           "n_spoof": 1560,
           "eer": 0.3284591070723034,
           "min_dcf": 0.769948717948718,
-          "cllr": 0.9401466254240487,
-          "min_cllr": null,
+          "cllr": 0.9401466293446401,
+          "min_cllr": 0.846654706963568,
           "frr_at_far1": 0.935,
           "far_at_dev_tau": 0.010897435897435897
         },
@@ -311,8 +333,8 @@
           "n_spoof": 1560,
           "eer": 0.3144730623818526,
           "min_dcf": 0.6896179487179487,
-          "cllr": 0.9095140414034673,
-          "min_cllr": null,
+          "cllr": 0.9095140440191776,
+          "min_cllr": 0.807110417372088,
           "frr_at_far1": 0.911,
           "far_at_dev_tau": 0.021794871794871794
         },
@@ -321,8 +343,8 @@
           "n_spoof": 1560,
           "eer": 0.3071448568229083,
           "min_dcf": 0.6782128205128204,
-          "cllr": 0.9891230412561859,
-          "min_cllr": null,
+          "cllr": 0.989123045302298,
+          "min_cllr": 0.7836098690324528,
           "frr_at_far1": 0.825,
           "far_at_dev_tau": 0.057692307692307696
         },
@@ -331,8 +353,8 @@
           "n_spoof": 1560,
           "eer": 0.33149910233393176,
           "min_dcf": 0.7757410256410256,
-          "cllr": 0.9642670054320467,
-          "min_cllr": null,
+          "cllr": 0.9642670096755932,
+          "min_cllr": 0.8530234117564816,
           "frr_at_far1": 0.908,
           "far_at_dev_tau": 0.020512820512820513
         },
@@ -341,8 +363,8 @@
           "n_spoof": 1560,
           "eer": 0.36057828481510623,
           "min_dcf": 0.8301076923076923,
-          "cllr": 1.0384320993418872,
-          "min_cllr": null,
+          "cllr": 1.0384321100069474,
+          "min_cllr": 0.8904843305456103,
           "frr_at_far1": 0.907,
           "far_at_dev_tau": 0.02564102564102564
         },
@@ -351,8 +373,8 @@
           "n_spoof": 1560,
           "eer": 0.2796712559707783,
           "min_dcf": 0.6208897435897436,
-          "cllr": 1.0592159551690956,
-          "min_cllr": null,
+          "cllr": 1.0592159644865962,
+          "min_cllr": 0.7443954536270743,
           "frr_at_far1": 0.666,
           "far_at_dev_tau": 0.09166666666666666
         },
@@ -361,8 +383,8 @@
           "n_spoof": 1560,
           "eer": 0.28153470326196295,
           "min_dcf": 0.6269128205128205,
-          "cllr": 1.0706003875875827,
-          "min_cllr": null,
+          "cllr": 1.0706003968166944,
+          "min_cllr": 0.744742143088094,
           "frr_at_far1": 0.652,
           "far_at_dev_tau": 0.10128205128205128
         },
@@ -371,8 +393,8 @@
           "n_spoof": 1560,
           "eer": 0.272265625,
           "min_dcf": 0.6431179487179487,
-          "cllr": 1.0259169205959475,
-          "min_cllr": null,
+          "cllr": 1.0259169273187354,
+          "min_cllr": 0.7523516908845134,
           "frr_at_far1": 0.715,
           "far_at_dev_tau": 0.0782051282051282
         },
@@ -381,8 +403,8 @@
           "n_spoof": 1560,
           "eer": 0.34293711415716227,
           "min_dcf": 0.7783051282051282,
-          "cllr": 0.9618103489169365,
-          "min_cllr": null,
+          "cllr": 0.961810362469758,
+          "min_cllr": 0.8590867660502337,
           "frr_at_far1": 0.949,
           "far_at_dev_tau": 0.015384615384615385
         },
@@ -391,8 +413,8 @@
           "n_spoof": 1560,
           "eer": 0.2764375668290365,
           "min_dcf": 0.578951282051282,
-          "cllr": 0.9250041470307444,
-          "min_cllr": null,
+          "cllr": 0.9250041525700015,
+          "min_cllr": 0.7217857296599839,
           "frr_at_far1": 0.742,
           "far_at_dev_tau": 0.06217948717948718
         },
@@ -401,8 +423,8 @@
           "n_spoof": 1560,
           "eer": 0.28231974921630093,
           "min_dcf": 0.6215820512820514,
-          "cllr": 0.9790066395132637,
-          "min_cllr": null,
+          "cllr": 0.9790066452203989,
+          "min_cllr": 0.7401799374154163,
           "frr_at_far1": 0.738,
           "far_at_dev_tau": 0.08012820512820513
         },
@@ -411,8 +433,8 @@
           "n_spoof": 1560,
           "eer": 0.3552655093183559,
           "min_dcf": 0.8584692307692308,
-          "cllr": 1.0903389974219009,
-          "min_cllr": null,
+          "cllr": 1.0903390009878648,
+          "min_cllr": 0.8915001996085363,
           "frr_at_far1": 0.908,
           "far_at_dev_tau": 0.03076923076923077
         },
@@ -421,8 +443,8 @@
           "n_spoof": 1560,
           "eer": 0.32017338331771317,
           "min_dcf": 0.7581153846153845,
-          "cllr": 1.0322868594330283,
-          "min_cllr": null,
+          "cllr": 1.0322868622257038,
+          "min_cllr": 0.8334434098367464,
           "frr_at_far1": 0.859,
           "far_at_dev_tau": 0.04038461538461539
         }
@@ -433,30 +455,42 @@
           "n_spoof": 1560,
           "eer": 0.2764375668290365,
           "min_dcf": 0.578951282051282,
-          "cllr": 0.9250041470307444,
-          "min_cllr": null,
+          "cllr": 0.9250041525700015,
+          "min_cllr": 0.7217857296599839,
           "frr_at_far1": 0.742,
-          "far_at_dev_tau": 0.06217948717948718
+          "far_at_dev_tau": 0.06217948717948718,
+          "eer_ci95": [
+            0.25940944236104807,
+            0.290982724201517
+          ]
         },
         "seen": {
           "n_bona": 9000,
           "n_spoof": 14040,
           "eer": 0.30698193135212637,
           "min_dcf": 0.706371225071225,
-          "cllr": 1.0165003065123381,
-          "min_cllr": null,
+          "cllr": 1.0165003117375533,
+          "min_cllr": 0.8014028960977655,
           "frr_at_far1": 0.7903333333333333,
-          "far_at_dev_tau": 0.06047008547008547
+          "far_at_dev_tau": 0.06047008547008547,
+          "eer_ci95": [
+            0.29453538938847307,
+            0.3183363896583168
+          ]
         },
         "heldout": {
           "n_bona": 4000,
           "n_spoof": 6240,
           "eer": 0.3442280724120347,
           "min_dcf": 0.798549358974359,
-          "cllr": 0.9761640197787298,
-          "min_cllr": null,
+          "cllr": 0.9761640278742347,
+          "min_cllr": 0.8726619523729511,
           "frr_at_far1": 0.92475,
-          "far_at_dev_tau": 0.01810897435897436
+          "far_at_dev_tau": 0.01810897435897436,
+          "eer_ci95": [
+            0.33039462010000575,
+            0.35596849323219676
+          ]
         }
       },
       "delta_nb": 0.0677905055829982,
@@ -516,24 +550,34 @@
       },
       "streaming_eer": {
         "1s": {
-          "clean": 0.30401495768549497,
-          "seen": 0.33894633930011286,
-          "heldout": 0.37688698083067085
+          "clean": 0.32971395609242976,
+          "clean_full_same_trials": 0.27681893516330647,
+          "seen": 0.36889835287102135,
+          "seen_full_same_trials": 0.30722402640659663,
+          "heldout": 0.3940977480483516,
+          "heldout_full_same_trials": 0.34389700651744315,
+          "n_bona_clean": 934,
+          "n_spoof_clean": 1483
         },
         "2s": {
-          "clean": 0.283246161633204,
-          "seen": 0.3113012977440838,
-          "heldout": 0.34820357142857145
+          "clean": 0.2959181452051812,
+          "clean_full_same_trials": 0.2766322532673664,
+          "seen": 0.32557685289905686,
+          "seen_full_same_trials": 0.3058949747622648,
+          "heldout": 0.3536498621854717,
+          "heldout_full_same_trials": 0.33534057739949474,
+          "n_bona_clean": 346,
+          "n_spoof_clean": 852
         },
         "4s": {
-          "clean": 0.27765914585012086,
-          "seen": 0.3073621735536228,
-          "heldout": 0.3443174452809493
-        },
-        "full": {
-          "clean": 0.2764375668290365,
-          "seen": 0.30698193135212637,
-          "heldout": 0.3442280724120347
+          "clean": 0.19343065693430656,
+          "clean_full_same_trials": 0.14606741573033707,
+          "seen": 0.20682265724545348,
+          "seen_full_same_trials": 0.16230688202247193,
+          "heldout": 0.17175709665828243,
+          "heldout_full_same_trials": 0.09844134536505332,
+          "n_bona_clean": 4,
+          "n_spoof_clean": 184
         }
       },
       "meta": {
@@ -569,13 +613,43 @@
     {
       "cue": "duration",
       "stage": "raw (before normalisation)",
-      "eval_eer": 0.40695500436245796,
+      "eval_eer": 0.40732436472346784,
       "passes_35pct_rule": true
     },
     {
-      "cue": "silence",
+      "cue": "silence (trim gate, 30 dB)",
       "stage": "CM input (nb_pcm)",
-      "eval_eer": 0.3806587525429998,
+      "eval_eer": 0.36950967766372483,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "silence (gate 20 dB)",
+      "stage": "CM input (nb_pcm)",
+      "eval_eer": 0.39067956179390617,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "silence (gate 25 dB)",
+      "stage": "CM input (nb_pcm)",
+      "eval_eer": 0.3824185615510728,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "silence (WebRTC VAD)",
+      "stage": "CM input (nb_pcm)",
+      "eval_eer": 0.4364046863558702,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "non-speech fraction (WebRTC VAD)",
+      "stage": "CM input (nb_pcm)",
+      "eval_eer": 0.40103165630299603,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "low-energy frame fraction (< max-30 dB)",
+      "stage": "CM input (nb_pcm)",
+      "eval_eer": 0.5,
       "passes_35pct_rule": true
     },
     {
@@ -587,13 +661,43 @@
     {
       "cue": "duration",
       "stage": "CM input (nb_pcm)",
-      "eval_eer": 0.4035415003990423,
+      "eval_eer": 0.40529141513969763,
       "passes_35pct_rule": true
     },
     {
-      "cue": "silence",
+      "cue": "silence (trim gate, 30 dB)",
       "stage": "CM input (g711u)",
-      "eval_eer": 0.3891066384180791,
+      "eval_eer": 0.40175265366576157,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "silence (gate 20 dB)",
+      "stage": "CM input (g711u)",
+      "eval_eer": 0.41454248366013075,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "silence (gate 25 dB)",
+      "stage": "CM input (g711u)",
+      "eval_eer": 0.41561564206447066,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "silence (WebRTC VAD)",
+      "stage": "CM input (g711u)",
+      "eval_eer": 0.47076271186440677,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "non-speech fraction (WebRTC VAD)",
+      "stage": "CM input (g711u)",
+      "eval_eer": 0.44512994480220786,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "low-energy frame fraction (< max-30 dB)",
+      "stage": "CM input (g711u)",
+      "eval_eer": 0.49980056356875413,
       "passes_35pct_rule": true
     },
     {
@@ -605,7 +709,7 @@
     {
       "cue": "duration",
       "stage": "CM input (g711u)",
-      "eval_eer": 0.4027789046653144,
+      "eval_eer": 0.40575308279506755,
       "passes_35pct_rule": true
     }
   ],
@@ -615,7 +719,7 @@
       "weight": 25,
       "status": "PENDING",
       "value": "n/a",
-      "note": "needs Kathbath bona fide (gated) + Gnani clone set (factory/gnani_clone.py, awaiting approval)"
+      "note": "G1/G3 from Timbre stock voices + the builder's own consented voice; Kathbath-speaker cloning DEFERRED (consent)"
     },
     {
       "kpi": "Pooled narrowband EER and delta-NB, held-out codecs",
@@ -635,8 +739,8 @@
       "kpi": "Streaming EER at 2.0 s",
       "weight": 10,
       "status": "MEASURED (proxy)",
-      "value": "gmm8_aug: 34.14% held-out pool",
-      "note": "prefix-only scoring"
+      "value": "gmm8_aug: 34.28% held-out pool",
+      "note": "causal prefix scoring, clips with >= 2 s of trimmed speech only (346 bona fide in the clean pool)"
     },
     {
       "kpi": "Student efficiency (RTF, params, RAM)",
@@ -648,9 +752,9 @@
     {
       "kpi": "End-to-end flow: ASR <= 5%, genuine >= 90%",
       "weight": 10,
-      "status": "PENDING",
-      "value": "n/a",
-      "note": "flow runs end to end on mocks; real G2/G5/G6 attack trials need the approved clone run"
+      "status": "PARTIAL (CM gate only, English proxy)",
+      "value": "g711u @ far1: genuine 32.5%, attack 11.0%; g711u @ min_dcf: genuine 88.5%, attack 62.5%; g711u @ eer: genuine 84.5%, attack 49.0%; amrnb_4k75 @ far1: genuine 4.5%, attack 1.0%; amrnb_4k75 @ min_dcf: genuine 75.5%, attack 55.5%; amrnb_4k75 @ eer: genuine 57.5%, attack 33.5%",
+      "note": "python -m ivr_demo.trials: real ASVspoof clips through verify(), echo STT, identity gate bypassed; Gnani-clone trials PENDING"
     },
     {
       "kpi": "Replay / injection detection (G5, G6 EER)",
@@ -669,9 +773,9 @@
     {
       "kpi": "Reproducibility: one-command eval, model card, data card",
       "weight": 5,
-      "status": "MEASURED",
-      "value": "run.ps1 quick / run.ps1 report; MODEL_CARD.md; DATA_CARD.md",
-      "note": ""
+      "status": "PARTIAL",
+      "value": "run.ps1 quick / run.ps1 report; MODEL_CARD.md; DATA_CARD.md; release/ holds models, calibration and gzipped scores",
+      "note": "a fresh clone regenerates every table from release/ (run.ps1 report); rebuilding the audio needs the ASVspoof download"
     }
   ]
 }

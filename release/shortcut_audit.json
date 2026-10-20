@@ -1,0 +1,116 @@
+[
+  {
+    "cue": "silence",
+    "stage": "raw (before normalisation)",
+    "eval_eer": 0.17536967236880255,
+    "passes_35pct_rule": false
+  },
+  {
+    "cue": "loudness",
+    "stage": "raw (before normalisation)",
+    "eval_eer": 0.4985699930432094,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "duration",
+    "stage": "raw (before normalisation)",
+    "eval_eer": 0.40732436472346784,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "silence (trim gate, 30 dB)",
+    "stage": "CM input (nb_pcm)",
+    "eval_eer": 0.36950967766372483,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "silence (gate 20 dB)",
+    "stage": "CM input (nb_pcm)",
+    "eval_eer": 0.39067956179390617,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "silence (gate 25 dB)",
+    "stage": "CM input (nb_pcm)",
+    "eval_eer": 0.3824185615510728,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "silence (WebRTC VAD)",
+    "stage": "CM input (nb_pcm)",
+    "eval_eer": 0.4364046863558702,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "non-speech fraction (WebRTC VAD)",
+    "stage": "CM input (nb_pcm)",
+    "eval_eer": 0.40103165630299603,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "low-energy frame fraction (< max-30 dB)",
+    "stage": "CM input (nb_pcm)",
+    "eval_eer": 0.5,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "loudness",
+    "stage": "CM input (nb_pcm)",
+    "eval_eer": 0.4223804347826087,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "duration",
+    "stage": "CM input (nb_pcm)",
+    "eval_eer": 0.40529141513969763,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "silence (trim gate, 30 dB)",
+    "stage": "CM input (g711u)",
+    "eval_eer": 0.40175265366576157,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "silence (gate 20 dB)",
+    "stage": "CM input (g711u)",
+    "eval_eer": 0.41454248366013075,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "silence (gate 25 dB)",
+    "stage": "CM input (g711u)",
+    "eval_eer": 0.41561564206447066,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "silence (WebRTC VAD)",
+    "stage": "CM input (g711u)",
+    "eval_eer": 0.47076271186440677,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "non-speech fraction (WebRTC VAD)",
+    "stage": "CM input (g711u)",
+    "eval_eer": 0.44512994480220786,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "low-energy frame fraction (< max-30 dB)",
+    "stage": "CM input (g711u)",
+    "eval_eer": 0.49980056356875413,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "loudness",
+    "stage": "CM input (g711u)",
+    "eval_eer": 0.4815895349104536,
+    "passes_35pct_rule": true
+  },
+  {
+    "cue": "duration",
+    "stage": "CM input (g711u)",
+    "eval_eer": 0.40575308279506755,
+    "passes_35pct_rule": true
+  }
+]

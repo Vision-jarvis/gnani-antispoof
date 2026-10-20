@@ -56,9 +56,9 @@ def echo_stt(challenge: Challenge):  # noqa: ANN201 - returns an SttFn
     return run
 
 
-def asvspoof_trials(condition: str, n: int, seed: int) -> list[tuple[str, str, np.ndarray]]:
-    man = pd.read_csv(PROC / "manifest.csv")
-    packed = load_packed(PROC / f"{condition}.npz")
+def asvspoof_trials(condition: str, n: int, seed: int, src: Path = PROC) -> list[tuple[str, str, np.ndarray]]:
+    man = pd.read_csv(src / "manifest.csv")
+    packed = load_packed(src / f"{condition}.npz")
     pos = {str(u): i for i, u in enumerate(packed.utt_ids)}
     rng = np.random.default_rng(seed)
     out = []
@@ -113,9 +113,14 @@ def main() -> None:
     ap.add_argument("--bona-dir", type=Path)
     ap.add_argument("--spoof-dir", type=Path)
     ap.add_argument("--tag", default="asvspoof")
+    ap.add_argument("--pack", action="store_true", help="use the committed 60 + 60 clip G.711 pack in release/demo_pack")
     a = ap.parse_args()
     ops = tuple(a.operating_points)
-    if a.bona_dir and a.spoof_dir:
+    if a.pack:
+        pack = ROOT / "release" / "demo_pack"
+        rows = run(asvspoof_trials("g711u", 60, a.seed, pack), "ASVspoof19 eval g711u (release pack)", ops)
+        a.tag = "pack"
+    elif a.bona_dir and a.spoof_dir:
         rows = run(wav_trials(a.bona_dir, a.spoof_dir), f"wav:{a.bona_dir.name} vs {a.spoof_dir.name}", ops)
     else:
         rows = [r for c in a.conditions for r in run(asvspoof_trials(c, a.n, a.seed), f"ASVspoof19 eval {c}", ops)]
