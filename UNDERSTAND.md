@@ -42,6 +42,14 @@ worse than the best empirical crossing (`test_eer_brute_force_agreement`) and ma
 theory value Phi(-d/2) for equal-variance classes (`test_eer_matches_gaussian_theory`).
 *Q: "Why the hull?"* A: It is the EER of the best system obtainable by randomising between two
 thresholds, it is well defined with ties, and it is what the statement asks for.
+*Ties (a bug that was found and fixed).* Within a block of tied scores BOSARIS puts the targets (bona fide)
+*below* the non-targets before taking the hull, which makes a tie cost what random tie-breaking costs; a
+constant score then has EER 50%. The first version sorted the other way round, so ties counted as perfectly
+separated (a constant score had EER 0%). Model scores are continuous, so model EERs did not move, but the
+shortcut-audit cues are quantised to 20 ms frames and tie constantly: that bug made the audit look *worse*
+than it was (`docs/results_v2_audit_ties.md`, `tests/test_metrics.py::test_eer_ties_are_pessimistic`).
+
+
 
 ## 4. minDCF with the bank prior (`eval/metrics.py: min_dcf`)
 pi_spf = 0.05, C_miss = 1, C_fa = 10, normalised by min(C_miss (1 - pi), C_fa pi) = min(0.95, 0.5) = 0.5.
@@ -63,17 +71,24 @@ different FAR on held-out codecs. This is the "calibration honesty" KPI.
 forbids, and in the field you do not know the codec chain.
 
 ## 6. The shortcut audit (`eval/shortcut_audit.py`, `factory/normalise.py`)
-ASVspoof 2019 bona fide files have longer silences than spoofs (Muller et al. 2021). A one-number
-classifier on silence duration gets far below 50% EER on raw audio. Every clip is therefore VAD-trimmed
-(keeping 50 ms of real context, never inserting digital zeros) and normalised to -23 LUFS before
-anything else. The audit fixes each cue's direction on dev, then measures eval EER; rule 4 requires
->= 35% on what the CM actually sees. See the audit table in `artifacts/results.md`: compare the raw
-rows with the "CM input" rows.
-*Q: "Your VAD is an energy gate, isn't that crude?"* A: Yes, deliberately: it is deterministic and
-identical for both classes, and the audit is the check that it was good enough. It was not, at first:
-with only the 40 dB build-time gate, silence alone still gave 24.3% EER on the CM input, failing rule 4.
-A second 30 dB trim on the CM input (`factory/normalise.py: cm_input`) brought it to 38.1%, every model
-was retrained, and the failed run is kept in `docs/results_v1_failed_audit.md`. That story is worth telling.
+ASVspoof 2019 bona fide files have longer silences than spoofs (Muller et al. 2021): on raw audio a
+silence-only classifier gets 17.5% EER here. Every clip is therefore VAD-trimmed (50 ms of real context
+kept, never digital zeros) and normalised to -23 LUFS, and the CM input is trimmed again at 30 dB below
+its loudest frame (`cm_input`). Rule 4: every single-cue classifier on what the CM sees must stay >= 35%.
+The audit fixes each cue's direction on dev and reports eval EER.
+*What went wrong, twice.* (1) v1 had no CM-input trim and its silence cue failed (24.3%,
+`docs/results_v1_failed_audit.md`). (2) The v2 audit measured silence with the 40 dB gate on audio already
+trimmed at 30 dB: a looser gate on tighter-trimmed audio can only see the 50 ms margin, so the audit could
+not fail. That is circular, and a reviewer caught it.
+*What the audit does now.* Silence at gates strictly *tighter* than the trim gate (20 and 25 dB), silence
+and non-speech fraction from an independent detector (WebRTC VAD, which shares nothing with the energy
+trim), the fraction of low-energy frames, loudness and duration, on `nb_pcm` and `g711u`. All pass; the
+weakest is silence at the trim gate itself, 37.0% (the margin being cut short at a file edge), then
+38.2% at 25 dB. Dropping the margin would raise the floor to about 40% but needs a full rebuild.
+*Q: "Your trim gate is 30 dB and your audit gate was 40 dB. What did the audit measure?"* A: Only the
+margin; that version was circular. The fixed audit uses tighter gates and an independent VAD. The
+reviewer's 28.2% at 25 dB came from the tie bug in section 3: with correct tie handling the same cue is
+38.2%. Both fixes and before/after numbers are in `docs/results_v2_audit_ties.md`.
 
 ## 7. Why LFCC and not CQCC or MFCC (`cm/features.py`)
 Mel filters are coarse at high frequencies, where artefacts live, so ASVspoof baselines use linear
@@ -93,14 +108,24 @@ and it is listed as future work.
 to train in minutes on a laptop; numbers are labelled as such. Run with more components via
 `LFCCGMM.train(n_components=512, max_frames=...)` if time allows.
 
-## 9. The LCNN and the streaming score (`cm/lcnn.py`, `cm/scorer.py`)
+## 9. The LCNN and the streaming score (`cm/lcnn.py`, `cm/scorer.py`, `factory/normalise.py: causal_cm_input`)
 Max-Feature-Map halves channels with an element-wise max (a learned competitive selection). The time
-axis is pooled by mean and standard deviation, so the model accepts any length; the streaming score at
-t is simply the model run on the first t seconds of trimmed speech (causal; LFCC deltas look 20 ms ahead,
-inside the 200 ms allowance). Training uses random 2 s crops because 2 s is the primary decision horizon.
+axis is pooled by mean and standard deviation, so the model accepts any length; prefixes shorter than
+32 frames are repeat-padded (`pad_frames`). Training uses random 2 s crops.
+*Causality, done properly.* The partial score at t is `llr(causal_cm_input(x[: t * sr]))`: cut to the
+first t seconds of *received* audio first, then trim and loudness-normalise using that prefix only. The
+first version trimmed and normalised the whole clip and then cut it, so the trim threshold (loudest frame
+of the whole call) and the loudness gain saw the future (mean LLR change 0.49 at 2 s), and the WebSocket
+endpoint skipped normalisation altogether (0.83). Now the batch partials, the WebSocket and the streaming
+evaluation call the same function (`tests/test_service.py::test_stream_and_batch_partials_are_identical_and_causal`).
+Residual look-ahead: LFCC deltas use 2 frames (20 ms) inside the prefix, never beyond t.
+*Which trials count.* After trimming, bona fide clips average 1.85 s, so for most of them "the first 2 s"
+was the whole clip. The streaming table now uses only clips with at least t s of trimmed speech and prints
+the full-clip EER on the same trials next to it. At 2 s that leaves 346 bona fide and 852 spoofs in the
+clean pool; at 4 s only 4 bona fide, so the 4 s row is not readable.
 *Q: "Is scoring a prefix the same as a streaming model?"* A: Functionally yes (same inputs available at t),
-computationally no: we recompute from scratch at 1, 2 and 4 s. At 170k parameters and a measured one-core RTF of 0.005
-that is affordable; a real stateful streaming student is part of the distillation work.
+computationally no: we recompute from scratch at 1, 2 and 4 s; at 170k parameters and RTF 0.005 that is
+affordable.
 
 ## 10. The student budget (`cm/export_onnx.py`)
 RTF = compute time / audio duration, on one thread, including LFCC. Peak RAM is measured in a fresh
@@ -131,19 +156,32 @@ are separate from its decision codes.
 *Q: "A clone that says the fresh phrase passes the phrase check."* A: Correct, by design: the phrase
 check stops replay, the CM must stop clones and injection. The realtime VC WebSocket makes a
 fresh-phrase clone cheap, which is why the red-team run uses it.
+*Operating points and real outcomes.* `cm.calibrate` fixes four thresholds on dev: far1 (FAR 1%),
+min_dcf, eer and bayes. `python -m ivr_demo.trials` runs `verify()` on 200 + 200 real ASVspoof eval clips per
+codec (echo STT, identity gate bypassed, so only the CM gate is measured). On G.711: far1 lets 32.5% of
+genuine callers through and 11.0% of spoofs; min_dcf 88.5% and 62.5%. On AMR-NB 4.75 (held out): far1
+4.5% / 1.0%, min_dcf 75.5% / 55.5%. No operating point of this CM meets "genuine >= 90% and attack <= 5%";
+the demo says so on screen instead of scripting a green tick. Every demo line prints its operating point.
 
 ## 14. What the numbers do and do not show
 Everything measured so far is on ASVspoof 2019 LA (English, VCTK-based, 2019-era generators) after our
 simulated channels, plus an Indic pilot whose bona fide and spoof come from different corpora (FLEURS vs
 IndicSynth). Neither is the statement's IndicClone-Tel. The headline KPI (unseen-Indic EER on Gnani
-clones) is PENDING the Kathbath download and the approved clone run. Say this before anyone asks.
+clones) is PENDING: the rule-safe version uses Timbre stock voices (G1/G3) and the builder's own consented
+voice (G2); cloning Kathbath speakers is DEFERRED until Gnani says in writing that it is allowed. Say this
+before anyone asks.
 
 ## 15. Likely hard questions with short answers
 - "Why not just use the SSL model?" It is 300M parameters, offline-teacher only; the CPU budget needs a
   student under 5M. The teacher is configured and smoke-tested (`python -m cm.teacher.train --smoke`) but
   needs a GPU.
-- "What does an EER on a 2,560-utterance subset mean?" With about 1,000 bona fide and 1,560 spoof trials
-  per pool, the standard error of an EER near 10% is roughly 1 point; per-attack cells (120 spoofs) are
-  noisier. Full-set commands are in STATUS.md.
+- "What does an EER on a 2,560-utterance subset mean?" Every pooled EER in `artifacts/results.md` now has a
+  95% utterance-bootstrap interval (200 resamples): about +-1.5 points (e.g. LCNN held-out 34.42%, 33.04 to
+  35.60). Per-attack cells (120 spoofs) are noisier, about +-4 points.
+- "Your clean 8 kHz EER is 26%; the official LFCC-GMM gets 8% at 16 kHz. Why trust the codec numbers?"
+  Our GMM has 128 components on 300k frames (official: 512 on all frames) and the LCNN trained 8 CPU
+  epochs. The codec effect is only readable on attacks the model catches in clean narrowband (A08, A09,
+  A17). The wideband control `gmm16_clean` and the no-augmentation ablation are in the results table;
+  the official-size GMM is a CPU-overnight run (STATUS.md).
 - "Why did you not use the 2021 LA real-channel data?" The 7.8 GB download was interrupted; it is the
   first sanity check to add, since its channels are real VoIP/PSTN, not simulated.

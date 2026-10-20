@@ -16,7 +16,8 @@ construction.
 ## Processing applied identically to every clip
 1. Raw statistics recorded before any processing: leading and trailing silence, integrated loudness,
    duration (`manifest.csv`, used by the shortcut audit).
-2. `factory.normalise.normalise`: energy VAD trim with 50 ms of original context kept, then -23 LUFS.
+2. `factory.normalise.normalise`: energy VAD trim with 50 ms of original context kept, then -23 LUFS. Every
+   CM additionally re-trims its input at 30 dB (`cm_input`); streaming partials do both on the prefix only.
 3. `factory.channel_sim`: 8 kHz conditions (seed = hash of utterance ID):
 
 | Condition | Chain | Role |
@@ -42,4 +43,10 @@ construction.
 - IndicSynth and MLAAD are CC-BY-NC: fine for research and the challenge entry, not for a commercial
   Armour365 model.
 - Real Gnani clone data (G1 to G3) is not generated yet; only 5 probe calls were made
-  (`docs/gnani_api_notes.md`). Cloned audio of corpus speakers must never be published (rule 7).
+  (`docs/gnani_api_notes.md`).
+- Consent rule: clones are made only of the builder's own voice and of friends with written consent
+  (`factory/gnani_clone.py` refuses any other speakers row). Cloning Kathbath corpus speakers is DEFERRED until
+  Gnani confirms in writing that it is allowed. No cloned clip is ever published or committed; only scores
+  and the generator script are.
+- ASVspoof 2019 LA comes from the HF mirror `Bisher/ASVspoof_2019_LA`, which states no licence; the original
+  is ODC-By 1.0 and the mirror's row counts equal the official protocol. Licences and redistribution: `DATA.md`.
