@@ -39,6 +39,9 @@ SCORES = ROOT / "artifacts" / "scores"
 MODELS = ROOT / "artifacts" / "models"
 EVAL_CONDITIONS = ["clean16k", *CONDITIONS]
 HORIZONS = (1.0, 2.0, 4.0)
+# Pretrained AASIST costs ~0.3 s per clip on this CPU, so it is scored on a representative subset of
+# conditions: clean, plain narrowband, the main seen codecs and every held-out condition.
+AASIST_CONDITIONS = ["clean16k", "nb_pcm", "g711u", "amrnb_12k2", "opus_8k", "amrnb_4k75", "gsm_fr", "chain_amrnb_g711u", "chain_gsm_g711a_plc2"]
 ALL_MODELS = ("gmm16_clean", "gmm8_aug", "lcnn8_aug", "lcnn8_noaug", "aasist", "aasist_l")
 
 
@@ -159,9 +162,10 @@ def run_aasist(name: str) -> None:
         return [str(u) for u in p.utt_ids], [resample(cm_input(p.get(i), p.sr), p.sr, 16000) for i in range(len(p))]
 
     ids, xs = clips("dev", "clean16k")
+    print(f"[{name}] scoring {len(xs)} dev clips", flush=True)
     dev = [{"utt_id": u, "condition": "clean16k", "score": float(s)} for u, s in zip(ids, score_aasist(model, xs), strict=True)]
     recs: list[dict[str, object]] = []
-    for cond in EVAL_CONDITIONS:
+    for cond in AASIST_CONDITIONS:
         t0 = time.time()
         ids, xs = clips("eval", cond)
         recs += [{"utt_id": u, "condition": cond, "horizon": 0.0, "score": float(s)} for u, s in zip(ids, score_aasist(model, xs), strict=True)]
