@@ -53,8 +53,9 @@ def rocch(bona: np.ndarray, spoof: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     nt, nn = len(bona), len(spoof)
     scores = np.concatenate([bona, spoof])
     ideal = np.concatenate([np.ones(nt), np.zeros(nn)])
-    # Stable sort; among tied scores put spoofs first so ties are resolved pessimistically.
-    order = np.lexsort((ideal, scores))
+    # Among tied scores put bona fide first (below the spoofs) so ties are resolved pessimistically,
+    # as BOSARIS does (its stable sort keeps targets ahead of non-targets). A constant score gives 50%.
+    order = np.lexsort((-ideal, scores))
     ideal = ideal[order]
     _, width, _ = pavx(ideal)
     cum = np.concatenate([[0], np.cumsum(ideal)])

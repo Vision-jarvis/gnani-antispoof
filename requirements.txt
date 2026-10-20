@@ -19,3 +19,4 @@ transformers==5.20.1
 uvicorn==0.54.0
 websockets==17.2
 tabulate==0.10.0
+webrtcvad-wheels==2.0.14  # independent VAD for the shortcut audit

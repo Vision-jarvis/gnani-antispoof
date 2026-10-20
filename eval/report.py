@@ -20,7 +20,7 @@ import pandas as pd
 
 from eval.metrics import DCF_PARAMS, AffineCalibration, evaluate, threshold_at_far
 from eval.points import points_matrix
-from eval.shortcut_audit import cue_table, run_audit
+from eval.shortcut_audit import AUDIT_COLS, cue_table, run_audit
 from factory.channel_sim import HELDOUT_CONDITIONS, TRAIN_CONDITIONS
 from factory.store import load_packed
 
@@ -87,7 +87,7 @@ def shortcut_audit(man_eval: pd.DataFrame) -> list[dict[str, object]]:
     for cond in ("nb_pcm", "g711u"):
         cues = {s: cue_table(load_packed(PROC / s / f"{cond}.npz")).merge(m[["utt_id", "label"]], on="utt_id")
                 for s, m in (("dev", man_dev), ("eval", man_eval))}
-        res += run_audit(cues["dev"], cues["eval"], {"silence": "silence_s", "loudness": "lufs", "duration": "dur_s"}, f"CM input ({cond})")
+        res += run_audit(cues["dev"], cues["eval"], AUDIT_COLS, f"CM input ({cond})")
     return [{"cue": r.cue, "stage": r.stage, "eval_eer": r.eval_eer, "passes_35pct_rule": r.passes} for r in res]
 
 

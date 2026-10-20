@@ -91,3 +91,11 @@ def test_protocol_rejects_test_only_attacks_codecs_and_speaker_overlap() -> None
                 _row("A01", "chain_amrnb_g711u", "s1"), _row("A01", "g711u", "s2")):
         with pytest.raises(ProtocolViolation):
             assert_protocol([bad], ok_eval)
+
+
+def test_eer_ties_are_pessimistic() -> None:
+    """A constant (or identically distributed, tied) score carries no information: EER 50%, as in BOSARIS."""
+    from eval.metrics import eer
+
+    assert eer(np.zeros(10), np.zeros(7)) == pytest.approx(0.5)
+    assert eer(np.array([0.0, 1.0]), np.array([0.0, 1.0])) == pytest.approx(0.5)

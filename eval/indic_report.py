@@ -21,7 +21,7 @@ from cm.gmm import LFCCGMM
 from cm.lcnn import LCNN
 from cm.train_lcnn import score_lcnn
 from eval.metrics import eer, far_frr, threshold_at_far
-from eval.shortcut_audit import cue_table
+from eval.shortcut_audit import AUDIT_COLS, cue_table
 from factory.channel_sim import resample
 from factory.indic_pilot import CONDITIONS
 from factory.normalise import cm_input
@@ -99,7 +99,8 @@ def main() -> None:
     for c in ("nb_pcm",):
         cues = cue_table(load_packed(PILOT / f"{c}.npz")).merge(man[["utt_id", "label"]], on="utt_id")
         bb = cues.label.eq("bonafide").to_numpy()
-        for cue, col in (("silence (CM input)", "silence_s"), ("loudness (CM input)", "lufs"), ("duration (CM input)", "dur_s")):
+        for cue, col in AUDIT_COLS.items():
+            cue = f"{cue} (CM input)"
             v = cues[col].fillna(cues[col].median()).to_numpy()
             audit.append({"cue": cue, "best_direction_eer": min(eer(v[bb], v[~bb]), eer(-v[bb], -v[~bb]))})
     pivot = res.pivot(index="condition", columns="model", values="eer").reindex(list(CONDS))
