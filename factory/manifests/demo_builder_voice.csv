@@ -1,2 +1,2 @@
-speaker,language,reference_wav
-builder_self,kn-IN,data/own_voice/builder_15s.wav
+speaker,language,reference_wav,consent
+builder_self,kn-IN,data/own_voice/builder_15s.wav,self

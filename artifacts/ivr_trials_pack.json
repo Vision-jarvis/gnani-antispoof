@@ -1,0 +1,35 @@
+[
+  {
+    "source": "ASVspoof19 eval g711u (release pack)",
+    "operating_point": "far1",
+    "tau_llr": 3.027,
+    "n_bona": 60,
+    "n_spoof": 60,
+    "genuine_success_pct": 31.7,
+    "attack_success_pct": 5.0,
+    "short_audio": 7,
+    "median_latency_ms": 50.1
+  },
+  {
+    "source": "ASVspoof19 eval g711u (release pack)",
+    "operating_point": "min_dcf",
+    "tau_llr": -0.715,
+    "n_bona": 60,
+    "n_spoof": 60,
+    "genuine_success_pct": 93.3,
+    "attack_success_pct": 63.3,
+    "short_audio": 7,
+    "median_latency_ms": 35.5
+  },
+  {
+    "source": "ASVspoof19 eval g711u (release pack)",
+    "operating_point": "eer",
+    "tau_llr": 0.49,
+    "n_bona": 60,
+    "n_spoof": 60,
+    "genuine_success_pct": 86.7,
+    "attack_success_pct": 45.0,
+    "short_audio": 7,
+    "median_latency_ms": 35.1
+  }
+]

@@ -157,7 +157,7 @@ def run_lcnn(name: str, epochs: int, train_only: bool = False, streaming_only: b
     else:
         tr_feats, tr_rows = pool_8k("train", augmented)
         assert_protocol(tr_rows, eval_rows("any"))
-        cfg = TrainConfig(epochs=epochs)
+        cfg = TrainConfig(epochs=epochs, threads=4)  # shared CPU; same recipe as lcnn8_aug otherwise
         t0 = time.time()
         model, history = train_lcnn(tr_feats, labels_of(tr_rows), dev_feats, labels_of(dev_rows), cfg)
         info = {"train_seconds": time.time() - t0, "history": history, "n_train": len(tr_feats), "config": cfg.__dict__}

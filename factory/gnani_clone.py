@@ -7,18 +7,23 @@ hash for embeddings), and its output is cached under artifacts/gnani_cache/, so 
 twice and an interrupted run resumes.
 
 Inputs
-  --speakers CSV: speaker,language,reference_wav  (eval-split speakers only; 5 to 30 s reference)
+  --speakers CSV: speaker,language,reference_wav,consent  (5 to 30 s reference). ``consent`` must be
+      ``self`` (the builder's own voice) or ``written`` (a friend who signed a consent note); any other row is
+      refused before planning. Cloning corpus speakers (Kathbath) is DEFERRED until Gnani confirms in writing
+      that it is allowed: corpus licences cover the audio, not the person's voice likeness (critique B4).
+  --languages kn-IN hi-IN: G1/G3 from Timbre stock voices only (no cloning, no consent question)
   sentences: FLEURS test transcripts for the language (text-disjoint from the references, CC-BY-4.0)
 Per speaker: one embedding call, then ``--per-speaker`` sentences: two thirds as 16 kHz WAV (G2, the
 channel simulator is applied later) and one third as container=mulaw (G3; the VC REST doc lists no
 alaw, so A-law G3 variants are transcoded from mu-law offline). G1: ``--g1-per-voice`` sentences per
 Timbre voice of the language (the same transcripts as the bona fide pool, so text is matched), a third requested as mulaw/alaw (G3, alternating).
 
-Privacy (honesty rule 7): clones of corpus speakers are for scoring only and are never published;
-public demo clones use the builder's own voice (speakers CSV with one row pointing at their recording).
+Privacy (honesty rule 7): no cloned clip is ever published or committed (artifacts/gnani_cache/ is
+git-ignored); only scores and this script are.
 
 Usage
-  python -m factory.gnani_clone --speakers factory/manifests/eval_speakers.csv            # dry run
+  python -m factory.gnani_clone --languages kn-IN hi-IN                                   # G1/G3 dry run
+  python -m factory.gnani_clone --speakers factory/manifests/demo_builder_voice.csv        # own voice, dry run
   python -m factory.gnani_clone --speakers ... --execute --max-calls 20                   # capped
 """
 
@@ -75,7 +80,17 @@ def fleurs_sentences(language: str, n: int, offset: int = 0) -> list[str]:
     return seen[offset : offset + n]
 
 
-def plan(speakers: list[dict[str, str]], per_speaker: int, g1_per_voice: int) -> list[Job]:
+CONSENT_OK = {"self", "written"}
+
+
+def check_consent(speakers: list[dict[str, str]]) -> None:
+    bad = [s.get("speaker", "?") for s in speakers if s.get("consent", "").strip().lower() not in CONSENT_OK]
+    if bad:
+        raise SystemExit(f"refusing to clone {bad}: consent must be 'self' or 'written' (corpus speakers are DEFERRED)")
+
+
+def plan(speakers: list[dict[str, str]], per_speaker: int, g1_per_voice: int, languages: tuple[str, ...] = ()) -> list[Job]:
+    check_consent(speakers)
     jobs: list[Job] = []
     for i, spk in enumerate(speakers):
         lang = spk["language"]
@@ -86,7 +101,7 @@ def plan(speakers: list[dict[str, str]], per_speaker: int, g1_per_voice: int) ->
             # "speaker" only makes the cache key unique per target; it is not sent to the API.
             body = {"text": text, "model": "vachana-vc-v1", "audio_config": cfg.to_json(), "speaker": spk["speaker"]}
             jobs.append(Job("G3" if born_nb else "G2", "vc_tts", spk["speaker"], lang, text, body, spk["reference_wav"]))
-    for lang in sorted({s["language"] for s in speakers}):
+    for lang in sorted({s["language"] for s in speakers} | set(languages)):
         for v, voice in enumerate(TIMBRE_V25_VOICES[lang]):
             for j, text in enumerate(fleurs_sentences(lang, g1_per_voice, offset=v * g1_per_voice)):
                 container = ("mulaw", "alaw")[j % 2] if j % 3 == 2 else "wav"
@@ -152,15 +167,20 @@ def write_manifest(jobs: list[Job], path: Path) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--speakers", type=Path, required=True)
+    ap.add_argument("--speakers", type=Path, help="consented speakers CSV (G2/G3 clones)")
+    ap.add_argument("--languages", nargs="*", default=[], help="Timbre stock-voice languages (G1/G3, no cloning)")
     ap.add_argument("--per-speaker", type=int, default=15)
     ap.add_argument("--g1-per-voice", type=int, default=40)
     ap.add_argument("--execute", action="store_true", help="make real (credit-spending) calls")
     ap.add_argument("--max-calls", type=int, default=0, help="hard cap on real calls in this run (required with --execute)")
     a = ap.parse_args()
-    with a.speakers.open(encoding="utf-8") as f:
-        speakers = list(csv.DictReader(f))
-    jobs = plan(speakers, a.per_speaker, a.g1_per_voice)
+    speakers: list[dict[str, str]] = []
+    if a.speakers:
+        with a.speakers.open(encoding="utf-8") as f:
+            speakers = list(csv.DictReader(f))
+    if not speakers and not a.languages:
+        raise SystemExit("give --speakers (consented) and/or --languages")
+    jobs = plan(speakers, a.per_speaker, a.g1_per_voice, tuple(a.languages))
     print(json.dumps(summarise(jobs), indent=2, ensure_ascii=False))
     write_manifest(jobs, ROOT / "factory" / "manifests" / "gnani_jobs.csv")
     if not a.execute:

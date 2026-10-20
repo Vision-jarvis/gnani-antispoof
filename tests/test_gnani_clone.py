@@ -18,7 +18,7 @@ def setup(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[list[gc.Job]
     monkeypatch.setattr(gc, "fleurs_sentences", lambda lang, n, offset=0: [f"{lang} sentence {offset + i}" for i in range(n)])
     ref = tmp_path / "ref.wav"
     sf.write(ref, (0.1 * np.random.default_rng(0).standard_normal(8000 * 10)).astype(np.float32), 8000)
-    jobs = gc.plan([{"speaker": "spk1", "language": "kn-IN", "reference_wav": str(ref)}], per_speaker=6, g1_per_voice=3)
+    jobs = gc.plan([{"speaker": "spk1", "language": "kn-IN", "reference_wav": str(ref), "consent": "self"}], per_speaker=6, g1_per_voice=3)
     return jobs, MockGnaniBackend(api_key="k")
 
 
@@ -43,3 +43,10 @@ def test_execute_respects_cap_and_cache(setup) -> None:  # type: ignore[no-untyp
     assert gc.execute(jobs, max_calls=100, client=client) == 0  # everything cached, nothing spent
     wav = next(j for j in jobs if j.attack == "G2" and j.kind == "vc_tts").out_path.read_bytes()
     assert sf.info(io.BytesIO(wav)).samplerate == 16000
+
+
+def test_clone_refuses_rows_without_consent() -> None:
+    import pytest
+
+    with pytest.raises(SystemExit):
+        gc.plan([{"speaker": "kathbath_123", "language": "hi-IN", "reference_wav": "x.wav"}], per_speaker=1, g1_per_voice=0)
