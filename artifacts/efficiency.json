@@ -1,0 +1,9 @@
+{
+  "model": "lcnn8_aug",
+  "params": 170401,
+  "onnx_bytes": 710034,
+  "rtf_1core": 0.004951962500008733,
+  "peak_ram_mb": 143.046875,
+  "measured_on": "this machine, 1 thread, 4 s clip, median of 50",
+  "measure_seconds": 2.1
+}

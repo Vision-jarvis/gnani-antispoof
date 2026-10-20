@@ -1,1 +1,5 @@
 [aasist] scoring 2020 dev clips
+[aasist] scored eval/clean16k in 960s
+[aasist] scored eval/nb_pcm in 8027s
+[aasist] scored eval/g711u in 917s
+[aasist] scored eval/amrnb_12k2 in 1004s

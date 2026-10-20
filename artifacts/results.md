@@ -1,0 +1,97 @@
+Metrics: EER %, minDCF (pi_spf=0.05, C_miss=1, C_fa=10), Cllr (bits, dev-calibrated), FRR@FAR1 % (dev-fixed threshold).
+
+### Pooled results
+
+| model | pool | EER % | minDCF | Cllr | FRR@FAR1 % | FAR at dev tau % |
+|---|---|---|---|---|---|---|
+| gmm8_aug | clean (nb_pcm) | 25.59 | 0.597 | 0.804 | 84.10 | 3.40 |
+| gmm8_aug | seen | 30.38 | 0.715 | 0.874 | 93.12 | 1.53 |
+| gmm8_aug | heldout | 33.63 | 0.781 | 0.874 | 99.28 | 0.16 |
+| lcnn8_aug | clean (nb_pcm) | 27.64 | 0.579 | 0.925 | 74.20 | 6.22 |
+| lcnn8_aug | seen | 30.70 | 0.706 | 1.017 | 79.03 | 6.05 |
+| lcnn8_aug | heldout | 34.42 | 0.799 | 0.976 | 92.47 | 1.81 |
+
+### delta-NB (EER held-out codecs minus EER clean pool, same utterances)
+
+| model | delta-NB (EER points) |
+|---|---|
+| gmm8_aug | +8.04 |
+| lcnn8_aug | +6.78 |
+
+### EER % per channel condition
+
+| condition | gmm8_aug | lcnn8_aug |
+|---|---|---|
+| amrnb_12k2 | 30.06 | 31.09 |
+| amrnb_4k75 (held-out) | 34.81 | 32.85 |
+| amrnb_7k95 | 30.92 | 31.45 |
+| amrwb_12k65 | 30.49 | 30.71 |
+| chain_amrnb_g711u (held-out) | 34.92 | 33.15 |
+| chain_gsm_g711a_plc2 (held-out) | 32.42 | 36.06 |
+| g711a | 28.55 | 27.97 |
+| g711u | 29.05 | 28.15 |
+| g711u_plc5 | 28.72 | 27.23 |
+| gsm_fr (held-out) | 30.41 | 34.29 |
+| nb_pcm | 25.59 | 27.64 |
+| opus_16k | 27.50 | 28.23 |
+| opus_6k_plc3 | 30.95 | 35.53 |
+| opus_8k | 28.09 | 32.02 |
+
+### EER % per ASVspoof 2019 eval attack (clean pool / held-out codec pool)
+
+| attack | gmm8_aug | lcnn8_aug |
+|---|---|---|
+| A07 | 39.01 / 41.54 | 46.84 / 47.30 |
+| A08 | 2.21 / 12.68 | 2.12 / 18.86 |
+| A09 | 0.09 / 7.69 | 0.22 / 9.78 |
+| A10 | 44.78 / 47.33 | 45.05 / 45.56 |
+| A11 | 15.35 / 36.87 | 34.26 / 41.66 |
+| A12 | 40.69 / 49.29 | 38.88 / 46.75 |
+| A13 | 10.34 / 24.59 | 15.47 / 25.12 |
+| A14 | 17.86 / 27.90 | 22.81 / 38.78 |
+| A15 | 16.18 / 24.05 | 18.72 / 33.04 |
+| A16 | 44.01 / 45.42 | 38.16 / 44.48 |
+| A17 | 4.79 / 19.30 | 4.84 / 19.00 |
+| A18 | 20.43 / 30.93 | 26.96 / 33.86 |
+| A19 | 28.83 / 41.43 | 11.82 / 19.48 |
+
+### Streaming EER % (decision on the first t seconds of trimmed speech only)
+
+| model | horizon | clean | seen | held-out |
+|---|---|---|---|---|
+| gmm8_aug | 1s | 27.48 | 32.10 | 35.46 |
+| gmm8_aug | 2s | 26.39 | 31.08 | 34.14 |
+| gmm8_aug | 4s | 25.48 | 30.39 | 33.57 |
+| gmm8_aug | full | 25.59 | 30.38 | 33.63 |
+| lcnn8_aug | 1s | 30.40 | 33.89 | 37.69 |
+| lcnn8_aug | 2s | 28.32 | 31.13 | 34.82 |
+| lcnn8_aug | 4s | 27.77 | 30.74 | 34.43 |
+| lcnn8_aug | full | 27.64 | 30.70 | 34.42 |
+
+### Shortcut audit (single-cue classifiers, direction fixed on dev; rule: must be >= 35% EER)
+
+| stage | cue | eval EER % | passes |
+|---|---|---|---|
+| raw (before normalisation) | silence | 17.54 | NO |
+| raw (before normalisation) | loudness | 49.86 | yes |
+| raw (before normalisation) | duration | 40.70 | yes |
+| CM input (nb_pcm) | silence | 38.07 | yes |
+| CM input (nb_pcm) | loudness | 42.24 | yes |
+| CM input (nb_pcm) | duration | 40.35 | yes |
+| CM input (g711u) | silence | 38.91 | yes |
+| CM input (g711u) | loudness | 48.16 | yes |
+| CM input (g711u) | duration | 40.28 | yes |
+
+### Points matrix (statement section 7)
+
+| KPI | weight | status | value | note |
+|---|---|---|---|---|
+| Unseen-Indic EER (G2+G3 after channel) | 25 | PENDING | n/a | needs Kathbath bona fide (gated) + Gnani clone set (factory/gnani_clone.py, awaiting approval) |
+| Pooled narrowband EER and delta-NB, held-out codecs | 15 | MEASURED (ASVspoof 2019 LA proxy) | gmm8_aug: 33.63%, delta-NB +8.04 pts | English VCTK-based proxy, not Indic |
+| FRR@FAR1, dev-fixed threshold | 10 | MEASURED (proxy) | lcnn8_aug: 92.47% on held-out codecs | threshold fixed on dev, never retuned |
+| Streaming EER at 2.0 s | 10 | MEASURED (proxy) | gmm8_aug: 34.14% held-out pool | prefix-only scoring |
+| Student efficiency (RTF, params, RAM) | 10 | MEASURED (inside budget) | lcnn8_aug: RTF 0.0050, 170,401 params, 143 MB | LFCC-LCNN stands in for the distilled student until the teacher is trained |
+| End-to-end flow: ASR <= 5%, genuine >= 90% | 10 | PENDING | n/a | flow runs end to end on mocks; real G2/G5/G6 attack trials need the approved clone run |
+| Replay / injection detection (G5, G6 EER) | 5 | PENDING | n/a | G5 simulator in factory/replay_sim.py; G6 needs G2 audio |
+| Rigor: shortcut audit, ablations, failure analysis, ITW / 2021 LA | 10 | PARTIAL | shortcut audit passes; codec-aug ablation PENDING | failure cases, In-the-Wild and 2021 LA sanity checks pending |
+| Reproducibility: one-command eval, model card, data card | 5 | MEASURED | run.ps1 quick / run.ps1 report; MODEL_CARD.md; DATA_CARD.md |  |

@@ -14,10 +14,10 @@ PENDING = blocked, with the blocker and the exact command to finish.
 | Pull an IndicSynth Hindi/Kannada slice | DONE | first shard each (FreeVC); used as G4 in the Indic pilot | |
 | `gnani_clone.py`: G2 for 40 speakers x 2 languages, G3 a third as mulaw, 300 G1 clips | PARTIAL | Generator, dry-run cost plan, hard cap, cache and tests done. Real generation not run: needs Kathbath eval speakers and student approval of the credit spend. | `python -m factory.gnani_clone --speakers factory/manifests/eval_speakers.csv` (dry run), then add `--execute --max-calls N` |
 | `channel_sim.py` with 8 codec conditions + 2 chains | DONE | 14 conditions incl. 2 two-hop chains, packet loss, band-limit; deterministic by seed; 31 unit tests | |
-| Normalisation and silence audit | DONE | VAD trim + -23 LUFS; audit before and after | `python -m eval.report` |
-| Run pretrained AASIST / AASIST-L on the channel set | DONE (ASVspoof proxy) | Indic version needs IndicClone-Tel | `python -m cm.run_baselines --models aasist aasist_l` |
+| Normalisation and silence audit | DONE | VAD trim + -23 LUFS, plus a second 30 dB trim at the CM input after the first version failed rule 4 (silence cue 24.3% EER); now 38.1% | `python -m eval.report` |
+| Run pretrained AASIST / AASIST-L on the channel set | PENDING | Wrapper done and checkpoints load; CPU scoring takes about 15 min per condition and was killed by a machine crash after 4 of 9 conditions (no partial scores kept). Do not rerun on the shared CPU; run on the GPU box. | `python -m cm.run_baselines --models aasist aasist_l` (GPU or an idle machine) |
 | Run pretrained SSL + AASIST | PENDING | checkpoint is on Google Drive (TakHemlata README, manual) and XLS-R is too slow for CPU at this scale | download `LA_model.pth` by hand, then score with `cm/teacher/model.py: build_teacher` on a GPU |
-| Day-1 tweet table "SOTA vs Indic phone clones" | PARTIAL | ASVspoof-proxy and Indic-pilot tables exist; the Gnani-clone column is pending | |
+| Day-1 tweet table "SOTA vs Indic phone clones" | PARTIAL | ASVspoof-proxy table exists for the 8 kHz GMM and LCNN; AASIST columns, Indic pilot scoring and the Gnani-clone column are pending | `python -m eval.indic_report` after the AASIST run |
 
 ## Day 2: train the telephony-native CM
 
@@ -25,7 +25,7 @@ PENDING = blocked, with the blocker and the exact command to finish.
 |---|---|---|---|
 | Fine-tune XLS-R 300M + AASIST at 8 kHz with codec aug + RawBoost | PENDING (GPU) | config `cm/teacher/ssl_aasist_8k.yaml`, loop `cm/teacher/train.py` (CPU smoke test passes), Modal runner | `modal run cm/teacher/modal_train.py` (setup steps in its docstring) |
 | Distil to a small 8 kHz student, streaming crops, ONNX, RTF | PARTIAL | No teacher yet, so no distillation. The 8 kHz LFCC-LCNN (trained on CPU with 2 s crops) stands in: ONNX export and one-core RTF / RAM measured | after the teacher: train the student on teacher soft labels; `python -m cm.export_onnx --checkpoint <student.pt>` |
-| Full eval grid, ablation (with vs without codec aug), DET curves | PARTIAL | per-condition / per-attack / pooled / streaming tables and the codec-aug ablation are DONE on the ASVspoof proxy; DET curves and the Indic grid pending | `python -m eval.report` |
+| Full eval grid, ablation (with vs without codec aug), DET curves | PARTIAL | DONE on the ASVspoof proxy for gmm8_aug and lcnn8_aug: per-condition, per-attack, pooled, streaming tables, shortcut audit, DET curves (`artifacts/det_asvspoof.png`). PENDING: the no-codec-aug ablation (`lcnn8_noaug`), wideband `gmm16_clean`, Indic grid. CPU LCNN training starved other jobs, so further CNN training moves to the GPU plan. | `modal run cm/teacher/modal_train.py` for the teacher; `python -m cm.run_baselines --models lcnn8_noaug gmm16_clean` on a GPU/idle box; then `python -m eval.report` |
 
 ## Day 3: product and story
 
@@ -34,7 +34,7 @@ PENDING = blocked, with the blocker and the exact command to finish.
 | FastAPI service + WebSocket streaming | DONE | `/v1/cm/score`, `WS /v1/cm/stream`, `/v1/auth/enrol`, `/v1/auth/challenge`, `/v1/auth/verify`; tested with TestClient | `.\run.ps1 serve` |
 | IVR demo: Timbre prompt, Prisma 8 kHz realtime phrase check, CM, ECAPA, decision codes | PARTIAL | Runs end to end on mocks (`.\run.ps1 demo`); live mode wired (1 Timbre + 1 Prisma call). ECAPA adapter written but speechbrain not installed; a placeholder ASV is used | `pip install speechbrain`, switch `LFCCStatsASV` to `EcapaASV`; `python -m ivr_demo.demo --live --caller my_8k.wav --enrol my_enrol_8k.wav` |
 | Red-team: builder's own voice cloned via Gnani VC, attacked live; end-to-end attack success | PENDING (approval + recording) | needs a 15 s recording of the student's own voice and approval to spend VC credits | `python -m factory.gnani_clone --speakers factory/manifests/demo_builder_voice.csv --execute --max-calls 16` |
-| REPORT.md, model and data cards | DONE (for what exists) | | |
+| REPORT.md, model and data cards | PARTIAL | MODEL_CARD.md and DATA_CARD.md done; REPORT.md text was delivered in the builder's final reply (file write was refused in-session) | paste it into REPORT.md |
 | 60-second video, challenge submission, X/LinkedIn post | PENDING (student) | see checklist below | |
 
 ## Great Indian AI Internship Challenge: submission checklist (verbatim requirements from the statement, section 8)

@@ -1,0 +1,677 @@
+{
+  "dcf_params": "pi_spf=0.05, C_miss=1, C_fa=10",
+  "n_eval_bona": 1000,
+  "n_eval_spoof": 1560,
+  "models": {
+    "gmm8_aug": {
+      "dev": {
+        "n_bona": 2000,
+        "n_spoof": 2040,
+        "eer": 0.2046784236700238,
+        "min_dcf": 0.35209019607843134,
+        "cllr": null,
+        "min_cllr": null,
+        "frr_at_far1": null,
+        "far_at_dev_tau": null
+      },
+      "clean_pool": "nb_pcm",
+      "per_condition": {
+        "amrnb_12k2": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.3006019015488422,
+          "min_dcf": 0.688723076923077,
+          "cllr": 0.8750379826110106,
+          "min_cllr": null,
+          "frr_at_far1": 0.932,
+          "far_at_dev_tau": 0.015384615384615385
+        },
+        "amrnb_4k75": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.34813167259786476,
+          "min_dcf": 0.8031948717948718,
+          "cllr": 0.8875510686414632,
+          "min_cllr": null,
+          "frr_at_far1": 0.998,
+          "far_at_dev_tau": 0.0
+        },
+        "amrnb_7k95": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.30922977296967846,
+          "min_dcf": 0.7486153846153846,
+          "cllr": 0.8489905212715207,
+          "min_cllr": null,
+          "frr_at_far1": 0.983,
+          "far_at_dev_tau": 0.001282051282051282
+        },
+        "amrwb_12k65": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.30488929889298894,
+          "min_dcf": 0.6713461538461538,
+          "cllr": 0.8944030243741938,
+          "min_cllr": null,
+          "frr_at_far1": 0.915,
+          "far_at_dev_tau": 0.017948717948717947
+        },
+        "chain_amrnb_g711u": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.3491559256302042,
+          "min_dcf": 0.8046333333333333,
+          "cllr": 0.903212481591116,
+          "min_cllr": null,
+          "frr_at_far1": 0.993,
+          "far_at_dev_tau": 0.0
+        },
+        "chain_gsm_g711a_plc2": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.3241946617579383,
+          "min_dcf": 0.7523461538461538,
+          "cllr": 0.8676049619329714,
+          "min_cllr": null,
+          "frr_at_far1": 0.995,
+          "far_at_dev_tau": 0.0019230769230769232
+        },
+        "g711a": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.28546477205447013,
+          "min_dcf": 0.6443820512820513,
+          "cllr": 0.8171211973955739,
+          "min_cllr": null,
+          "frr_at_far1": 0.92,
+          "far_at_dev_tau": 0.017948717948717947
+        },
+        "g711u": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.29050991501416434,
+          "min_dcf": 0.6377641025641025,
+          "cllr": 0.8148940572432485,
+          "min_cllr": null,
+          "frr_at_far1": 0.923,
+          "far_at_dev_tau": 0.01987179487179487
+        },
+        "g711u_plc5": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.2872368421052631,
+          "min_dcf": 0.6469923076923076,
+          "cllr": 0.8065486316514593,
+          "min_cllr": null,
+          "frr_at_far1": 0.945,
+          "far_at_dev_tau": 0.01282051282051282
+        },
+        "gsm_fr": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.30405149051490515,
+          "min_dcf": 0.6878794871794872,
+          "cllr": 0.8361969785388357,
+          "min_cllr": null,
+          "frr_at_far1": 0.985,
+          "far_at_dev_tau": 0.004487179487179487
+        },
+        "nb_pcm": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.25593967993434547,
+          "min_dcf": 0.5972871794871795,
+          "cllr": 0.8043087885373938,
+          "min_cllr": null,
+          "frr_at_far1": 0.841,
+          "far_at_dev_tau": 0.03397435897435897
+        },
+        "opus_16k": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.2750294637595757,
+          "min_dcf": 0.6614589743589744,
+          "cllr": 0.8392508604099544,
+          "min_cllr": null,
+          "frr_at_far1": 0.893,
+          "far_at_dev_tau": 0.023717948717948717
+        },
+        "opus_6k_plc3": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.3094993581514763,
+          "min_dcf": 0.7567128205128205,
+          "cllr": 1.0133649316546187,
+          "min_cllr": null,
+          "frr_at_far1": 0.951,
+          "far_at_dev_tau": 0.011538461538461539
+        },
+        "opus_8k": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.2809476940382452,
+          "min_dcf": 0.6867435897435897,
+          "cllr": 0.9570644033905467,
+          "min_cllr": null,
+          "frr_at_far1": 0.919,
+          "far_at_dev_tau": 0.01730769230769231
+        }
+      },
+      "pools": {
+        "clean": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.25593967993434547,
+          "min_dcf": 0.5972871794871795,
+          "cllr": 0.8043087885373938,
+          "min_cllr": null,
+          "frr_at_far1": 0.841,
+          "far_at_dev_tau": 0.03397435897435897
+        },
+        "seen": {
+          "n_bona": 9000,
+          "n_spoof": 14040,
+          "eer": 0.30375996291929913,
+          "min_dcf": 0.7145643874643874,
+          "cllr": 0.874075067778014,
+          "min_cllr": null,
+          "frr_at_far1": 0.9312222222222222,
+          "far_at_dev_tau": 0.015313390313390313
+        },
+        "heldout": {
+          "n_bona": 4000,
+          "n_spoof": 6240,
+          "eer": 0.3363328721401267,
+          "min_dcf": 0.7811692307692308,
+          "cllr": 0.8736413726760968,
+          "min_cllr": null,
+          "frr_at_far1": 0.99275,
+          "far_at_dev_tau": 0.0016025641025641025
+        }
+      },
+      "delta_nb": 0.08039319220578123,
+      "per_attack_eer": {
+        "A07": {
+          "clean": 0.3901013874066169,
+          "heldout": 0.41537783568362974
+        },
+        "A08": {
+          "clean": 0.022058823529411763,
+          "heldout": 0.12684426229508194
+        },
+        "A09": {
+          "clean": 0.0009433962264150943,
+          "heldout": 0.07694907940161105
+        },
+        "A10": {
+          "clean": 0.4477923139820114,
+          "heldout": 0.47325808977035494
+        },
+        "A11": {
+          "clean": 0.15353658536585366,
+          "heldout": 0.36865491365131575
+        },
+        "A12": {
+          "clean": 0.40693641618497106,
+          "heldout": 0.49290081521739126
+        },
+        "A13": {
+          "clean": 0.10342857142857144,
+          "heldout": 0.2459227467811159
+        },
+        "A14": {
+          "clean": 0.1785996835443038,
+          "heldout": 0.27900754884547074
+        },
+        "A15": {
+          "clean": 0.16181125439624855,
+          "heldout": 0.24048723897911833
+        },
+        "A16": {
+          "clean": 0.44009931719428924,
+          "heldout": 0.45416267470694327
+        },
+        "A17": {
+          "clean": 0.04789473684210526,
+          "heldout": 0.19302884615384613
+        },
+        "A18": {
+          "clean": 0.20426646706586826,
+          "heldout": 0.3092938311688312
+        },
+        "A19": {
+          "clean": 0.28832819722650227,
+          "heldout": 0.41431090094030176
+        }
+      },
+      "streaming_eer": {
+        "1s": {
+          "clean": 0.27476821192052975,
+          "seen": 0.3210343802898366,
+          "heldout": 0.3546288046619149
+        },
+        "2s": {
+          "clean": 0.2639155251141552,
+          "seen": 0.31079429795145136,
+          "heldout": 0.3413730038109064
+        },
+        "4s": {
+          "clean": 0.25483870967741934,
+          "seen": 0.30392423357445597,
+          "heldout": 0.3357158398607485
+        },
+        "full": {
+          "clean": 0.25593967993434547,
+          "seen": 0.30375996291929913,
+          "heldout": 0.3363328721401267
+        }
+      },
+      "meta": {
+        "model": "gmm8_aug",
+        "train_seconds": 319.627876996994,
+        "components": 128,
+        "n_train": 10320
+      }
+    },
+    "lcnn8_aug": {
+      "dev": {
+        "n_bona": 2000,
+        "n_spoof": 2040,
+        "eer": 0.14005220417633413,
+        "min_dcf": 0.2708774509803922,
+        "cllr": null,
+        "min_cllr": null,
+        "frr_at_far1": null,
+        "far_at_dev_tau": null
+      },
+      "clean_pool": "nb_pcm",
+      "per_condition": {
+        "amrnb_12k2": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.31093750000000003,
+          "min_dcf": 0.6941923076923077,
+          "cllr": 0.9924999162305717,
+          "min_cllr": null,
+          "frr_at_far1": 0.839,
+          "far_at_dev_tau": 0.04230769230769231
+        },
+        "amrnb_4k75": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.3284591070723034,
+          "min_dcf": 0.769948717948718,
+          "cllr": 0.9401466254240487,
+          "min_cllr": null,
+          "frr_at_far1": 0.935,
+          "far_at_dev_tau": 0.010897435897435897
+        },
+        "amrnb_7k95": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.3144730623818526,
+          "min_dcf": 0.6896179487179487,
+          "cllr": 0.9095140414034673,
+          "min_cllr": null,
+          "frr_at_far1": 0.911,
+          "far_at_dev_tau": 0.021794871794871794
+        },
+        "amrwb_12k65": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.3071448568229083,
+          "min_dcf": 0.6782128205128204,
+          "cllr": 0.9891230412561859,
+          "min_cllr": null,
+          "frr_at_far1": 0.825,
+          "far_at_dev_tau": 0.057692307692307696
+        },
+        "chain_amrnb_g711u": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.33149910233393176,
+          "min_dcf": 0.7757410256410256,
+          "cllr": 0.9642670054320467,
+          "min_cllr": null,
+          "frr_at_far1": 0.908,
+          "far_at_dev_tau": 0.020512820512820513
+        },
+        "chain_gsm_g711a_plc2": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.36057828481510623,
+          "min_dcf": 0.8301076923076923,
+          "cllr": 1.0384320993418872,
+          "min_cllr": null,
+          "frr_at_far1": 0.907,
+          "far_at_dev_tau": 0.02564102564102564
+        },
+        "g711a": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.2796712559707783,
+          "min_dcf": 0.6208897435897436,
+          "cllr": 1.0592159551690956,
+          "min_cllr": null,
+          "frr_at_far1": 0.666,
+          "far_at_dev_tau": 0.09166666666666666
+        },
+        "g711u": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.28153470326196295,
+          "min_dcf": 0.6269128205128205,
+          "cllr": 1.0706003875875827,
+          "min_cllr": null,
+          "frr_at_far1": 0.652,
+          "far_at_dev_tau": 0.10128205128205128
+        },
+        "g711u_plc5": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.272265625,
+          "min_dcf": 0.6431179487179487,
+          "cllr": 1.0259169205959475,
+          "min_cllr": null,
+          "frr_at_far1": 0.715,
+          "far_at_dev_tau": 0.0782051282051282
+        },
+        "gsm_fr": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.34293711415716227,
+          "min_dcf": 0.7783051282051282,
+          "cllr": 0.9618103489169365,
+          "min_cllr": null,
+          "frr_at_far1": 0.949,
+          "far_at_dev_tau": 0.015384615384615385
+        },
+        "nb_pcm": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.2764375668290365,
+          "min_dcf": 0.578951282051282,
+          "cllr": 0.9250041470307444,
+          "min_cllr": null,
+          "frr_at_far1": 0.742,
+          "far_at_dev_tau": 0.06217948717948718
+        },
+        "opus_16k": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.28231974921630093,
+          "min_dcf": 0.6215820512820514,
+          "cllr": 0.9790066395132637,
+          "min_cllr": null,
+          "frr_at_far1": 0.738,
+          "far_at_dev_tau": 0.08012820512820513
+        },
+        "opus_6k_plc3": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.3552655093183559,
+          "min_dcf": 0.8584692307692308,
+          "cllr": 1.0903389974219009,
+          "min_cllr": null,
+          "frr_at_far1": 0.908,
+          "far_at_dev_tau": 0.03076923076923077
+        },
+        "opus_8k": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.32017338331771317,
+          "min_dcf": 0.7581153846153845,
+          "cllr": 1.0322868594330283,
+          "min_cllr": null,
+          "frr_at_far1": 0.859,
+          "far_at_dev_tau": 0.04038461538461539
+        }
+      },
+      "pools": {
+        "clean": {
+          "n_bona": 1000,
+          "n_spoof": 1560,
+          "eer": 0.2764375668290365,
+          "min_dcf": 0.578951282051282,
+          "cllr": 0.9250041470307444,
+          "min_cllr": null,
+          "frr_at_far1": 0.742,
+          "far_at_dev_tau": 0.06217948717948718
+        },
+        "seen": {
+          "n_bona": 9000,
+          "n_spoof": 14040,
+          "eer": 0.30698193135212637,
+          "min_dcf": 0.706371225071225,
+          "cllr": 1.0165003065123381,
+          "min_cllr": null,
+          "frr_at_far1": 0.7903333333333333,
+          "far_at_dev_tau": 0.06047008547008547
+        },
+        "heldout": {
+          "n_bona": 4000,
+          "n_spoof": 6240,
+          "eer": 0.3442280724120347,
+          "min_dcf": 0.798549358974359,
+          "cllr": 0.9761640197787298,
+          "min_cllr": null,
+          "frr_at_far1": 0.92475,
+          "far_at_dev_tau": 0.01810897435897436
+        }
+      },
+      "delta_nb": 0.0677905055829982,
+      "per_attack_eer": {
+        "A07": {
+          "clean": 0.4684036144578313,
+          "heldout": 0.4730493351994402
+        },
+        "A08": {
+          "clean": 0.021205357142857144,
+          "heldout": 0.18855712166172106
+        },
+        "A09": {
+          "clean": 0.0022058823529411764,
+          "heldout": 0.09781976744186047
+        },
+        "A10": {
+          "clean": 0.45053000000000004,
+          "heldout": 0.4555893358278765
+        },
+        "A11": {
+          "clean": 0.3425632911392405,
+          "heldout": 0.4165828710124827
+        },
+        "A12": {
+          "clean": 0.3888086642599278,
+          "heldout": 0.46751783398184177
+        },
+        "A13": {
+          "clean": 0.15472136222910216,
+          "heldout": 0.2511552132701422
+        },
+        "A14": {
+          "clean": 0.22809139784946242,
+          "heldout": 0.38783740942028977
+        },
+        "A15": {
+          "clean": 0.1872093023255814,
+          "heldout": 0.33040445604175034
+        },
+        "A16": {
+          "clean": 0.38164983164983163,
+          "heldout": 0.4447841816367265
+        },
+        "A17": {
+          "clean": 0.04844444444444445,
+          "heldout": 0.19004101283880173
+        },
+        "A18": {
+          "clean": 0.26964285714285713,
+          "heldout": 0.3385828267477204
+        },
+        "A19": {
+          "clean": 0.11815068493150685,
+          "heldout": 0.19482954545454548
+        }
+      },
+      "streaming_eer": {
+        "1s": {
+          "clean": 0.30401495768549497,
+          "seen": 0.33894633930011286,
+          "heldout": 0.37688698083067085
+        },
+        "2s": {
+          "clean": 0.283246161633204,
+          "seen": 0.3113012977440838,
+          "heldout": 0.34820357142857145
+        },
+        "4s": {
+          "clean": 0.27765914585012086,
+          "seen": 0.3073621735536228,
+          "heldout": 0.3443174452809493
+        },
+        "full": {
+          "clean": 0.2764375668290365,
+          "seen": 0.30698193135212637,
+          "heldout": 0.3442280724120347
+        }
+      },
+      "meta": {
+        "model": "lcnn8_aug",
+        "params": 170401,
+        "train_seconds": 3010.13410615921,
+        "n_train": 10320,
+        "config": {
+          "epochs": 8,
+          "batch_size": 64,
+          "crop_frames": 200,
+          "lr": 0.001,
+          "weight_decay": 0.0001,
+          "seed": 0,
+          "threads": 12
+        }
+      }
+    }
+  },
+  "shortcut_audit": [
+    {
+      "cue": "silence",
+      "stage": "raw (before normalisation)",
+      "eval_eer": 0.17536967236880255,
+      "passes_35pct_rule": false
+    },
+    {
+      "cue": "loudness",
+      "stage": "raw (before normalisation)",
+      "eval_eer": 0.4985699930432094,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "duration",
+      "stage": "raw (before normalisation)",
+      "eval_eer": 0.40695500436245796,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "silence",
+      "stage": "CM input (nb_pcm)",
+      "eval_eer": 0.3806587525429998,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "loudness",
+      "stage": "CM input (nb_pcm)",
+      "eval_eer": 0.4223804347826087,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "duration",
+      "stage": "CM input (nb_pcm)",
+      "eval_eer": 0.4035415003990423,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "silence",
+      "stage": "CM input (g711u)",
+      "eval_eer": 0.3891066384180791,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "loudness",
+      "stage": "CM input (g711u)",
+      "eval_eer": 0.4815895349104536,
+      "passes_35pct_rule": true
+    },
+    {
+      "cue": "duration",
+      "stage": "CM input (g711u)",
+      "eval_eer": 0.4027789046653144,
+      "passes_35pct_rule": true
+    }
+  ],
+  "points": [
+    {
+      "kpi": "Unseen-Indic EER (G2+G3 after channel)",
+      "weight": 25,
+      "status": "PENDING",
+      "value": "n/a",
+      "note": "needs Kathbath bona fide (gated) + Gnani clone set (factory/gnani_clone.py, awaiting approval)"
+    },
+    {
+      "kpi": "Pooled narrowband EER and delta-NB, held-out codecs",
+      "weight": 15,
+      "status": "MEASURED (ASVspoof 2019 LA proxy)",
+      "value": "gmm8_aug: 33.63%, delta-NB +8.04 pts",
+      "note": "English VCTK-based proxy, not Indic"
+    },
+    {
+      "kpi": "FRR@FAR1, dev-fixed threshold",
+      "weight": 10,
+      "status": "MEASURED (proxy)",
+      "value": "lcnn8_aug: 92.47% on held-out codecs",
+      "note": "threshold fixed on dev, never retuned"
+    },
+    {
+      "kpi": "Streaming EER at 2.0 s",
+      "weight": 10,
+      "status": "MEASURED (proxy)",
+      "value": "gmm8_aug: 34.14% held-out pool",
+      "note": "prefix-only scoring"
+    },
+    {
+      "kpi": "Student efficiency (RTF, params, RAM)",
+      "weight": 10,
+      "status": "MEASURED (inside budget)",
+      "value": "lcnn8_aug: RTF 0.0050, 170,401 params, 143 MB",
+      "note": "LFCC-LCNN stands in for the distilled student until the teacher is trained"
+    },
+    {
+      "kpi": "End-to-end flow: ASR <= 5%, genuine >= 90%",
+      "weight": 10,
+      "status": "PENDING",
+      "value": "n/a",
+      "note": "flow runs end to end on mocks; real G2/G5/G6 attack trials need the approved clone run"
+    },
+    {
+      "kpi": "Replay / injection detection (G5, G6 EER)",
+      "weight": 5,
+      "status": "PENDING",
+      "value": "n/a",
+      "note": "G5 simulator in factory/replay_sim.py; G6 needs G2 audio"
+    },
+    {
+      "kpi": "Rigor: shortcut audit, ablations, failure analysis, ITW / 2021 LA",
+      "weight": 10,
+      "status": "PARTIAL",
+      "value": "shortcut audit passes; codec-aug ablation PENDING",
+      "note": "failure cases, In-the-Wild and 2021 LA sanity checks pending"
+    },
+    {
+      "kpi": "Reproducibility: one-command eval, model card, data card",
+      "weight": 5,
+      "status": "MEASURED",
+      "value": "run.ps1 quick / run.ps1 report; MODEL_CARD.md; DATA_CARD.md",
+      "note": ""
+    }
+  ]
+}

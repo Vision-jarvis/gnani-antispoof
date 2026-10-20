@@ -56,8 +56,8 @@ def points_matrix(res: dict[str, Any]) -> list[dict[str, Any]]:
         {"kpi": "Replay / injection detection (G5, G6 EER)", "weight": 5, "status": "PENDING", "value": "n/a",
          "note": "G5 simulator in factory/replay_sim.py; G6 needs G2 audio"},
         {"kpi": "Rigor: shortcut audit, ablations, failure analysis, ITW / 2021 LA", "weight": 10, "status": "PARTIAL",
-         "value": f"shortcut audit {'passes' if audit_ok else 'FAILS'}; codec-augmentation ablation done",
+         "value": f"shortcut audit {'passes' if audit_ok else 'FAILS'}; codec-aug ablation {'done' if 'lcnn8_noaug' in models else 'PENDING'}",
          "note": "failure cases, In-the-Wild and 2021 LA sanity checks pending"},
         {"kpi": "Reproducibility: one-command eval, model card, data card", "weight": 5, "status": "MEASURED",
-         "value": "run.ps1 quick / run.ps1 eval; MODEL_CARD.md; DATA_CARD.md", "note": ""},
+         "value": "run.ps1 quick / run.ps1 report; MODEL_CARD.md; DATA_CARD.md", "note": ""},
     ]

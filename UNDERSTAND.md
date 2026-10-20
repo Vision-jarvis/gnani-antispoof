@@ -11,8 +11,9 @@ cue is gone and codec quantisation noise is added to bona fide and spoof alike.
 `tests/test_channel_sim.py::test_narrowband_removes_4_to_8_khz` proves the 6 kHz tone vanishes and does
 not alias down.
 *Q: "Could you not just train at 16 kHz and upsample phone audio?"* A: You can, and `gmm16_clean` and the
-pretrained AASIST models do exactly that. The upsampled input has an empty top band the model never saw
-in training, so its scores shift (see the clean vs held-out rows in `artifacts/results.md`). The teacher
+pretrained AASIST models do exactly that (their runs are PENDING). The upsampled input has an empty top
+band the model never saw in training, so its scores are expected to shift; measuring by how much is the
+first job for the GPU box. The teacher
 config still upsamples to 16 kHz for XLS-R, but trains on channel-degraded audio so the empty band is
 the normal case, not a surprise.
 
@@ -68,9 +69,11 @@ classifier on silence duration gets far below 50% EER on raw audio. Every clip i
 anything else. The audit fixes each cue's direction on dev, then measures eval EER; rule 4 requires
 >= 35% on what the CM actually sees. See the audit table in `artifacts/results.md`: compare the raw
 rows with the "CM input" rows.
-*Q: "Your VAD is a 40 dB energy gate, isn't that crude?"* A: Yes, deliberately: it is deterministic and
-identical for both classes. The audit is the check that it was good enough. A residual duration cue
-remains (spoofed utterances in ASVspoof have different lengths); it is reported, not hidden.
+*Q: "Your VAD is an energy gate, isn't that crude?"* A: Yes, deliberately: it is deterministic and
+identical for both classes, and the audit is the check that it was good enough. It was not, at first:
+with only the 40 dB build-time gate, silence alone still gave 24.3% EER on the CM input, failing rule 4.
+A second 30 dB trim on the CM input (`factory/normalise.py: cm_input`) brought it to 38.1%, every model
+was retrained, and the failed run is kept in `docs/results_v1_failed_audit.md`. That story is worth telling.
 
 ## 7. Why LFCC and not CQCC or MFCC (`cm/features.py`)
 Mel filters are coarse at high frequencies, where artefacts live, so ASVspoof baselines use linear
@@ -84,7 +87,8 @@ and it is listed as future work.
   measurement. The scoring follows the official code (first 64,600 samples, repeat-padded).
 - `gmm16_clean`: classic wideband LFCC-GMM, the 2019 B2 recipe at CPU scale (128 components, 300k frames).
 - `gmm8_aug`, `lcnn8_aug`: 8 kHz native, trained on nb_pcm plus one seen codec per utterance.
-- `lcnn8_noaug`: same LCNN with no codec augmentation: the codec-augmentation ablation.
+- `lcnn8_noaug`: same LCNN with no codec augmentation: the codec-augmentation ablation (code ready, run PENDING).
+- Completed so far: `gmm8_aug` and `lcnn8_aug`. AASIST scoring was killed by a crash; `gmm16_clean` and `lcnn8_noaug` were not run.
 *Q: "Your GMM is much smaller than the official one."* A: Yes (128 vs 512 components, subsampled frames)
 to train in minutes on a laptop; numbers are labelled as such. Run with more components via
 `LFCCGMM.train(n_components=512, max_frames=...)` if time allows.
@@ -95,7 +99,7 @@ axis is pooled by mean and standard deviation, so the model accepts any length; 
 t is simply the model run on the first t seconds of trimmed speech (causal; LFCC deltas look 20 ms ahead,
 inside the 200 ms allowance). Training uses random 2 s crops because 2 s is the primary decision horizon.
 *Q: "Is scoring a prefix the same as a streaming model?"* A: Functionally yes (same inputs available at t),
-computationally no: we recompute from scratch at 1, 2 and 4 s. At 170k parameters and RTF about 0.01
+computationally no: we recompute from scratch at 1, 2 and 4 s. At 170k parameters and a measured one-core RTF of 0.005
 that is affordable; a real stateful streaming student is part of the distillation work.
 
 ## 10. The student budget (`cm/export_onnx.py`)
