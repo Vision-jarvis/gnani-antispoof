@@ -126,6 +126,27 @@ def threshold_at_far(bona: np.ndarray, spoof: np.ndarray, target_far: float = 0.
     return float(np.nextafter(s[len(s) - k - 1], np.inf))
 
 
+def _sweep(bona: np.ndarray, spoof: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """(taus, FRR, FAR) at every distinct score, accept when score >= tau."""
+    bona, spoof = np.sort(np.asarray(bona, float)), np.sort(np.asarray(spoof, float))
+    taus = np.unique(np.concatenate([bona, spoof]))
+    frr = np.searchsorted(bona, taus, side="left") / len(bona)
+    far = 1.0 - np.searchsorted(spoof, taus, side="left") / len(spoof)
+    return taus, frr, far
+
+
+def threshold_at_eer(bona: np.ndarray, spoof: np.ndarray) -> float:
+    """Threshold where FAR and FRR are closest on these (dev) scores."""
+    taus, frr, far = _sweep(bona, spoof)
+    return float(taus[np.argmin(np.abs(far - frr))])
+
+
+def threshold_min_dcf(bona: np.ndarray, spoof: np.ndarray, pi_spf: float = PI_SPF, c_miss: float = C_MISS, c_fa: float = C_FA) -> float:
+    """Threshold that attains minDCF on these (dev) scores."""
+    taus, frr, far = _sweep(bona, spoof)
+    return float(taus[np.argmin(c_miss * (1 - pi_spf) * frr + c_fa * pi_spf * far)])
+
+
 @dataclass(frozen=True)
 class AffineCalibration:
     """llr = a * score + b, fitted by prior-weighted logistic regression on dev (BOSARIS style)."""

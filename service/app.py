@@ -87,8 +87,8 @@ async def cm_stream(ws: WebSocket) -> None:
             buf = np.concatenate([buf, frame.astype(np.float32) / 32768.0])
             while pending and len(buf) >= pending[0] * SR:
                 t = pending.pop(0)
-                llr = cm().llr(buf[: int(t * SR)])  # causal: only audio received up to t
-                await ws.send_json({"t": t, "llr": round(llr, 3), "decision": "bonafide" if llr >= cm().cal.tau_llr else "spoof"})
+                llr = cm().prefix_llr(buf, t)  # same causal path as /v1/cm/score partials: audio up to t only
+                await ws.send_json({"t": t, "llr": round(llr, 3), "decision": "bonafide" if llr >= cm().tau else "spoof", "operating_point": cm().operating_point})
         await ws.close()
     except WebSocketDisconnect:
         return

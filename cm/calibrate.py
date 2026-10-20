@@ -1,7 +1,11 @@
 """Fit the runtime calibration of an 8 kHz model on its DEV scores only and save it next to the checkpoint.
 
-llr = a * raw + b (prior-weighted logistic regression, prior 0.5), and the operating threshold
-tau_llr is the dev threshold giving FAR = 1% (the FRR@FAR1 operating point), mapped into LLR units.
+llr = a * raw + b (prior-weighted logistic regression, prior 0.5). Named operating points, all fixed on dev
+and mapped into LLR units (accept as bona fide when llr >= tau):
+  far1     dev FAR = 1% (the FRR@FAR1 point; the default ``tau_llr``)
+  min_dcf  the dev threshold attaining minDCF (pi_spf = 0.05, C_miss = 1, C_fa = 10)
+  eer      the dev EER threshold
+  bayes    log(C_fa pi / (C_miss (1 - pi))): the Bayes threshold if the calibration transfers
 Usage: python -m cm.calibrate --model lcnn8_aug
 """
 
@@ -15,7 +19,9 @@ from pathlib import Path
 import pandas as pd
 
 from cm.scorer import Calibration
-from eval.metrics import AffineCalibration, threshold_at_far
+import numpy as np
+
+from eval.metrics import C_FA, C_MISS, PI_SPF, AffineCalibration, threshold_at_eer, threshold_at_far, threshold_min_dcf
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -28,7 +34,9 @@ def fit(name: str) -> Calibration:
     s = dev.score.to_numpy(float)
     aff = AffineCalibration.fit(s[b], s[~b])
     tau = threshold_at_far(s[b], s[~b], 0.01)
-    return Calibration(a=aff.a, b=aff.b, tau_llr=float(aff(tau)), source=f"dev scores of {name}, FAR=1% operating point")
+    ops = {"far1": float(aff(tau)), "min_dcf": float(aff(threshold_min_dcf(s[b], s[~b]))),
+           "eer": float(aff(threshold_at_eer(s[b], s[~b]))), "bayes": float(np.log(C_FA * PI_SPF / (C_MISS * (1 - PI_SPF))))}
+    return Calibration(a=aff.a, b=aff.b, tau_llr=ops["far1"], source=f"dev scores of {name}, FAR=1% operating point", operating_points=ops)
 
 
 def main() -> None:

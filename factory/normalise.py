@@ -92,3 +92,13 @@ def cm_input(x: np.ndarray, sr: int) -> np.ndarray:
 def normalise(x: np.ndarray, sr: int, policy: NormPolicy = DEFAULT_POLICY) -> np.ndarray:
     """The full anti-shortcut policy: VAD trim, then loudness normalisation."""
     return loudness_normalise(vad_trim(np.asarray(x, dtype=np.float32), sr, policy), sr, policy.target_lufs)
+
+
+def causal_cm_input(prefix: np.ndarray, sr: int) -> np.ndarray:
+    """CM input for a streaming decision: normalise, then ``cm_input``, using ``prefix`` and nothing after it.
+
+    The trim threshold (loudest frame so far) and the loudness gain are computed on the samples received up
+    to the decision time only, so a partial score never sees the future (honesty rule 5). The runtime scorer,
+    the WebSocket endpoint and the streaming evaluation all call this one function on ``x[: t * sr]``.
+    """
+    return cm_input(normalise(np.asarray(prefix, dtype=np.float32), sr), sr)
