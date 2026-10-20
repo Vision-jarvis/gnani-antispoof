@@ -21,7 +21,7 @@ import numpy as np
 import torch
 
 from cm.features import LFCCConfig, lfcc
-from cm.lcnn import LCNN
+from cm.lcnn import LCNN, pad_frames
 from factory.normalise import causal_cm_input
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -78,7 +78,7 @@ class CMScorer:
 
     @torch.no_grad()
     def raw_score(self, x: np.ndarray) -> float:
-        f = lfcc(x, self.cfg)
+        f = pad_frames(lfcc(x, self.cfg))
         return float(self.model(torch.from_numpy(f[None])))
 
     def llr(self, x: np.ndarray) -> float:

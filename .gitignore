@@ -17,3 +17,6 @@ artifacts/models/
 artifacts/scores/*.csv
 artifacts/scores/indic/
 artifacts/superseded_v1/
+artifacts/scores/parts/
+artifacts/smoke_teacher/
+artifacts/smoke_pretrained/

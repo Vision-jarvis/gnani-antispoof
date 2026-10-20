@@ -1,0 +1,30 @@
+[lcnn8_aug] scored eval/nb_pcm
+[lcnn8_aug] scored eval/g711u
+[lcnn8_aug] scored eval/g711a
+[lcnn8_aug] scored eval/amrnb_12k2
+[lcnn8_aug] scored eval/amrnb_7k95
+[lcnn8_aug] scored eval/amrnb_4k75
+[lcnn8_aug] scored eval/amrwb_12k65
+[lcnn8_aug] scored eval/opus_8k
+[lcnn8_aug] scored eval/opus_16k
+[lcnn8_aug] scored eval/opus_6k_plc3
+[lcnn8_aug] scored eval/g711u_plc5
+[lcnn8_aug] scored eval/gsm_fr
+[lcnn8_aug] scored eval/chain_amrnb_g711u
+[lcnn8_aug] scored eval/chain_gsm_g711a_plc2
+== lcnn8_aug done in 452s
+[gmm8_aug] scored eval/nb_pcm
+[gmm8_aug] scored eval/g711u
+[gmm8_aug] scored eval/g711a
+[gmm8_aug] scored eval/amrnb_12k2
+[gmm8_aug] scored eval/amrnb_7k95
+[gmm8_aug] scored eval/amrnb_4k75
+[gmm8_aug] scored eval/amrwb_12k65
+[gmm8_aug] scored eval/opus_8k
+[gmm8_aug] scored eval/opus_16k
+[gmm8_aug] scored eval/opus_6k_plc3
+[gmm8_aug] scored eval/g711u_plc5
+[gmm8_aug] scored eval/gsm_fr
+[gmm8_aug] scored eval/chain_amrnb_g711u
+[gmm8_aug] scored eval/chain_gsm_g711a_plc2
+== gmm8_aug done in 30s

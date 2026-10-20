@@ -31,7 +31,7 @@ OUT_JSON = ROOT / "artifacts" / "results.json"
 OUT_MD = ROOT / "artifacts" / "results.md"
 SEEN = [c for c in TRAIN_CONDITIONS if c != "nb_pcm"]
 HELDOUT = sorted(HELDOUT_CONDITIONS)
-EIGHT_K_MODELS = {"gmm8_aug", "lcnn8_aug", "lcnn8_noaug"}
+EIGHT_K_MODELS = {"gmm8_aug", "lcnn8_aug", "lcnn8_noaug", "lcnn8_distil", "teacher"}
 
 
 def _cell(df: pd.DataFrame, cal: AffineCalibration, tau: float) -> dict[str, float | int | None]:
@@ -129,7 +129,7 @@ def to_markdown(res: dict[str, object]) -> str:
 def main() -> None:
     man = pd.read_csv(PROC / "eval" / "manifest.csv")
     names = sorted(p.stem for p in SCORES.glob("*.csv") if not p.stem.endswith("_dev"))
-    order = ["aasist", "aasist_l", "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug"]
+    order = ["aasist", "aasist_l", "ssl_aasist", "teacher", "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug"]
     names = [n for n in order if n in names] + [n for n in names if n not in order]
     res: dict[str, object] = {"dcf_params": DCF_PARAMS, "n_eval_bona": int((man.label == "bonafide").sum()),
                               "n_eval_spoof": int((man.label == "spoof").sum()),

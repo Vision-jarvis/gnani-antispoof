@@ -15,16 +15,13 @@ from pathlib import Path
 import pandas as pd
 import torch
 
-from cm.aasist_pretrained import load_aasist, score_aasist
 from cm.featurize import load_features
 from cm.gmm import LFCCGMM
 from cm.lcnn import LCNN
 from cm.train_lcnn import score_lcnn
 from eval.metrics import eer, far_frr, threshold_at_far
 from eval.shortcut_audit import AUDIT_COLS, cue_table
-from factory.channel_sim import resample
 from factory.indic_pilot import CONDITIONS
-from factory.normalise import cm_input
 from factory.store import load_packed
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -33,9 +30,14 @@ MODELS = ROOT / "artifacts" / "models"
 SCORES = ROOT / "artifacts" / "scores"
 OUT = ROOT / "artifacts" / "indic_pilot.md"
 CONDS = ("clean16k", *CONDITIONS)
+PRETRAINED = ("aasist", "aasist_l", "ssl_aasist")
 
 
 def score_model(name: str) -> pd.DataFrame | None:
+    pre = SCORES / "indic" / f"{name}.csv"
+    if name in PRETRAINED:
+        # Published models are scored on the GPU by cm.score_pretrained (modal run cm/modal_pretrained.py).
+        return pd.read_csv(pre)[["utt_id", "condition", "score"]] if pre.exists() else None
     recs = []
     if name.startswith("gmm") and (MODELS / f"{name}.npz").exists():
         gmm = LFCCGMM.load(MODELS / f"{name}.npz")
@@ -51,12 +53,6 @@ def score_model(name: str) -> pd.DataFrame | None:
         for c in CONDITIONS:
             fs = load_features(PILOT, c)
             recs += [(str(u), c, float(s)) for u, s in zip(fs.utt_ids, score_lcnn(model, fs.all()), strict=True)]
-    elif name.startswith("aasist") and (SCORES / f"{name}.csv").exists():
-        model = load_aasist("AASIST" if name == "aasist" else "AASIST-L")
-        for c in CONDS:
-            p = load_packed(PILOT / f"{c}.npz")
-            s = score_aasist(model, [resample(cm_input(p.get(i), p.sr), p.sr, 16000) for i in range(len(p))])
-            recs += [(str(u), c, float(v)) for u, v in zip(p.utt_ids, s, strict=True)]
     else:
         return None
     return pd.DataFrame(recs, columns=["utt_id", "condition", "score"])
@@ -72,7 +68,7 @@ def main() -> None:
     man = pd.read_csv(PILOT / "manifest.csv")
     torch.set_num_threads(12)
     rows, lang_rows = [], []
-    for name in ("aasist", "aasist_l", "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug"):
+    for name in (*PRETRAINED, "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug"):
         df = score_model(name)
         if df is None:
             continue

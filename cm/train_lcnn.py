@@ -15,7 +15,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from cm.lcnn import LCNN
+from cm.lcnn import LCNN, pad_frames
 from eval.metrics import eer
 
 
@@ -41,7 +41,7 @@ def _crop(f: np.ndarray, n: int, rng: np.random.Generator) -> np.ndarray:
 def score_lcnn(model: LCNN, feats: Sequence[np.ndarray]) -> np.ndarray:
     """Score full-length utterances one by one (variable length, no padding artefacts)."""
     model.eval()
-    return np.array([float(model(torch.from_numpy(f[None].astype(np.float32)))) for f in feats])
+    return np.array([float(model(torch.from_numpy(pad_frames(f)[None].astype(np.float32)))) for f in feats])
 
 
 def train_lcnn(
@@ -51,8 +51,10 @@ def train_lcnn(
     dev_labels: np.ndarray,
     cfg: TrainConfig = TrainConfig(),
     log: Callable[[str], None] = lambda m: print(m, flush=True),
+    hard_labels: np.ndarray | None = None,
 ) -> tuple[LCNN, list[dict[str, float]]]:
-    """labels: 1 = bona fide, 0 = spoof."""
+    """labels: 1 = bona fide, 0 = spoof; or soft targets in [0, 1] (distillation) with ``hard_labels`` given
+    for the class balance weight."""
     torch.manual_seed(cfg.seed)
     torch.set_num_threads(cfg.threads)
     rng = np.random.default_rng(cfg.seed)
@@ -63,7 +65,8 @@ def train_lcnn(
     del stacked
     opt = torch.optim.Adam(model.parameters(), lr=cfg.lr, weight_decay=cfg.weight_decay)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=cfg.epochs)
-    pos_weight = torch.tensor((train_labels == 0).sum() / max(1, (train_labels == 1).sum()), dtype=torch.float32)
+    hard = train_labels if hard_labels is None else hard_labels
+    pos_weight = torch.tensor((hard == 0).sum() / max(1, (hard == 1).sum()), dtype=torch.float32)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     best_eer, best_state, history = np.inf, None, []
     dev_bona = dev_labels == 1

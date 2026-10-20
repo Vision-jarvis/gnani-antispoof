@@ -51,7 +51,9 @@ def score_aasist(model: torch.nn.Module, clips_16k: Iterable[np.ndarray], batch:
     def flush() -> None:
         if buf:
             x = torch.from_numpy(np.stack(buf).astype(np.float32))
-            out.extend(model(x)[1][:, 1].tolist())
+            o = model(x.to(next(model.parameters()).device))
+            o = o[1] if isinstance(o, tuple) else o  # clovaai AASIST returns (hidden, logits); SSL+AASIST logits only
+            out.extend(o[:, 1].float().cpu().tolist())
             buf.clear()
 
     for clip in clips_16k:

@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import time
 from collections.abc import Callable, Sequence
 from pathlib import Path
@@ -86,20 +87,38 @@ def _records(fs: FeatureSet, scores: np.ndarray, cond: str, horizon: float) -> l
             for u, s in zip(fs.utt_ids, scores, strict=True)]
 
 
-def score_feature_model(name: str, scorer: Callable[[list[np.ndarray]], np.ndarray], eight_k: bool, streaming: bool) -> list[dict[str, object]]:
+def _part(name: str, cond: str, horizon: float | None) -> Path:
+    tag = f"h{horizon:g}causal" if horizon else "full"
+    return SCORES / "parts" / name / f"{cond}_{tag}.csv"
+
+
+def score_feature_model(name: str, scorer: Callable[[list[np.ndarray]], np.ndarray], eight_k: bool, streaming: bool,
+                        streaming_only: bool = False) -> list[dict[str, object]]:
+    """Score every eval condition (and streaming horizon); one CSV part per cell, existing parts are reused.
+
+    ``streaming_only`` keeps the full-clip rows of the existing ``<name>.csv`` and rescores only the horizons.
+    """
+    old = pd.read_csv(SCORES / f"{name}.csv") if streaming_only and (SCORES / f"{name}.csv").exists() else None
     recs: list[dict[str, object]] = []
     for cond in EVAL_CONDITIONS:
         if eight_k and cond == "clean16k":
             continue
         resample_to = 16000 if (not eight_k and cond != "clean16k") else None
         for horizon in (None, *(HORIZONS if streaming else ())):
-            fs = load_features(PROC / "eval", cond, horizon, resample_to=resample_to)
-            recs += _records(fs, scorer(fs.all()), cond, horizon or 0.0)
+            part = _part(name, cond, horizon)
+            if horizon is None and old is not None:
+                recs += old[(old.condition == cond) & (old.horizon == 0)].to_dict("records")
+                continue
+            if not part.exists():
+                fs = load_features(PROC / "eval", cond, horizon, resample_to=resample_to)
+                part.parent.mkdir(parents=True, exist_ok=True)
+                pd.DataFrame(_records(fs, scorer(fs.all()), cond, horizon or 0.0)).to_csv(part, index=False)
+            recs += pd.read_csv(part).to_dict("records")
         print(f"[{name}] scored eval/{cond}", flush=True)
     return recs
 
 
-def run_gmm(name: str) -> None:
+def run_gmm(name: str, streaming_only: bool = False) -> None:
     t0 = time.time()
     if name == "gmm16_clean":
         tr, dv = load_features(PROC / "train", "clean16k"), load_features(PROC / "dev", "clean16k")
@@ -121,11 +140,11 @@ def run_gmm(name: str) -> None:
     train_s = time.time() - t0
     scorer = gmm.score_many
     dev = [{"utt_id": u, "condition": c, "score": s} for u, c, s in zip(dev_ids, dev_conds, scorer(dev_feats), strict=True)]
-    recs = score_feature_model(name, scorer, eight_k=name != "gmm16_clean", streaming=name == "gmm8_aug")
+    recs = score_feature_model(name, scorer, eight_k=name != "gmm16_clean", streaming=name == "gmm8_aug", streaming_only=streaming_only)
     write_scores(name, recs, dev, {"model": name, "train_seconds": train_s, "components": 128, "n_train": len(tr_feats)})
 
 
-def run_lcnn(name: str, epochs: int, train_only: bool = False) -> None:
+def run_lcnn(name: str, epochs: int, train_only: bool = False, streaming_only: bool = False) -> None:
     """Train (or reuse artifacts/models/<name>.pt) and score. ``train_only`` stops before eval scoring."""
     augmented = name == "lcnn8_aug"
     dev_feats, dev_rows = pool_8k("dev", augmented=True)
@@ -149,12 +168,12 @@ def run_lcnn(name: str, epochs: int, train_only: bool = False) -> None:
         return
     scorer = lambda feats: score_lcnn(model, feats)  # noqa: E731
     dev = [{"utt_id": r["utt_id"], "condition": r["condition"], "score": float(s)} for r, s in zip(dev_rows, scorer(dev_feats), strict=True)]
-    recs = score_feature_model(name, scorer, eight_k=True, streaming=augmented)
+    recs = score_feature_model(name, scorer, eight_k=True, streaming=augmented, streaming_only=streaming_only)
     write_scores(name, recs, dev, {"model": name, "params": n_params(model), **info})
 
 
 def run_aasist(name: str) -> None:
-    torch.set_num_threads(12)
+    torch.set_num_threads(int(os.environ.get("CM_THREADS", "4")))  # 4 on the shared CPU; Modal sets more
     model = load_aasist("AASIST" if name == "aasist" else "AASIST-L")
 
     def clips(split: str, cond: str) -> tuple[list[str], list[np.ndarray]]:
@@ -167,8 +186,13 @@ def run_aasist(name: str) -> None:
     recs: list[dict[str, object]] = []
     for cond in AASIST_CONDITIONS:
         t0 = time.time()
-        ids, xs = clips("eval", cond)
-        recs += [{"utt_id": u, "condition": cond, "horizon": 0.0, "score": float(s)} for u, s in zip(ids, score_aasist(model, xs), strict=True)]
+        part = _part(name, cond, None)
+        if not part.exists():  # one part per condition: a crash keeps the finished conditions
+            ids, xs = clips("eval", cond)
+            part.parent.mkdir(parents=True, exist_ok=True)
+            pd.DataFrame([{"utt_id": u, "condition": cond, "horizon": 0.0, "score": float(s)}
+                          for u, s in zip(ids, score_aasist(model, xs), strict=True)]).to_csv(part, index=False)
+        recs += pd.read_csv(part).to_dict("records")
         print(f"[{name}] scored eval/{cond} in {time.time() - t0:.0f}s", flush=True)
     write_scores(name, recs, dev, {"model": name, "params": n_params(model), "source": "clovaai/aasist pretrained"})
 
@@ -178,13 +202,14 @@ def main() -> None:
     ap.add_argument("--models", nargs="+", default=list(ALL_MODELS), choices=ALL_MODELS)
     ap.add_argument("--epochs", type=int, default=8)
     ap.add_argument("--train-only", action="store_true", help="LCNN: train and save, skip eval scoring")
+    ap.add_argument("--streaming-only", action="store_true", help="keep full-clip rows of the existing CSV, rescore the horizons")
     a = ap.parse_args()
     for m in a.models:
         t0 = time.time()
         if m.startswith("gmm"):
-            run_gmm(m)
+            run_gmm(m, a.streaming_only)
         elif m.startswith("lcnn"):
-            run_lcnn(m, a.epochs, a.train_only)
+            run_lcnn(m, a.epochs, a.train_only, a.streaming_only)
         else:
             run_aasist(m)
         print(f"== {m} done in {time.time() - t0:.0f}s", flush=True)

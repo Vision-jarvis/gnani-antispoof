@@ -56,3 +56,16 @@ class MFM1d(nn.Module):
 
 def n_params(model: nn.Module) -> int:
     return sum(p.numel() for p in model.parameters())
+
+
+MIN_FRAMES = 32  # four 2x time poolings need at least 16 frames; 32 (320 ms) leaves margin
+
+
+def pad_frames(f: "np.ndarray", n: int = MIN_FRAMES) -> "np.ndarray":
+    """Repeat-pad an LFCC sequence shorter than ``n`` frames (as AASIST repeat-pads short waveforms).
+
+    Only very short causal prefixes need it (a 1 s prefix whose trim keeps under 320 ms of speech).
+    """
+    import numpy as np
+
+    return f if len(f) >= n else np.tile(f, (int(np.ceil(n / max(1, len(f)))), 1))[:n]
