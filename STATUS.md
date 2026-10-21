@@ -1,54 +1,94 @@
-# Status (3-day cut from the problem statement, section 9)
+# Status (2026-10-20)
 
-Legend: DONE = built and verified in this repo; PARTIAL = built, but part of the item is blocked;
-PENDING = blocked, with the blocker and the exact command to finish.
+Legend: DONE = built and verified in this repo; PARTIAL = built, part of it blocked; PENDING = blocked, with
+the blocker and the exact command; DEFERRED = deliberately not done now, with the reason.
 
-## Day 1: data and "the baseline breaks"
+## Response to the critique (`critiques/05-gnani.md`)
 
-| Item | Status | Notes / blocker | Command to finish |
+| ID | Status | What changed / what is left |
+|---|---|---|
+| B1 SOTA numbers missing | PARTIAL (tooling FIXED, run PENDING GPU) | `cm/score_pretrained.py` scores AASIST, AASIST-L and SSL+AASIST (`LA_model.pth`, loaded without fairseq by `cm/ssl_pretrained.py`, strict load verified, CPU sanity check 0/50 errors on dev) on all 15 conditions + the Indic pilot, one part file per cell. One command: `.\run.ps1 gpu-pretrained` (about $1, cap $2.84). The hook was rewritten to the measured English-proxy result. |
+| B2 demo genuine path | FIXED | Named dev-fixed operating points (`cm.calibrate`: far1, min_dcf, eer, bayes). `python -m ivr_demo.trials` runs `verify()` on real ASVspoof clips: G.711 far1 genuine 32.5% / attack 11.0%, min_dcf 88.5% / 62.5%; AMR-NB 4.75 far1 4.5% / 1.0%, min_dcf 75.5% / 55.5% (`artifacts/ivr_trials_asvspoof.md`). The demo uses real clips, prints its operating point and these rates, and is not scripted (at far1 the genuine caller is rejected; at min_dcf the spoof gets in). |
+| B3 circular audit | FIXED | Audit cues now use gates tighter than the trim gate, WebRTC VAD silence and non-speech fraction, low-energy fraction, loudness and duration. Also fixed: EER broke ties optimistically (a constant score had 0% EER). Rerun: every CM-input cue >= 37.0% (`artifacts/results.md`); the critique's 28.2% was the tie bug (38.2% with BOSARIS ties). No retrain needed; record in `docs/results_v2_audit_ties.md`. |
+| B4 cloning corpus speakers | FIXED (plan) / DEFERRED (Kathbath cloning) | `factory/gnani_clone.py` refuses any speakers row without `consent` = self or written. G1/G3 from Timbre stock voices via `--languages`. Kathbath-speaker cloning DEFERRED pending written consent clearance from Gnani (ask on the challenge support channel). Statement Part A and section 9 updated. |
+| M1 weak baselines | PARTIAL | Bootstrap 95% CIs on every pooled EER; `lcnn8_noaug` ablation and wideband `gmm16_clean` run on CPU (see README table). DEFERRED: official-size GMM (512 components, all frames; CPU overnight: edit `cm/gmm.py` defaults, delete `artifacts/models/gmm8_aug.npz`, `python -m cm.run_baselines --models gmm8_aug`). |
+| M2 causality | FIXED | `causal_cm_input` on the prefix only; `CMScorer.prefix_llr` used by batch partials and the WebSocket; streaming eval recomputed with prefix-first processing; test pins batch == WS and future-independence. |
+| M3 teacher script | FIXED (code) / PENDING (GPU run) | `cm/teacher/train.py` checkpoints per epoch, early-stops, scores dev, all eval conditions x (full, causal 1/2/4 s) and the train pool, writes GPU hours; smoke test covers scoring. `cm/distil.py` (soft-BCE LCNN student) written and smoke-tested. Yaml fixed. One command: `.\run.ps1 gpu-teacher` (about $4 to $6.50, cap $15.50). |
+| M4 reproducibility | FIXED | `release/` (9.3 MB): ONNX, LCNN, GMM, calibration, gzipped scores, manifests, audit, 120-clip G.711 pack. Verified: a fresh `git clone` + `.\run.ps1 report` reproduces `artifacts/results.md` byte for byte; the demo and `ivr_demo.trials --pack` run from a clone. REPORT.md expanded. |
+| M5 Indic / Gnani gap | PARTIAL | Indic pilot report runs as soon as the GPU scoring job returns the SOTA columns (`python -m eval.indic_report`, CPU part 10 min). G1/G3 Timbre plan: 240 calls (dry run). Own-voice G2: needs the student's 15 s recording. |
+| M6 schedule | FIXED | Statement header: Nov 1-3, submit by Nov 5 to 8 (deadline Nov 10, 11:59 PM IST). |
+| M7 challenge rules | PARTIAL | Checklist below. Live run needs `GNANI_MODE=live` and 2 to 4 live calls; Evon not used (no public API page). |
+| M8 streaming trials | FIXED | Streaming rows only on clips with >= t s of trimmed speech, with the full-clip EER on the same trials; the 4 s row has 4 bona fide clips and is flagged unreadable. |
+| M9 DM / tweet | FIXED | Section 11 rewritten: measured proxy hook, 4-line DM, GPU and own-voice lines gated on the real runs. |
+| m1 delta-NB definition | FIXED | Stated in REPORT.md next to the number. |
+| m2 minCllr | FIXED | Copied into every cell and shown in the pooled table. |
+| m3 statement facts | FIXED | Ganesh Gopalan, Kathbath licence note; Evon noted as having no public API page. |
+| m4 hygiene | FIXED | "about 30 cases" for the simulator tests; user paths scrubbed from tracked logs; `gnani_probe.json` stays tracked on purpose (no secrets: transcripts, request ids, header names) as evidence for the API list. |
+| m5 crash resilience | FIXED | Per-cell part files, reused on rerun, for LFCC models, AASIST, the SOTA job and the teacher. |
+| m6 ASV placeholder | PARTIAL / DEFERRED | Demo and trials bypass the identity gate and print no ASV score. DEFERRED: ECAPA needs a matching torchaudio wheel and a model download (`pip install speechbrain torchaudio`, then use `EcapaASV`). |
+| m7 config drift | FIXED | Yaml marks PENDING sets; UNDERSTAND.md sections 6 and 9 rewritten. |
+| m8 codec-native packet loss | DEFERRED | Needs a new eval condition (ffmpeg libopus `-packet_loss`/`-fec`) and a store rebuild (about 1 h CPU); it does not change any current claim. |
+
+## 3-day cut checklist (statement section 9)
+
+| Item | Status | Blocker | Command to finish |
 |---|---|---|---|
-| Register for challenge credits; measure credit cost per call | PARTIAL | Registered, key in `.env`. 5 probe calls made (TTS, STT REST, STT realtime, VC embedding, VC TTS mu-law); shapes verified, see `docs/gnani_api_notes.md`. The API returns no credit information in responses. | Read the balance on app.gnani.ai now, divide by the 5 probe calls (or by the ledger rows in `artifacts/gnani_usage.jsonl`) |
-| Pull ASVspoof 2019 LA | DONE | HF mirror (DataShare refused connections; manual browser step in `data/README.md`) | |
-| Pull ASVspoof 2021 LA eval + keys | PARTIAL | keys done; 7.8 GB audio download in progress / resumable | `bash scripts/download_data.sh` |
-| Pull Kathbath Hindi + Kannada | PENDING | gated on HF (accept terms while logged in) | see `data/README.md`, step 2 |
-| Pull an IndicSynth Hindi/Kannada slice | DONE | first shard each (FreeVC); used as G4 in the Indic pilot | |
-| `gnani_clone.py`: G2 for 40 speakers x 2 languages, G3 a third as mulaw, 300 G1 clips | PARTIAL | Generator, dry-run cost plan, hard cap, cache and tests done. Real generation not run: needs Kathbath eval speakers and student approval of the credit spend. | `python -m factory.gnani_clone --speakers factory/manifests/eval_speakers.csv` (dry run), then add `--execute --max-calls N` |
-| `channel_sim.py` with 8 codec conditions + 2 chains | DONE | 14 conditions incl. 2 two-hop chains, packet loss, band-limit; deterministic by seed; 31 unit tests | |
-| Normalisation and silence audit | DONE | VAD trim + -23 LUFS, plus a second 30 dB trim at the CM input after the first version failed rule 4 (silence cue 24.3% EER); now 38.1% | `python -m eval.report` |
-| Run pretrained AASIST / AASIST-L on the channel set | PENDING | Wrapper done and checkpoints load; CPU scoring takes about 15 min per condition and was killed by a machine crash after 4 of 9 conditions (no partial scores kept). Do not rerun on the shared CPU; run on the GPU box. | `python -m cm.run_baselines --models aasist aasist_l` (GPU or an idle machine) |
-| Run pretrained SSL + AASIST | PENDING | checkpoint is on Google Drive (TakHemlata README, manual) and XLS-R is too slow for CPU at this scale | download `LA_model.pth` by hand, then score with `cm/teacher/model.py: build_teacher` on a GPU |
-| Day-1 tweet table "SOTA vs Indic phone clones" | PARTIAL | ASVspoof-proxy table exists for the 8 kHz GMM and LCNN; AASIST columns, Indic pilot scoring and the Gnani-clone column are pending | `python -m eval.indic_report` after the AASIST run |
+| Credits, cost per call | PARTIAL | API returns no usage data; 5 probe calls made | read the balance on app.gnani.ai before and after the G1 run |
+| ASVspoof 2019 LA | DONE | | |
+| ASVspoof 2021 LA eval | PARTIAL | download interrupted | `bash scripts/download_data.sh` |
+| Kathbath Hindi + Kannada | PENDING | gated (accept terms on HF) | `data/README.md` step 2 (bona fide only; cloning DEFERRED) |
+| IndicSynth slice | DONE | | |
+| `gnani_clone.py` G1/G3 Timbre stock voices | PENDING (credits) | student decision on the spend | `python -m factory.gnani_clone --languages kn-IN hi-IN --execute --max-calls 240` |
+| `gnani_clone.py` G2/G3 own voice | PENDING (recording) | 15 s consented recording at `data/own_voice/builder_15s.wav` | `python -m factory.gnani_clone --speakers factory/manifests/demo_builder_voice.csv --execute --max-calls 16` |
+| `gnani_clone.py` Kathbath G2 | DEFERRED | consent clearance from Gnani | none until Gnani answers in writing |
+| Channel simulator | DONE | 14 conditions, about 30 test cases | |
+| Normalisation and audit | DONE | | `python -m eval.report` |
+| Pretrained AASIST / AASIST-L / SSL+AASIST | PENDING (GPU) | Modal account | `bash scripts/modal_setup.sh`, then `.\run.ps1 gpu-pretrained` |
+| Teacher fine-tune at 8 kHz | PENDING (GPU) | Modal account | `.\run.ps1 gpu-teacher` |
+| Distilled student, ONNX, RTF | PARTIAL | teacher | `python -m cm.distil`, then `python -m cm.export_onnx --checkpoint artifacts/models/lcnn8_distil.pt` |
+| Eval grid, ablation, DET | PARTIAL | GPU models pending | `python -m eval.report`, `python -m eval.det` |
+| FastAPI + WebSocket | DONE | | `.\run.ps1 serve` |
+| IVR demo with stated operating point | DONE (mock Gnani, real audio) | live run needs 2 to 4 calls | see the checklist below |
+| Red-team own-voice clone | PENDING (recording) | | own-voice row above, then `python -m ivr_demo.trials --bona-dir <own takes> --spoof-dir <clones> --tag ownvoice` |
+| REPORT.md, model and data cards | DONE | numbers refresh after the GPU jobs | |
 
-## Day 2: train the telephony-native CM
+## GPU runs (Modal; prices checked 2026-10-20 on modal.com/pricing)
 
-| Item | Status | Notes / blocker | Command to finish |
-|---|---|---|---|
-| Fine-tune XLS-R 300M + AASIST at 8 kHz with codec aug + RawBoost | PENDING (GPU) | config `cm/teacher/ssl_aasist_8k.yaml`, loop `cm/teacher/train.py` (CPU smoke test passes), Modal runner | `modal run cm/teacher/modal_train.py` (setup steps in its docstring) |
-| Distil to a small 8 kHz student, streaming crops, ONNX, RTF | PARTIAL | No teacher yet, so no distillation. The 8 kHz LFCC-LCNN (trained on CPU with 2 s crops) stands in: ONNX export and one-core RTF / RAM measured | after the teacher: train the student on teacher soft labels; `python -m cm.export_onnx --checkpoint <student.pt>` |
-| Full eval grid, ablation (with vs without codec aug), DET curves | PARTIAL | DONE on the ASVspoof proxy for gmm8_aug and lcnn8_aug: per-condition, per-attack, pooled, streaming tables, shortcut audit, DET curves (`artifacts/det_asvspoof.png`). PENDING: the no-codec-aug ablation (`lcnn8_noaug`), wideband `gmm16_clean`, Indic grid. CPU LCNN training starved other jobs, so further CNN training moves to the GPU plan. | `modal run cm/teacher/modal_train.py` for the teacher; `python -m cm.run_baselines --models lcnn8_noaug gmm16_clean` on a GPU/idle box; then `python -m eval.report` |
+One-time: `bash scripts/modal_setup.sh` (pip install modal, `modal setup` login, uploads about 4.2 GB of stores
+and manifests only; never `.env`). Then:
 
-## Day 3: product and story
+| Job | Command | GPU | Estimate | Hard cap (timeout x price) |
+|---|---|---|---|---|
+| Throughput dry run | `modal run cm/modal_pretrained.py --limit 20` | A10 | a few minutes, cents | same |
+| SOTA scoring (B1) | `.\run.ps1 gpu-pretrained` | A10 + 4 CPU + 16 GiB ($1.42/h) | 30 to 45 min, $0.70 to $1.10 | 2 h = $2.84 |
+| Teacher plumbing check | `modal run cm/teacher/modal_train.py --epochs 1` | L40S + 8 CPU + 32 GiB ($2.58/h) | about 25 min, about $1 | 6 h = $15.50 |
+| Teacher (M3) | `.\run.ps1 gpu-teacher` | same | 1.5 to 2.5 h, $4 to $6.50 | 6 h = $15.50 |
+| Distil (CPU) | `python -m cm.distil` | none | about 1 h at 4 threads | |
 
-| Item | Status | Notes / blocker | Command to finish |
-|---|---|---|---|
-| FastAPI service + WebSocket streaming | DONE | `/v1/cm/score`, `WS /v1/cm/stream`, `/v1/auth/enrol`, `/v1/auth/challenge`, `/v1/auth/verify`; tested with TestClient | `.\run.ps1 serve` |
-| IVR demo: Timbre prompt, Prisma 8 kHz realtime phrase check, CM, ECAPA, decision codes | PARTIAL | Runs end to end on mocks (`.\run.ps1 demo`); live mode wired (1 Timbre + 1 Prisma call). ECAPA adapter written but speechbrain not installed; a placeholder ASV is used | `pip install speechbrain`, switch `LFCCStatsASV` to `EcapaASV`; `python -m ivr_demo.demo --live --caller my_8k.wav --enrol my_enrol_8k.wav` |
-| Red-team: builder's own voice cloned via Gnani VC, attacked live; end-to-end attack success | PENDING (approval + recording) | needs a 15 s recording of the student's own voice and approval to spend VC credits | `python -m factory.gnani_clone --speakers factory/manifests/demo_builder_voice.csv --execute --max-calls 16` |
-| REPORT.md, model and data cards | PARTIAL | MODEL_CARD.md and DATA_CARD.md done; REPORT.md text was delivered in the builder's final reply (file write was refused in-session) | paste it into REPORT.md |
-| 60-second video, challenge submission, X/LinkedIn post | PENDING (student) | see checklist below | |
+Total expected about $6 to $9, inside the $30 Starter credit and the statement's $50 budget. Both jobs print
+and save wall hours and dollars (`artifacts/scores/*_cost.json`); put them in REPORT.md.
 
-## Great Indian AI Internship Challenge: submission checklist (verbatim requirements from the statement, section 8)
+## Great Indian AI Internship Challenge checklist (deadline Nov 10, 2026, 11:59 PM IST; submit by Nov 5 to 8)
 
-- [ ] Deadline **10 November 2026, 11:59 PM IST**. (Internships start 1 January 2027: 6 months, stipend up to Rs 1 lakh/month, up to 100 offers.)
-- [ ] Eligible: enrolled at an Indian college/university, 18+, solo or a team of two.
-- [ ] Must use **at least one of Prisma v2.5 (STT), Timbre v2.5 (TTS), Evon v3.3 (LLM)**. This build uses Prisma (realtime 8 kHz phrase verification) and Timbre (prompts plus G1 attacks), with the voice-cloning API for G2/G3. Document each call in the write-up.
-- [ ] Submission (1): a demo video, publicly posted.
-- [ ] Submission (2): a LinkedIn and/or X post with **#GnaniAI** and **#GreatIndianAIInternshipChallenge**, posted before submission.
-- [ ] Submission (3): a written explanation (problem, users, contributions).
-- [ ] Submission (4): a list of the Gnani models/APIs used.
-- [ ] Data rule: no real phone numbers, account numbers, Aadhaar/PAN or recorded calls; use synthetic data only. No bought engagement.
-- [ ] Award fit: **Noise Canceller** (telephony audio performance), **Main Character** (regional language), **Solo Ninja**, **Demo Day Drop** (60-second video). Only one award per entrant.
+What is real today:
+- [x] Uses Prisma v2.5 (REST + realtime 8 kHz) and Timbre v2.5: 5 live calls verified the shapes (`docs/gnani_api_notes.md`); the IVR flow calls both.
+- [x] Working application: FastAPI service + IVR flow; the decision logic and CM run on real audio (`ivr_demo.trials`).
+- [x] Synthetic-data rule: no real phone numbers, accounts or recorded calls; clones only of consenting voices.
+- [ ] Demo video (60 s), publicly posted.
+- [ ] X and LinkedIn post with **#GnaniAI** and **#GreatIndianAIInternshipChallenge**, posted BEFORE submitting.
+- [ ] Written explanation: problem, users, contributions (solo), plus "built with AI coding agents from my spec".
+- [ ] List of Gnani models/APIs used (below).
 
-Gnani models and APIs used so far (for item 4): Timbre v2.5 TTS REST (`POST /api/v1/tts/inference`, voice Nalini),
-Prisma v2.5 STT REST (`POST /stt/v3`), Prisma v2.5 realtime STT (`wss://api.vachana.ai/stt/v3/stream`, 8000 Hz),
-Voice Clone Embeddings (`POST /api/v1/tts/voice-clone/embeddings`), Voice Cloned TTS `vachana-vc-v1` (`container=mulaw`).
+Exact remaining steps, in order:
+1. Rotate the Gnani API key (it has been in agent sessions); put the new one in `.env`.
+2. Modal: `bash scripts/modal_setup.sh`, `modal run cm/modal_pretrained.py --limit 20`, then `.\run.ps1 gpu-pretrained` and `python -m eval.indic_report`. Refresh README/REPORT numbers.
+3. Record 15 s of your own voice at `data/own_voice/builder_15s.wav` (and 5 or more short answers at 8 kHz for genuine trials). Run the 16-call own-voice plan (STATUS row above) after reading the credit balance.
+4. Optional, credits permitting: the 240-call Timbre G1/G3 plan, then score it.
+5. Teacher: `modal run cm/teacher/modal_train.py --epochs 1`, then `.\run.ps1 gpu-teacher`, then `python -m cm.distil`.
+6. Live demo: `$env:GNANI_MODE="live"; python -m ivr_demo.demo --live --caller <answer_8k.wav> --enrol <enrol_8k.wav> --operating-point min_dcf` (2 calls). Record it with the key masked; say the operating point on screen; keep the real outcome.
+7. Post (X + LinkedIn, both hashtags), then submit on gnani.ai/internship with the video, post link, write-up and API list. Award fit: Noise Canceller (telephony audio) or Main Character (regional language); one award per entrant.
+
+Gnani models and APIs used (for the write-up): Timbre v2.5 TTS REST (`POST /api/v1/tts/inference`), Prisma v2.5
+STT REST (`POST /stt/v3`), Prisma v2.5 realtime STT (`wss://api.vachana.ai/stt/v3/stream`, 8000 Hz), Voice Clone
+Embeddings (`POST /api/v1/tts/voice-clone/embeddings`) and Voice Cloned TTS `vachana-vc-v1` (`container=mulaw`),
+the last two listed as extras beyond the required models. Evon v3.3: not used (no public API page).

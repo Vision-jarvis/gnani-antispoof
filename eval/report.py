@@ -155,7 +155,8 @@ def to_markdown(res: dict[str, object]) -> str:
     for n, m in models.items():
         for h, v in m.get("streaming_eer", {}).items():
             cells = " | ".join(f"{_pct(v[k])} ({_pct(v[k + '_full_same_trials'])})" for k in ("clean", "seen", "heldout"))
-            lines.append(f"| {n} | {h} | {v['n_bona_clean']} / {v['n_spoof_clean']} | {cells} |")
+            flag = " (too few bona fide to read)" if v["n_bona_clean"] < 50 else ""
+            lines.append(f"| {n} | {h}{flag} | {v['n_bona_clean']} / {v['n_spoof_clean']} | {cells} |")
     lines += ["", "### Shortcut audit (single-cue classifiers, direction fixed on dev; rule: must be >= 35% EER)", "", "| stage | cue | eval EER % | passes |", "|---|---|---|---|"]
     lines += [f"| {a['stage']} | {a['cue']} | {_pct(a['eval_eer'])} | {'yes' if a['passes_35pct_rule'] else 'NO'} |" for a in res["shortcut_audit"]]  # type: ignore[union-attr]
     lines += ["", "### Points matrix (statement section 7)", "", "| KPI | weight | status | value | note |", "|---|---|---|---|---|"]
