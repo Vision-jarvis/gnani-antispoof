@@ -19,7 +19,6 @@ import numpy as np
 import pandas as pd
 
 from eval.metrics import DCF_PARAMS, AffineCalibration, eer, evaluate, threshold_at_far
-from cm.release import manifest_path
 from eval.points import points_matrix
 from eval.shortcut_audit import AUDIT_COLS, cue_table, run_audit
 from factory.channel_sim import HELDOUT_CONDITIONS, TRAIN_CONDITIONS
@@ -34,6 +33,12 @@ SEEN = [c for c in TRAIN_CONDITIONS if c != "nb_pcm"]
 HELDOUT = sorted(HELDOUT_CONDITIONS)
 BOOT = 200  # bootstrap resamples per pooled cell
 EIGHT_K_MODELS = {"gmm8_aug", "lcnn8_aug", "lcnn8_noaug", "lcnn8_distil", "teacher"}
+
+
+def manifest_path(split: str) -> Path:
+    """data/proc manifest if the data is built, else the copy committed in release/ (fresh clone)."""
+    p = PROC / split / "manifest.csv"
+    return p if p.exists() else ROOT / "release" / "manifests" / f"{split}_manifest.csv"
 
 
 def _cell(df: pd.DataFrame, cal: AffineCalibration, tau: float) -> dict[str, float | int | None]:
