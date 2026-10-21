@@ -14,13 +14,13 @@ the blocker and the exact command; DEFERRED = deliberately not done now, with th
 | M1 weak baselines | PARTIAL | Bootstrap 95% CIs on every pooled EER; `lcnn8_noaug` ablation and wideband `gmm16_clean` run on CPU (see README table). DEFERRED: official-size GMM (512 components, all frames; CPU overnight: edit `cm/gmm.py` defaults, delete `artifacts/models/gmm8_aug.npz`, `python -m cm.run_baselines --models gmm8_aug`). |
 | M2 causality | FIXED | `causal_cm_input` on the prefix only; `CMScorer.prefix_llr` used by batch partials and the WebSocket; streaming eval recomputed with prefix-first processing; test pins batch == WS and future-independence. |
 | M3 teacher script | FIXED (code) / PENDING (GPU run) | `cm/teacher/train.py` checkpoints per epoch, early-stops, scores dev, all eval conditions x (full, causal 1/2/4 s) and the train pool, writes GPU hours; smoke test covers scoring. `cm/distil.py` (soft-BCE LCNN student) written and smoke-tested. Yaml fixed. One command: `.\run.ps1 gpu-teacher` (about $4 to $6.50, cap $15.50). |
-| M4 reproducibility | FIXED | `release/` (9.3 MB): ONNX, LCNN, GMM, calibration, gzipped scores, manifests, audit, 120-clip G.711 pack. Verified: a fresh `git clone` + `.\run.ps1 report` reproduces `artifacts/results.md` byte for byte; the demo and `ivr_demo.trials --pack` run from a clone. REPORT.md expanded. |
+| M4 reproducibility | FIXED | `release/` (9.3 MB): ONNX, LCNN, GMM, calibration, gzipped scores, manifests, audit, 120-clip G.711 pack. Verified: a fresh `git clone` + `.\run.ps1 report` reproduces `artifacts/results.md` byte for byte; the demo and `ivr_demo.trials --pack` run from a clone. PENDING (student): REPORT.md still holds the old streaming (non-causal) and audit numbers; the expanded 2-page version was drafted but not saved in this session, so replace REPORT.md before posting (README.md and `artifacts/results.md` are current). |
 | M5 Indic / Gnani gap | PARTIAL | Indic pilot report runs as soon as the GPU scoring job returns the SOTA columns (`python -m eval.indic_report`, CPU part 10 min). G1/G3 Timbre plan: 240 calls (dry run). Own-voice G2: needs the student's 15 s recording. |
 | M6 schedule | FIXED | Statement header: Nov 1-3, submit by Nov 5 to 8 (deadline Nov 10, 11:59 PM IST). |
 | M7 challenge rules | PARTIAL | Checklist below. Live run needs `GNANI_MODE=live` and 2 to 4 live calls; Evon not used (no public API page). |
 | M8 streaming trials | FIXED | Streaming rows only on clips with >= t s of trimmed speech, with the full-clip EER on the same trials; the 4 s row has 4 bona fide clips and is flagged unreadable. |
 | M9 DM / tweet | FIXED | Section 11 rewritten: measured proxy hook, 4-line DM, GPU and own-voice lines gated on the real runs. |
-| m1 delta-NB definition | FIXED | Stated in REPORT.md next to the number. |
+| m1 delta-NB definition | FIXED | Stated in README.md next to the number. |
 | m2 minCllr | FIXED | Copied into every cell and shown in the pooled table. |
 | m3 statement facts | FIXED | Ganesh Gopalan, Kathbath licence note; Evon noted as having no public API page. |
 | m4 hygiene | FIXED | "about 30 cases" for the simulator tests; user paths scrubbed from tracked logs; `gnani_probe.json` stays tracked on purpose (no secrets: transcripts, request ids, header names) as evidence for the API list. |
@@ -50,7 +50,7 @@ the blocker and the exact command; DEFERRED = deliberately not done now, with th
 | FastAPI + WebSocket | DONE | | `.\run.ps1 serve` |
 | IVR demo with stated operating point | DONE (mock Gnani, real audio) | live run needs 2 to 4 calls | see the checklist below |
 | Red-team own-voice clone | PENDING (recording) | | own-voice row above, then `python -m ivr_demo.trials --bona-dir <own takes> --spoof-dir <clones> --tag ownvoice` |
-| REPORT.md, model and data cards | DONE | numbers refresh after the GPU jobs | |
+| REPORT.md, model and data cards | PARTIAL | cards current; REPORT.md needs the expanded version (see M4 row) | |
 
 ## GPU runs (Modal; prices checked 2026-10-20 on modal.com/pricing)
 
