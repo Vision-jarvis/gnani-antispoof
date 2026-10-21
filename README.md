@@ -13,19 +13,28 @@ command each and are PENDING (STATUS.md has the commands and verified cost caps)
 ## Quickstart (Windows, PowerShell)
 
 ```powershell
-.un.ps1 setup        # .venv, CPU torch, requirements, clones clovaai/aasist and SSL_Anti-spoofing into third_party/
-.un.ps1 quick        # under 5 minutes: unit tests + teacher smoke + IVR demo (real clips) + tables, works on a fresh clone via release/
-.un.ps1 trials       # IVR flow on real ASVspoof clips at the dev-fixed operating points
-.un.ps1 report       # rebuild artifacts/results.md (restores release/ first on a fresh clone)
-.un.ps1 pipeline     # full CPU pipeline from raw data (hours; resumable)
-.un.ps1 serve        # FastAPI on :8000 (/v1/cm/score, WS /v1/cm/stream, /v1/auth/*)
-.un.ps1 gpu-pretrained   # Modal: AASIST, AASIST-L, SSL+AASIST on every condition (about $1, cap $2.84)
-.un.ps1 gpu-teacher      # Modal: XLS-R + AASIST teacher at 8 kHz (about $4 to $6.50, cap $15.50)
+.
+un.ps1 setup        # .venv, CPU torch, requirements, clones clovaai/aasist and SSL_Anti-spoofing into third_party/
+.
+un.ps1 quick        # under 5 minutes: unit tests + teacher smoke + IVR demo (real clips) + tables, works on a fresh clone via release/
+.
+un.ps1 trials       # IVR flow on real ASVspoof clips at the dev-fixed operating points
+.
+un.ps1 report       # rebuild artifacts/results.md (restores release/ first on a fresh clone)
+.
+un.ps1 pipeline     # full CPU pipeline from raw data (hours; resumable)
+.
+un.ps1 serve        # FastAPI on :8000 (/v1/cm/score, WS /v1/cm/stream, /v1/auth/*)
+.
+un.ps1 gpu-pretrained   # Modal: AASIST, AASIST-L, SSL+AASIST on every condition (about $1, cap $2.84)
+.
+un.ps1 gpu-teacher      # Modal: XLS-R + AASIST teacher at 8 kHz (about $4 to $6.50, cap $15.50)
 ```
-`release/` (9.3 MB, committed) holds the trained CPU models, calibration, gzipped scores, manifests and a
+`release/` (10.5 MB, committed) holds the trained CPU models, calibration, gzipped scores, manifests and a
 120-clip G.711 eval pack, so a fresh clone reproduces `artifacts/results.md` exactly. Raw data:
 `bash scripts/download_data.sh`; gated sets in `data/README.md`; licences in `DATA.md`. The Gnani key is
-read from `.env` (git-ignored). No test touches the network; `.un.ps1 live-test` makes 2 real calls.
+read from `.env` (git-ignored). No test touches the network; `.
+un.ps1 live-test` makes 2 real calls.
 
 ## Results so far (real runs in this repo)
 
@@ -39,6 +48,8 @@ not the statement's Indic benchmark. Brackets: 95% utterance-bootstrap interval.
 |---|---|---|---|---|---|---|
 | LFCC-GMM (`gmm8_aug`, 128 comp.) | 25.59% [24.08, 27.19] | 30.38% | 33.63% [32.29, 34.81] | +8.04 pts | 0.781 | 99.28% |
 | LFCC-LCNN (`lcnn8_aug`, 170k params) | 27.64% [25.94, 29.10] | 30.70% | 34.42% [33.04, 35.60] | +6.78 pts | 0.799 | 92.47% |
+| Ablation: LFCC-LCNN, no codec augmentation (`lcnn8_noaug`) | 26.59% [24.95, 27.94] | 35.17% | 41.84% [40.63, 42.86] | +15.25 pts | 0.943 | 98.45% |
+| Wideband control: LFCC-GMM trained on clean 16 kHz (`gmm16_clean`), 8 kHz audio upsampled | 24.10% (clean 16 kHz) | 41.63% | 44.73% [43.53, 45.97] | +20.63 pts | 0.998 | 100.00% |
 
 delta-NB here is EER(held-out codecs) minus EER(clean **8 kHz**, `nb_pcm`), on the same utterances; the
 statement defines it against clean 16 kHz, which only makes sense for wideband models (`gmm16_clean`, the
@@ -55,7 +66,10 @@ per codec, CM gate only: echo STT, identity gate bypassed):
 | AMR-NB 4.75k (held out) | min_dcf | 75.5% | 55.5% |
 
 What this shows (and does not):
-- The phone line costs both CPU baselines 7 to 8 EER points on unseen codecs, even with codec augmentation;
+- Codec augmentation is what holds the line: the same LCNN without it loses 15.25 EER points on held-out codecs
+  (41.84% vs 34.42% with it, same recipe and epochs), and a GMM trained on clean 16 kHz loses 20.63 points
+  (44.73%, near chance).
+- The phone line still costs both augmented CPU baselines 7 to 8 EER points on unseen codecs;
   the damage is concentrated on attacks that were easy in clean narrowband (LCNN A08: 2.1% to 18.9%; A09:
   0.2% to 9.8%; A17: 4.8% to 19.0%).
 - A threshold fixed on dev does not survive the channel: at FAR = 1% the CM rejects 92% of genuine callers on

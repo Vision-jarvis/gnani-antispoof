@@ -1,0 +1,67 @@
+C:\Users\rrsri\desktop\peakalways\xjob\builds\gnani-antispoof\.venv\Lib\site-packages\sklearn\mixture\_base.py:293: ConvergenceWarning: Best performing initialization did not converge. Try different init parameters, or increase max_iter, tol, or check for degenerate data.
+  warnings.warn(
+C:\Users\rrsri\desktop\peakalways\xjob\builds\gnani-antispoof\.venv\Lib\site-packages\sklearn\mixture\_base.py:293: ConvergenceWarning: Best performing initialization did not converge. Try different init parameters, or increase max_iter, tol, or check for degenerate data.
+  warnings.warn(
+[gmm16_clean] scored eval/clean16k
+[gmm16_clean] scored eval/nb_pcm
+[gmm16_clean] scored eval/g711u
+[gmm16_clean] scored eval/g711a
+[gmm16_clean] scored eval/amrnb_12k2
+[gmm16_clean] scored eval/amrnb_7k95
+[gmm16_clean] scored eval/amrnb_4k75
+[gmm16_clean] scored eval/amrwb_12k65
+[gmm16_clean] scored eval/opus_8k
+[gmm16_clean] scored eval/opus_16k
+[gmm16_clean] scored eval/opus_6k_plc3
+[gmm16_clean] scored eval/g711u_plc5
+[gmm16_clean] scored eval/gsm_fr
+[gmm16_clean] scored eval/chain_amrnb_g711u
+[gmm16_clean] scored eval/chain_gsm_g711a_plc2
+== gmm16_clean done in 196s
+  epoch 1 batch 0 loss 0.6927 (2s)
+  epoch 1 batch 40 loss 0.3465 (55s)
+  epoch 1 batch 80 loss 0.4199 (109s)
+epoch 1/8 loss 0.4285 dev EER 19.24% (234s)
+  epoch 2 batch 0 loss 0.5116 (2s)
+  epoch 2 batch 40 loss 0.1735 (55s)
+  epoch 2 batch 80 loss 0.3731 (107s)
+epoch 2/8 loss 0.2822 dev EER 18.11% (222s)
+  epoch 3 batch 0 loss 0.3369 (1s)
+  epoch 3 batch 40 loss 0.1713 (55s)
+  epoch 3 batch 80 loss 0.2787 (109s)
+epoch 3/8 loss 0.2341 dev EER 26.12% (233s)
+  epoch 4 batch 0 loss 0.2333 (2s)
+  epoch 4 batch 40 loss 0.2499 (54s)
+  epoch 4 batch 80 loss 0.1455 (105s)
+epoch 4/8 loss 0.1960 dev EER 18.39% (226s)
+  epoch 5 batch 0 loss 0.1063 (2s)
+  epoch 5 batch 40 loss 0.2357 (56s)
+  epoch 5 batch 80 loss 0.1396 (113s)
+epoch 5/8 loss 0.1458 dev EER 23.70% (260s)
+  epoch 6 batch 0 loss 0.0906 (2s)
+  epoch 6 batch 40 loss 0.0800 (67s)
+  epoch 6 batch 80 loss 0.1445 (131s)
+epoch 6/8 loss 0.0977 dev EER 18.71% (285s)
+  epoch 7 batch 0 loss 0.1358 (2s)
+  epoch 7 batch 40 loss 0.1176 (64s)
+  epoch 7 batch 80 loss 0.0280 (124s)
+epoch 7/8 loss 0.0750 dev EER 18.12% (590s)
+  epoch 8 batch 0 loss 0.0637 (6s)
+  epoch 8 batch 40 loss 0.0616 (113s)
+  epoch 8 batch 80 loss 0.0811 (396s)
+epoch 8/8 loss 0.0457 dev EER 18.70% (636s)
+[lcnn8_noaug] scored eval/nb_pcm
+[lcnn8_noaug] scored eval/g711u
+[lcnn8_noaug] scored eval/g711a
+[lcnn8_noaug] scored eval/amrnb_12k2
+[lcnn8_noaug] scored eval/amrnb_7k95
+[lcnn8_noaug] scored eval/amrnb_4k75
+[lcnn8_noaug] scored eval/amrwb_12k65
+[lcnn8_noaug] scored eval/opus_8k
+[lcnn8_noaug] scored eval/opus_16k
+[lcnn8_noaug] scored eval/opus_6k_plc3
+[lcnn8_noaug] scored eval/g711u_plc5
+[lcnn8_noaug] scored eval/gsm_fr
+[lcnn8_noaug] scored eval/chain_amrnb_g711u
+[lcnn8_noaug] scored eval/chain_gsm_g711a_plc2
+== lcnn8_noaug done in 4986s

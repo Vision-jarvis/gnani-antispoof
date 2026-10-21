@@ -181,7 +181,8 @@ before anyone asks.
 - "Your clean 8 kHz EER is 26%; the official LFCC-GMM gets 8% at 16 kHz. Why trust the codec numbers?"
   Our GMM has 128 components on 300k frames (official: 512 on all frames) and the LCNN trained 8 CPU
   epochs. The codec effect is only readable on attacks the model catches in clean narrowband (A08, A09,
-  A17). The wideband control `gmm16_clean` and the no-augmentation ablation are in the results table;
-  the official-size GMM is a CPU-overnight run (STATUS.md).
+  A17). The controls answer the codec question on their own terms: without codec augmentation the same
+  LCNN goes to 41.84% held-out EER (delta-NB +15.25 vs +6.78), and the clean 16 kHz GMM to 44.73% (+20.63).
+  The official-size GMM is a CPU-overnight run (STATUS.md).
 - "Why did you not use the 2021 LA real-channel data?" The 7.8 GB download was interrupted; it is the
   first sanity check to add, since its channels are real VoIP/PSTN, not simulated.

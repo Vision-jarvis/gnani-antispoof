@@ -1,0 +1,6 @@
+{
+  "model": "gmm16_clean",
+  "train_seconds": 88.11776161193848,
+  "components": 128,
+  "n_train": 5160
+}
