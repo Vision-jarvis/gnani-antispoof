@@ -63,6 +63,7 @@ and manifests only; never `.env`). Then:
 | SOTA scoring (B1) | `.\run.ps1 gpu-pretrained` | A10 + 4 CPU + 16 GiB ($1.42/h) | 30 to 45 min, $0.70 to $1.10 | 2 h = $2.84 |
 | Teacher plumbing check | `modal run cm/teacher/modal_train.py --epochs 1` | L40S + 8 CPU + 32 GiB ($2.58/h) | about 25 min, about $1 | 6 h = $15.50 |
 | Teacher (M3) | `.\run.ps1 gpu-teacher` | same | 1.5 to 2.5 h, $4 to $6.50 | 6 h = $15.50 |
+| Plain VM (one GCE GPU) | `python gce_run.py score` then `python gce_run.py teacher --epochs 1` and `python gce_run.py teacher` | any CUDA GPU | same work as above; estimates above are for A10 / L40S | none (VM billed until deleted) |
 | Distil (CPU) | `python -m cm.distil` | none | about 1 h at 4 threads | |
 
 Total expected about $6 to $9, inside the $30 Starter credit and the statement's $50 budget. Both jobs print

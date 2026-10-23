@@ -21,3 +21,5 @@ artifacts/scores/parts/
 artifacts/smoke_teacher/
 artifacts/smoke_pretrained/
 artifacts/logs/gdown_la.log
+artifacts_teacher/
+artifacts/scores_dryrun/
