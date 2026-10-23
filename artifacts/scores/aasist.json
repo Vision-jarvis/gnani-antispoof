@@ -1,0 +1,7 @@
+{
+  "model": "aasist",
+  "source": "published checkpoint, scored as published",
+  "device": "cuda",
+  "score_seconds_this_run": 296.69879055023193,
+  "limit": null
+}

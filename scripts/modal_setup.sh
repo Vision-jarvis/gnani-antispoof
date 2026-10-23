@@ -2,6 +2,7 @@
 # One-time Modal setup for the two GPU jobs (run from the repo root in Git Bash, after the CPU data build).
 # Uploads only the packed audio stores and manifests (about 4.2 GB), never data/raw, feature caches or .env.
 set -euo pipefail
+export MSYS_NO_PATHCONV=1   # Git Bash on Windows would rewrite /asv19/... into C:/Program Files/Git/asv19/...
 pip install modal
 modal setup                                  # browser login, writes ~/.modal.toml (student account)
 modal volume create gnani-cm-data || true    # ok if it already exists
