@@ -1,8 +1,8 @@
 # PENDING (needs a GPU): XLS-R 300M + AASIST teacher, fine-tuned for 8 kHz telephony.
 # Documentation of the recipe; cm/teacher/train.py hard-codes these values (it takes no --config flag).
 # Launch: modal run cm/teacher/modal_train.py   (or on a CUDA box: python -m cm.teacher.train --device cuda)
-# Budget (statement rule 8): <= $50 of GPU. Estimate in cm/teacher/modal_train.py: 1.5 to 2.5 h on one L40S
-# (about $4 to $6.50, hard cap $15.50 from the 6 h timeout).
+# Budget (statement rule 8): <= $50 of GPU. Estimate in cm/teacher/modal_train.py: 1.2 to 1.6 h on one L40S for the
+# cheap pass (--epochs 10 --patience 2 --eval full, $3 to $4), 1.9 to 2.5 h for the full recipe; hard cap $15.50.
 
 front_end: facebook/wav2vec2-xls-r-300m      # loaded with transformers; upsample 8k -> 16k before it
 back_end: aasist (TakHemlata/SSL_Anti-spoofing, unchanged)
@@ -26,7 +26,8 @@ optim:
   weight_decay: 1.0e-4
   batch_size: 14
   epochs: 20
-  loss: weighted_ce                            # class weights [0.1, 0.9] (spoof, bona fide), recipe default
+  loss: weighted_ce                            # inverse class frequency of the pool: [0.5, 0.5] on our balanced subset ([0.1, 0.9] fits only a 9:1 pool)
+  init: third_party/ssl_ckpt/LA_model.pth     # published SSL+AASIST LA model; a random back end at lr 1e-6 did not learn in 6 epochs (v1)
   early_stop: dev_eer, patience 4
 ablations:                                     # statement section 7
   - no_codec_aug                               # augmentation.channel: none

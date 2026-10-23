@@ -33,7 +33,9 @@ class HFSSLFrontEnd(nn.Module):
         if isinstance(name_or_config, Wav2Vec2Config):
             self.model = Wav2Vec2Model(name_or_config)  # random init (tests, no download)
         else:
-            self.model = Wav2Vec2Model.from_pretrained(name_or_config)
+            # The hub config turns on SpecAugment time masking (0.075) and LayerDrop (0.1) in train mode; the
+            # reference calls fairseq with mask=False, so both are off here.
+            self.model = Wav2Vec2Model.from_pretrained(name_or_config, mask_time_prob=0.0, layerdrop=0.0)
         self.out_dim = self.model.config.hidden_size
 
     def extract_feat(self, x: torch.Tensor) -> torch.Tensor:

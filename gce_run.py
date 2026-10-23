@@ -62,8 +62,8 @@ def score(limit: int, device: str = "cuda", models: list[str] | None = None, ind
 
 
 def teacher(epochs: int, out: Path | None = None) -> dict:
-    _need([PROC / "asv19" / s / "manifest.csv" for s in SPLITS] + [TP / "SSL_Anti-spoofing"])
-    out = out or ROOT / "artifacts_teacher"
+    _need([PROC / "asv19" / s / "manifest.csv" for s in SPLITS] + [TP / "SSL_Anti-spoofing", TP / "ssl_ckpt" / "LA_model.pth"])
+    out = out or ROOT / "artifacts_teacher_v2"  # v2: LA_model.pth init; never resume the v1 (from-scratch) epochs
     hours = _run([sys.executable, "-m", "cm.teacher.train", "--device", "cuda", "--epochs", str(epochs), "--out", str(out)], 8)
     # Same files the Modal entrypoint downloads, to the same places.
     for f in ("teacher.csv", "teacher_dev.csv", "teacher_train.csv", "teacher.json"):
