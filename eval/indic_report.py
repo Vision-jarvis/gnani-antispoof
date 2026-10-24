@@ -66,9 +66,9 @@ def dev_threshold(name: str) -> float:
 
 def main() -> None:
     man = pd.read_csv(PILOT / "manifest.csv")
-    torch.set_num_threads(12)
+    torch.set_num_threads(4)
     rows, lang_rows = [], []
-    for name in (*PRETRAINED, "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug"):
+    for name in (*PRETRAINED, "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug", "lcnn8_distil"):
         df = score_model(name)
         if df is None:
             continue

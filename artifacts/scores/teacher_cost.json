@@ -1,0 +1,6 @@
+{
+  "gpu": "L40S",
+  "epochs_max": 10,
+  "wall_hours": 0.521,
+  "usd": 1.35
+}

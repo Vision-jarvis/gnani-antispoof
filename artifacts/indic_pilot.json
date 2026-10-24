@@ -321,6 +321,48 @@
       "eer": 0.4500561167227834,
       "frr_at_dev_far1": 0.9166666666666666,
       "far_at_dev_tau": 0.03166666666666667
+    },
+    {
+      "model": "lcnn8_distil",
+      "condition": "amrnb_12k2",
+      "eer": 0.49380530973451336,
+      "frr_at_dev_far1": 0.9366666666666666,
+      "far_at_dev_tau": 0.043333333333333335
+    },
+    {
+      "model": "lcnn8_distil",
+      "condition": "amrnb_4k75",
+      "eer": 0.4268353576248313,
+      "frr_at_dev_far1": 0.9866666666666667,
+      "far_at_dev_tau": 0.0
+    },
+    {
+      "model": "lcnn8_distil",
+      "condition": "chain_amrnb_g711u",
+      "eer": 0.4800380228136882,
+      "frr_at_dev_far1": 0.9833333333333333,
+      "far_at_dev_tau": 0.0033333333333333335
+    },
+    {
+      "model": "lcnn8_distil",
+      "condition": "g711u",
+      "eer": 0.4485094850948509,
+      "frr_at_dev_far1": 0.7766666666666666,
+      "far_at_dev_tau": 0.12833333333333333
+    },
+    {
+      "model": "lcnn8_distil",
+      "condition": "gsm_fr",
+      "eer": 0.4760112888052681,
+      "frr_at_dev_far1": 0.9683333333333334,
+      "far_at_dev_tau": 0.0016666666666666668
+    },
+    {
+      "model": "lcnn8_distil",
+      "condition": "nb_pcm",
+      "eer": 0.4836734693877551,
+      "frr_at_dev_far1": 0.82,
+      "far_at_dev_tau": 0.13666666666666666
     }
   ],
   "audit": [

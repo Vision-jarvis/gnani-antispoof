@@ -1,0 +1,62 @@
+  epoch 1 batch 0 loss 0.6857 (1s)
+  epoch 1 batch 40 loss 0.4782 (36s)
+  epoch 1 batch 80 loss 0.3487 (73s)
+  epoch 1 batch 120 loss 0.5270 (110s)
+  epoch 1 batch 160 loss 0.4357 (155s)
+epoch 1/8 loss 0.4481 dev EER 17.25% (269s)
+  epoch 2 batch 0 loss 0.3420 (2s)
+  epoch 2 batch 40 loss 0.2804 (47s)
+  epoch 2 batch 80 loss 0.2595 (89s)
+  epoch 2 batch 120 loss 0.3164 (132s)
+  epoch 2 batch 160 loss 0.2373 (175s)
+epoch 2/8 loss 0.2987 dev EER 15.45% (260s)
+  epoch 3 batch 0 loss 0.3806 (1s)
+  epoch 3 batch 40 loss 0.3088 (41s)
+  epoch 3 batch 80 loss 0.2666 (78s)
+  epoch 3 batch 120 loss 0.3671 (115s)
+  epoch 3 batch 160 loss 0.2139 (152s)
+epoch 3/8 loss 0.2573 dev EER 14.47% (249s)
+  epoch 4 batch 0 loss 0.1966 (3s)
+  epoch 4 batch 40 loss 0.2282 (55s)
+  epoch 4 batch 80 loss 0.1939 (97s)
+  epoch 4 batch 120 loss 0.1501 (133s)
+  epoch 4 batch 160 loss 0.2437 (171s)
+epoch 4/8 loss 0.2077 dev EER 15.15% (256s)
+  epoch 5 batch 0 loss 0.1747 (9s)
+  epoch 5 batch 40 loss 0.1820 (51s)
+  epoch 5 batch 80 loss 0.0716 (88s)
+  epoch 5 batch 120 loss 0.1887 (129s)
+  epoch 5 batch 160 loss 0.1862 (165s)
+epoch 5/8 loss 0.1729 dev EER 14.39% (251s)
+  epoch 6 batch 0 loss 0.1892 (12s)
+  epoch 6 batch 40 loss 0.1146 (48s)
+  epoch 6 batch 80 loss 0.2074 (85s)
+  epoch 6 batch 120 loss 0.1902 (122s)
+  epoch 6 batch 160 loss 0.0818 (160s)
+epoch 6/8 loss 0.1324 dev EER 13.67% (254s)
+  epoch 7 batch 0 loss 0.0955 (1s)
+  epoch 7 batch 40 loss 0.1576 (40s)
+  epoch 7 batch 80 loss 0.0631 (78s)
+  epoch 7 batch 120 loss 0.1226 (117s)
+  epoch 7 batch 160 loss 0.1153 (157s)
+epoch 7/8 loss 0.1065 dev EER 14.05% (242s)
+  epoch 8 batch 0 loss 0.1513 (1s)
+  epoch 8 batch 40 loss 0.0756 (40s)
+  epoch 8 batch 80 loss 0.0634 (79s)
+  epoch 8 batch 120 loss 0.0913 (117s)
+  epoch 8 batch 160 loss 0.1068 (155s)
+epoch 8/8 loss 0.0952 dev EER 13.78% (242s)
+[lcnn8_distil] scored eval/nb_pcm
+[lcnn8_distil] scored eval/g711u
+[lcnn8_distil] scored eval/g711a
+[lcnn8_distil] scored eval/amrnb_12k2
+[lcnn8_distil] scored eval/amrnb_7k95
+[lcnn8_distil] scored eval/amrnb_4k75
+[lcnn8_distil] scored eval/amrwb_12k65
+[lcnn8_distil] scored eval/opus_8k
+[lcnn8_distil] scored eval/opus_16k
+[lcnn8_distil] scored eval/opus_6k_plc3
+[lcnn8_distil] scored eval/g711u_plc5
+[lcnn8_distil] scored eval/gsm_fr
+[lcnn8_distil] scored eval/chain_amrnb_g711u
+[lcnn8_distil] scored eval/chain_gsm_g711a_plc2

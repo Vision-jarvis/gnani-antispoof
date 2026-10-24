@@ -7,8 +7,8 @@ my machine, and can walk through any module.
 A countermeasure (CM) stack for catching TTS and voice-conversion clones after the audio has gone
 through an 8 kHz phone line, plus a random-phrase voice-auth IVR flow built on Gnani Prisma STT and
 Timbre TTS that returns Armour365's decision codes. Built for the Great Indian AI Internship Challenge.
-Everything below ran on CPU; the GPU jobs (published SOTA models, the XLS-R teacher) are one `modal run`
-command each and are PENDING (STATUS.md has the commands and verified cost caps).
+The LFCC models, the distilled student and every table ran on CPU; the published SOTA models and the
+XLS-R teacher ran on Modal GPUs (about $9.42 in total, REPORT.md section 8).
 
 ## Quickstart (Windows, PowerShell)
 
@@ -30,7 +30,7 @@ un.ps1 gpu-pretrained   # Modal: AASIST, AASIST-L, SSL+AASIST on every condition
 .
 un.ps1 gpu-teacher      # Modal: XLS-R + AASIST teacher at 8 kHz (about $4 to $6.50, cap $15.50)
 ```
-`release/` (10.5 MB, committed) holds the trained CPU models, calibration, gzipped scores, manifests and a
+`release/` (14.5 MB, committed) holds the trained CPU models, calibration, gzipped scores (GPU rows included), manifests and a
 120-clip G.711 eval pack, so a fresh clone reproduces `artifacts/results.md` exactly. Raw data:
 `bash scripts/download_data.sh`; gated sets in `data/README.md`; licences in `DATA.md`. The Gnani key is
 read from `.env` (git-ignored). No test touches the network; `.
@@ -44,8 +44,13 @@ VAD-trimmed and loudness-normalised, then sent through the channel simulator. "H
 GSM-FR and two two-hop chains, never used in training. This is an **English proxy** for the channel effect,
 not the statement's Indic benchmark. Brackets: 95% utterance-bootstrap interval.
 
-| Model (8 kHz native, codec-augmented) | EER clean 8 kHz | EER seen codecs | EER held-out codecs | delta-NB | minDCF held-out | FRR@FAR1 held-out (dev threshold) |
+| Model | EER clean | EER seen codecs | EER held-out codecs | delta-NB | minDCF held-out | FRR@FAR1 held-out (dev threshold) |
 |---|---|---|---|---|---|---|
+| AASIST, published (16 kHz, GPU) | 23.65% (clean 16 kHz) | 37.30% | 39.22% [37.63, 40.20] | +15.57 pts | 0.855 | 92.17% |
+| AASIST-L, published (16 kHz, GPU) | 21.57% (clean 16 kHz) | 34.32% | 37.13% [35.89, 38.35] | +15.56 pts | 0.869 | 96.78% |
+| SSL+AASIST (XLS-R), published (16 kHz, GPU) | 9.15% (clean 16 kHz) | 18.45% | **20.97% [19.93, 21.96]** | +11.83 pts | 0.572 | 71.60% |
+| Teacher: SSL+AASIST fine-tuned at 8 kHz with codec aug (GPU) | 23.34% [21.43, 24.64] | 24.23% | 21.63% [20.03, 22.71] | **-1.71 pts** | **0.381** | 7.35% (but 27.0% FAR) |
+| Distilled student (`lcnn8_distil`, same LCNN on teacher soft targets) | 26.79% [25.37, 28.35] | 30.58% | 34.63% [33.35, 35.86] | +7.84 pts | 0.836 | 91.17% |
 | LFCC-GMM (`gmm8_aug`, 128 comp.) | 25.59% [24.08, 27.19] | 30.38% | 33.63% [32.29, 34.81] | +8.04 pts | 0.781 | 99.28% |
 | LFCC-LCNN (`lcnn8_aug`, 170k params) | 27.64% [25.94, 29.10] | 30.70% | 34.42% [33.04, 35.60] | +6.78 pts | 0.799 | 92.47% |
 | Ablation: LFCC-LCNN, no codec augmentation (`lcnn8_noaug`) | 26.59% [24.95, 27.94] | 35.17% | 41.84% [40.63, 42.86] | +15.25 pts | 0.943 | 98.45% |
@@ -53,7 +58,7 @@ not the statement's Indic benchmark. Brackets: 95% utterance-bootstrap interval.
 
 delta-NB here is EER(held-out codecs) minus EER(clean **8 kHz**, `nb_pcm`), on the same utterances; the
 statement defines it against clean 16 kHz, which only makes sense for wideband models (`gmm16_clean`, the
-SOTA models).
+published SOTA models). The 8 kHz rows (LFCC, teacher, student) use clean 8 kHz.
 
 **The IVR flow on real audio** (`python -m ivr_demo.trials`, 200 bona fide + 200 spoof ASVspoof eval clips
 per codec, CM gate only: echo STT, identity gate bypassed):
@@ -75,8 +80,16 @@ What this shows (and does not):
 - A threshold fixed on dev does not survive the channel: at FAR = 1% the CM rejects 92% of genuine callers on
   held-out codecs, and no operating point meets "genuine >= 90% with attack <= 5%". The demo shows this
   honestly and names its operating point; it is not scripted.
-- Both baselines are weak (official 16 kHz LFCC-GMM: about 8% EER); the codec effect is only readable on the
-  attacks they catch. The SOTA columns come from the GPU job.
+- Published SOTA through the phone line: SSL+AASIST stays the best pooled model (20.97% held-out) but loses
+  11.8 points from clean; AASIST and AASIST-L lose 15.6 points and end up worse than the codec-augmented CPU LCNN.
+- The teacher (fine-tuned from `LA_model.pth` at 8 kHz, dev EER 8.42% to 2.28%) is channel-flat (delta-NB
+  -1.71, best minDCF and best on AMR-NB 4.75k and lossy Opus) but not better overall: its 21.63% held-out EER sits
+  inside SSL+AASIST's interval, because fine-tuning on A01 to A06 cost it unseen attacks (A11: 7.2% to 49.8%).
+  Its dev threshold lets 27% of spoofs through on held-out codecs.
+- Distillation gave no gain: the student scores 34.63% vs 34.42% for `lcnn8_aug` (intervals overlap), so
+  `lcnn8_aug` stays the shipped CPU model.
+- The CPU baselines are weak (official 16 kHz LFCC-GMM: about 8% EER); the codec effect is only readable on the
+  attacks they catch.
 - Streaming is causal (trim and loudness from the received prefix only, identical in batch and WebSocket)
   and reported only on clips with at least t s of speech: LCNN at 2 s, held-out pool, 35.36% vs 33.53% for the
   full clip on the same trials.
@@ -84,13 +97,18 @@ What this shows (and does not):
   independent WebRTC VAD and tighter gates than the trim, is at least 37.0%. An earlier audit was circular
   and EER mishandled ties; both are fixed and documented (`docs/results_v2_audit_ties.md`).
 - Student budget: the LCNN in ONNX runs at RTF 0.0050 on one thread, 170,401 parameters, 143 MB peak RAM.
-  It is a stand-in; `cm/distil.py` trains the distilled student once the teacher exists.
+  The distilled student has the same architecture and budget.
 - Gnani APIs: 5 live calls verified every request/response shape used (Timbre, Prisma REST and realtime
   8 kHz, voice-clone embedding, VC TTS as mu-law); `docs/gnani_api_notes.md`.
 - Consent: clones are made only of the builder's own voice and consenting friends; cloning corpus speakers
   is deferred until Gnani confirms in writing that it is allowed. No cloned clip is published.
 
-PENDING (STATUS.md): SOTA columns (GPU), Indic pilot report, Gnani clone set, teacher and distilled student.
+- Indic pilot (`artifacts/indic_pilot.md`, FLEURS Hindi/Kannada vs IndicSynth FreeVC): the published models
+  and the LCNNs are near chance (45 to 50% EER); the GMM looks better (18 to 33%) but the set fails its shortcut
+  audit (duration alone: 16.6% EER, rule >= 35%), so it supports no model claim. The teacher was not scored on it.
+
+PENDING (STATUS.md): a shortcut-clean Indic set, the Gnani clone set (G1 to G3), replay/injection trials,
+teacher streaming rows, own-voice red team.
 
 ## Repo map
 
@@ -106,7 +124,7 @@ PENDING (STATUS.md): SOTA columns (GPU), Indic pilot report, Gnani clone set, te
 | `cm/aasist_pretrained.py` | pretrained AASIST / AASIST-L as published |
 | `cm/run_baselines.py` | trains and scores every baseline on every condition and streaming horizon |
 | `cm/scorer.py`, `cm/calibrate.py`, `cm/export_onnx.py` | runtime CM (LLR, partial scores), dev calibration, ONNX + RTF/RAM |
-| `cm/teacher/` | XLS-R 300M + AASIST teacher: training + eval scoring loop (CPU smoke test), Modal runner (PENDING GPU) |
+| `cm/teacher/` | XLS-R 300M + AASIST teacher: training + eval scoring loop (CPU smoke test), Modal runner (run 2026-10-24) |
 | `eval/metrics.py`, `eval/protocol.py`, `eval/shortcut_audit.py` | ROCCH EER, minDCF, Cllr, FRR@FAR1; held-out attack/codec rules; shortcut audit |
 | `eval/report.py`, `eval/points.py`, `eval/det.py`, `eval/indic_report.py` | tables, points matrix, DET curves, Indic pilot |
 | `ivr_demo/` | challenge phrases, phrase match, ASV stand-in, fused Armour365 decision, demo (mock or live) |

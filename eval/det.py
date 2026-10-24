@@ -15,7 +15,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 from scipy.stats import norm  # noqa: E402
 
-from eval.report import EIGHT_K_MODELS, HELDOUT, PROC, SCORES  # noqa: E402
+from eval.report import EIGHT_K_MODELS, HELDOUT, PROC, SCORES, score_models  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 TICKS = [0.001, 0.01, 0.05, 0.2, 0.5]
@@ -31,7 +31,7 @@ def det_points(bona: np.ndarray, spoof: np.ndarray) -> tuple[np.ndarray, np.ndar
 
 def main() -> None:
     man = pd.read_csv(PROC / "eval" / "manifest.csv")[["utt_id", "label"]]
-    names = sorted(p.stem for p in SCORES.glob("*.csv") if not p.stem.endswith("_dev"))
+    names = score_models()
     fig, axes = plt.subplots(1, 2, figsize=(11, 5), sharex=True, sharey=True)
     for ax, pool in zip(axes, ("clean", "heldout"), strict=True):
         for n in names:

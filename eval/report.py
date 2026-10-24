@@ -35,6 +35,12 @@ BOOT = 200  # bootstrap resamples per pooled cell
 EIGHT_K_MODELS = {"gmm8_aug", "lcnn8_aug", "lcnn8_noaug", "lcnn8_distil", "teacher"}
 
 
+def score_models() -> list[str]:
+    """Model names with eval scores: every artifacts/scores/<name>.csv except the <name>_dev.csv calibration
+    scores and <name>_train.csv train-pool scores (the teacher's soft targets for cm.distil)."""
+    return sorted(p.stem for p in SCORES.glob("*.csv") if not p.stem.endswith(("_dev", "_train")))
+
+
 def manifest_path(split: str) -> Path:
     """data/proc manifest if the data is built, else the copy committed in release/ (fresh clone)."""
     p = PROC / split / "manifest.csv"
@@ -171,8 +177,8 @@ def to_markdown(res: dict[str, object]) -> str:
 
 def main() -> None:
     man = pd.read_csv(manifest_path("eval"))
-    names = sorted(p.stem for p in SCORES.glob("*.csv") if not p.stem.endswith("_dev"))
-    order = ["aasist", "aasist_l", "ssl_aasist", "teacher", "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug"]
+    names = score_models()
+    order = ["aasist", "aasist_l", "ssl_aasist", "teacher", "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug", "lcnn8_distil"]
     names = [n for n in order if n in names] + [n for n in names if n not in order]
     res: dict[str, object] = {"dcf_params": DCF_PARAMS, "n_eval_bona": int((man.label == "bonafide").sum()),
                               "n_eval_spoof": int((man.label == "spoof").sum()),

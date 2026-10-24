@@ -23,7 +23,8 @@ ROOT = Path(__file__).resolve().parents[1]
 REL = ROOT / "release"
 ART = ROOT / "artifacts"
 PROC = ROOT / "data" / "proc" / "asv19"
-MODEL_FILES = ("cm_student.onnx", "lcnn8_aug.pt", "lcnn8_aug_calibration.json", "lcnn8_aug_history.json", "gmm8_aug.npz")
+MODEL_FILES = ("cm_student.onnx", "lcnn8_aug.pt", "lcnn8_aug_calibration.json", "lcnn8_aug_history.json", "gmm8_aug.npz",
+               "lcnn8_distil.pt", "lcnn8_distil_calibration.json", "lcnn8_distil_history.json")
 PACK_CONDITION, PACK_PER_CLASS = "g711u", 60
 
 

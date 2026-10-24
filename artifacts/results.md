@@ -13,6 +13,9 @@ Metrics: EER %, minDCF (pi_spf=0.05, C_miss=1, C_fa=10), Cllr (bits, dev-calibra
 | ssl_aasist | clean (clean16k) | 9.15 | 8.02 to 10.02 | 0.157 | 1.217 | 0.278 | 0.00 | 20.19 |
 | ssl_aasist | seen | 18.45 | 17.65 to 19.06 | 0.530 | 1.460 | 0.609 | 36.16 | 6.02 |
 | ssl_aasist | heldout | 20.97 | 19.93 to 21.96 | 0.572 | 2.298 | 0.638 | 71.60 | 1.04 |
+| teacher | clean (nb_pcm) | 23.34 | 21.43 to 24.64 | 0.339 | 1.178 | 0.540 | 0.30 | 34.23 |
+| teacher | seen | 24.23 | 22.73 to 25.30 | 0.485 | 1.152 | 0.654 | 9.84 | 31.08 |
+| teacher | heldout | 21.63 | 20.03 to 22.71 | 0.381 | 0.982 | 0.566 | 7.35 | 27.00 |
 | gmm16_clean | clean (clean16k) | 24.10 | 22.49 to 25.53 | 0.553 | 0.740 | 0.663 | 88.50 | 1.35 |
 | gmm16_clean | seen | 41.63 | 40.36 to 43.13 | 0.954 | 3.079 | 0.959 | 100.00 | 0.00 |
 | gmm16_clean | heldout | 44.73 | 43.53 to 45.97 | 0.998 | 3.142 | 0.983 | 100.00 | 0.00 |
@@ -25,6 +28,9 @@ Metrics: EER %, minDCF (pi_spf=0.05, C_miss=1, C_fa=10), Cllr (bits, dev-calibra
 | lcnn8_aug | clean (nb_pcm) | 27.64 | 25.94 to 29.10 | 0.579 | 0.925 | 0.722 | 74.20 | 6.22 |
 | lcnn8_aug | seen | 30.70 | 29.45 to 31.83 | 0.706 | 1.017 | 0.801 | 79.03 | 6.05 |
 | lcnn8_aug | heldout | 34.42 | 33.04 to 35.60 | 0.799 | 0.976 | 0.873 | 92.47 | 1.81 |
+| lcnn8_distil | clean (nb_pcm) | 26.79 | 25.37 to 28.35 | 0.583 | 0.972 | 0.727 | 70.10 | 8.65 |
+| lcnn8_distil | seen | 30.58 | 29.42 to 31.78 | 0.704 | 1.057 | 0.817 | 76.16 | 7.18 |
+| lcnn8_distil | heldout | 34.63 | 33.35 to 35.86 | 0.836 | 1.032 | 0.894 | 91.17 | 2.80 |
 
 ### delta-NB (EER held-out codecs minus EER clean pool, same utterances)
 
@@ -33,48 +39,50 @@ Metrics: EER %, minDCF (pi_spf=0.05, C_miss=1, C_fa=10), Cllr (bits, dev-calibra
 | aasist | +15.57 |
 | aasist_l | +15.56 |
 | ssl_aasist | +11.83 |
+| teacher | -1.71 |
 | gmm16_clean | +20.63 |
 | gmm8_aug | +8.04 |
 | lcnn8_noaug | +15.25 |
 | lcnn8_aug | +6.78 |
+| lcnn8_distil | +7.84 |
 
 ### EER % per channel condition
 
-| condition | aasist | aasist_l | ssl_aasist | gmm16_clean | gmm8_aug | lcnn8_noaug | lcnn8_aug |
-|---|---|---|---|---|---|---|---|
-| amrnb_12k2 | 33.03 | 29.44 | 8.70 | 39.29 | 30.06 | 32.65 | 31.09 |
-| amrnb_4k75 (held-out) | 39.42 | 37.54 | 25.26 | 42.24 | 34.81 | 37.80 | 32.85 |
-| amrnb_7k95 | 34.85 | 31.89 | 13.01 | 41.04 | 30.92 | 34.89 | 31.45 |
-| amrwb_12k65 | 32.94 | 31.04 | 8.83 | 39.41 | 30.49 | 32.97 | 30.71 |
-| chain_amrnb_g711u (held-out) | 37.90 | 34.82 | 19.31 | 45.59 | 34.92 | 40.49 | 33.15 |
-| chain_gsm_g711a_plc2 (held-out) | 42.33 | 37.70 | 22.12 | 45.94 | 32.42 | 42.89 | 36.06 |
-| clean16k | 23.65 | 21.57 | 9.15 | 24.10 | n/a | n/a | n/a |
-| g711a | 34.81 | 32.92 | 10.47 | 43.37 | 28.55 | 30.38 | 27.97 |
-| g711u | 35.01 | 32.94 | 10.74 | 42.92 | 29.05 | 30.23 | 28.15 |
-| g711u_plc5 | 41.85 | 37.64 | 16.52 | 42.78 | 28.72 | 31.66 | 27.23 |
-| gsm_fr (held-out) | 33.51 | 30.08 | 10.22 | 42.35 | 30.41 | 38.98 | 34.29 |
-| nb_pcm | 27.18 | 24.35 | 8.47 | 39.39 | 25.59 | 26.59 | 27.64 |
-| opus_16k | 30.22 | 26.98 | 8.58 | 39.46 | 27.50 | 29.59 | 28.23 |
-| opus_6k_plc3 | 48.47 | 45.32 | 38.14 | 42.21 | 30.95 | 41.59 | 35.53 |
-| opus_8k | 37.27 | 32.38 | 15.50 | 40.02 | 28.09 | 37.36 | 32.02 |
+| condition | aasist | aasist_l | ssl_aasist | teacher | gmm16_clean | gmm8_aug | lcnn8_noaug | lcnn8_aug | lcnn8_distil |
+|---|---|---|---|---|---|---|---|---|---|
+| amrnb_12k2 | 33.03 | 29.44 | 8.70 | 22.20 | 39.29 | 30.06 | 32.65 | 31.09 | 31.13 |
+| amrnb_4k75 (held-out) | 39.42 | 37.54 | 25.26 | 15.93 | 42.24 | 34.81 | 37.80 | 32.85 | 34.35 |
+| amrnb_7k95 | 34.85 | 31.89 | 13.01 | 19.98 | 41.04 | 30.92 | 34.89 | 31.45 | 31.76 |
+| amrwb_12k65 | 32.94 | 31.04 | 8.83 | 20.90 | 39.41 | 30.49 | 32.97 | 30.71 | 30.91 |
+| chain_amrnb_g711u (held-out) | 37.90 | 34.82 | 19.31 | 26.85 | 45.59 | 34.92 | 40.49 | 33.15 | 34.38 |
+| chain_gsm_g711a_plc2 (held-out) | 42.33 | 37.70 | 22.12 | 22.07 | 45.94 | 32.42 | 42.89 | 36.06 | 34.92 |
+| clean16k | 23.65 | 21.57 | 9.15 | n/a | 24.10 | n/a | n/a | n/a | n/a |
+| g711a | 34.81 | 32.92 | 10.47 | 30.83 | 43.37 | 28.55 | 30.38 | 27.97 | 28.49 |
+| g711u | 35.01 | 32.94 | 10.74 | 30.87 | 42.92 | 29.05 | 30.23 | 28.15 | 28.04 |
+| g711u_plc5 | 41.85 | 37.64 | 16.52 | 22.65 | 42.78 | 28.72 | 31.66 | 27.23 | 28.13 |
+| gsm_fr (held-out) | 33.51 | 30.08 | 10.22 | 17.70 | 42.35 | 30.41 | 38.98 | 34.29 | 34.01 |
+| nb_pcm | 27.18 | 24.35 | 8.47 | 23.34 | 39.39 | 25.59 | 26.59 | 27.64 | 26.79 |
+| opus_16k | 30.22 | 26.98 | 8.58 | 23.92 | 39.46 | 27.50 | 29.59 | 28.23 | 28.28 |
+| opus_6k_plc3 | 48.47 | 45.32 | 38.14 | 21.99 | 42.21 | 30.95 | 41.59 | 35.53 | 35.10 |
+| opus_8k | 37.27 | 32.38 | 15.50 | 19.16 | 40.02 | 28.09 | 37.36 | 32.02 | 31.09 |
 
 ### EER % per ASVspoof 2019 eval attack (clean pool / held-out codec pool)
 
-| attack | aasist | aasist_l | ssl_aasist | gmm16_clean | gmm8_aug | lcnn8_noaug | lcnn8_aug |
-|---|---|---|---|---|---|---|---|
-| A07 | 38.76 / 42.20 | 34.93 / 42.19 | 3.68 / 24.45 | 26.33 / 47.58 | 39.01 / 41.54 | 45.87 / 49.35 | 46.84 / 47.30 |
-| A08 | 1.66 / 11.25 | 2.13 / 15.35 | 0.76 / 17.68 | 4.14 / 45.61 | 2.21 / 12.68 | 1.14 / 38.63 | 2.12 / 18.86 |
-| A09 | 0.28 / 12.71 | 0.54 / 12.35 | 0.00 / 15.18 | 1.98 / 36.13 | 0.09 / 7.69 | 0.47 / 31.66 | 0.22 / 9.78 |
-| A10 | 47.40 / 48.62 | 47.64 / 48.87 | 36.05 / 39.77 | 36.33 / 47.55 | 44.78 / 47.33 | 44.95 / 45.72 | 45.05 / 45.56 |
-| A11 | 18.16 / 35.97 | 9.94 / 31.98 | 7.16 / 27.74 | 1.84 / 34.83 | 15.35 / 36.87 | 26.27 / 41.96 | 34.26 / 41.66 |
-| A12 | 42.52 / 47.92 | 45.10 / 48.15 | 15.76 / 27.36 | 41.08 / 49.35 | 40.69 / 49.29 | 37.94 / 45.71 | 38.88 / 46.75 |
-| A13 | 19.54 / 48.09 | 20.19 / 47.13 | 0.00 / 11.63 | 31.35 / 45.96 | 10.34 / 24.59 | 19.87 / 38.61 | 15.47 / 25.12 |
-| A14 | 7.28 / 22.16 | 3.09 / 19.29 | 0.34 / 20.40 | 12.65 / 45.34 | 17.86 / 27.90 | 26.10 / 49.85 | 22.81 / 38.78 |
-| A15 | 33.43 / 35.29 | 24.19 / 34.73 | 10.13 / 23.69 | 4.22 / 47.58 | 16.18 / 24.05 | 16.59 / 47.69 | 18.72 / 33.04 |
-| A16 | 13.72 / 39.16 | 17.50 / 42.11 | 1.19 / 16.89 | 39.33 / 49.91 | 44.01 / 45.42 | 44.60 / 46.68 | 38.16 / 44.48 |
-| A17 | 15.75 / 45.02 | 11.30 / 39.41 | 0.83 / 11.26 | 5.14 / 32.92 | 4.79 / 19.30 | 7.02 / 33.62 | 4.84 / 19.00 |
-| A18 | 11.51 / 27.54 | 10.70 / 24.16 | 1.65 / 12.26 | 30.36 / 41.27 | 20.43 / 30.93 | 16.31 / 30.50 | 26.96 / 33.86 |
-| A19 | 18.28 / 48.00 | 14.84 / 44.56 | 4.57 / 10.05 | 14.81 / 41.36 | 28.83 / 41.43 | 10.08 / 28.04 | 11.82 / 19.48 |
+| attack | aasist | aasist_l | ssl_aasist | teacher | gmm16_clean | gmm8_aug | lcnn8_noaug | lcnn8_aug | lcnn8_distil |
+|---|---|---|---|---|---|---|---|---|---|
+| A07 | 38.76 / 42.20 | 34.93 / 42.19 | 3.68 / 24.45 | 27.50 / 26.26 | 26.33 / 47.58 | 39.01 / 41.54 | 45.87 / 49.35 | 46.84 / 47.30 | 46.08 / 48.61 |
+| A08 | 1.66 / 11.25 | 2.13 / 15.35 | 0.76 / 17.68 | 5.85 / 6.96 | 4.14 / 45.61 | 2.21 / 12.68 | 1.14 / 38.63 | 2.12 / 18.86 | 3.71 / 21.19 |
+| A09 | 0.28 / 12.71 | 0.54 / 12.35 | 0.00 / 15.18 | 0.22 / 1.98 | 1.98 / 36.13 | 0.09 / 7.69 | 0.47 / 31.66 | 0.22 / 9.78 | 0.96 / 14.87 |
+| A10 | 47.40 / 48.62 | 47.64 / 48.87 | 36.05 / 39.77 | 49.72 / 48.64 | 36.33 / 47.55 | 44.78 / 47.33 | 44.95 / 45.72 | 45.05 / 45.56 | 40.63 / 46.06 |
+| A11 | 18.16 / 35.97 | 9.94 / 31.98 | 7.16 / 27.74 | 49.84 / 49.67 | 1.84 / 34.83 | 15.35 / 36.87 | 26.27 / 41.96 | 34.26 / 41.66 | 36.19 / 45.42 |
+| A12 | 42.52 / 47.92 | 45.10 / 48.15 | 15.76 / 27.36 | 35.88 / 29.83 | 41.08 / 49.35 | 40.69 / 49.29 | 37.94 / 45.71 | 38.88 / 46.75 | 36.52 / 45.82 |
+| A13 | 19.54 / 48.09 | 20.19 / 47.13 | 0.00 / 11.63 | 0.16 / 2.49 | 31.35 / 45.96 | 10.34 / 24.59 | 19.87 / 38.61 | 15.47 / 25.12 | 13.69 / 21.66 |
+| A14 | 7.28 / 22.16 | 3.09 / 19.29 | 0.34 / 20.40 | 15.65 / 13.64 | 12.65 / 45.34 | 17.86 / 27.90 | 26.10 / 49.85 | 22.81 / 38.78 | 29.59 / 40.82 |
+| A15 | 33.43 / 35.29 | 24.19 / 34.73 | 10.13 / 23.69 | 35.24 / 25.49 | 4.22 / 47.58 | 16.18 / 24.05 | 16.59 / 47.69 | 18.72 / 33.04 | 18.93 / 32.26 |
+| A16 | 13.72 / 39.16 | 17.50 / 42.11 | 1.19 / 16.89 | 0.75 / 6.43 | 39.33 / 49.91 | 44.01 / 45.42 | 44.60 / 46.68 | 38.16 / 44.48 | 35.28 / 41.95 |
+| A17 | 15.75 / 45.02 | 11.30 / 39.41 | 0.83 / 11.26 | 0.82 / 5.81 | 5.14 / 32.92 | 4.79 / 19.30 | 7.02 / 33.62 | 4.84 / 19.00 | 3.42 / 17.16 |
+| A18 | 11.51 / 27.54 | 10.70 / 24.16 | 1.65 / 12.26 | 5.73 / 8.68 | 30.36 / 41.27 | 20.43 / 30.93 | 16.31 / 30.50 | 26.96 / 33.86 | 25.38 / 32.47 |
+| A19 | 18.28 / 48.00 | 14.84 / 44.56 | 4.57 / 10.05 | 0.09 / 1.33 | 14.81 / 41.36 | 28.83 / 41.43 | 10.08 / 28.04 | 11.82 / 19.48 | 7.87 / 19.39 |
 
 ### Streaming EER % (causal: decision on the first t s of received audio, trim and loudness from that prefix only)
 
@@ -88,6 +96,9 @@ Only clips with at least t s of trimmed speech; in brackets the full-clip EER on
 | lcnn8_aug | 1s | 934 / 1483 | 32.97 (27.68) | 36.89 (30.72) | 39.41 (34.39) |
 | lcnn8_aug | 2s | 346 / 852 | 29.59 (27.66) | 32.56 (30.59) | 35.36 (33.53) |
 | lcnn8_aug | 4s (too few bona fide to read) | 4 / 184 | 19.34 (14.61) | 20.68 (16.23) | 17.18 (9.84) |
+| lcnn8_distil | 1s | 934 / 1483 | 32.52 (26.74) | 36.47 (30.57) | 39.67 (34.63) |
+| lcnn8_distil | 2s | 346 / 852 | 29.20 (26.88) | 32.74 (30.83) | 35.86 (34.27) |
+| lcnn8_distil | 4s (too few bona fide to read) | 4 / 184 | 24.43 (18.44) | 24.99 (20.26) | 20.44 (17.45) |
 
 ### Shortcut audit (single-cue classifiers, direction fixed on dev; rule: must be >= 35% EER)
 
@@ -119,9 +130,9 @@ Only clips with at least t s of trimmed speech; in brackets the full-clip EER on
 |---|---|---|---|---|
 | Unseen-Indic EER (G2+G3 after channel) | 25 | PENDING | n/a | G1/G3 from Timbre stock voices + the builder's own consented voice; Kathbath-speaker cloning DEFERRED (consent) |
 | Pooled narrowband EER and delta-NB, held-out codecs | 15 | MEASURED (ASVspoof 2019 LA proxy) | ssl_aasist: 20.97%, delta-NB +11.83 pts | English VCTK-based proxy, not Indic |
-| FRR@FAR1, dev-fixed threshold | 10 | MEASURED (proxy) | ssl_aasist: 71.60% on held-out codecs | threshold fixed on dev, never retuned |
+| FRR@FAR1, dev-fixed threshold | 10 | MEASURED (proxy) | teacher: 7.35% on held-out codecs | threshold fixed on dev, never retuned |
 | Streaming EER at 2.0 s | 10 | MEASURED (proxy) | gmm8_aug: 34.28% held-out pool | causal prefix scoring, clips with >= 2 s of trimmed speech only (346 bona fide in the clean pool) |
-| Student efficiency (RTF, params, RAM) | 10 | MEASURED (inside budget) | lcnn8_aug: RTF 0.0050, 170,401 params, 143 MB | LFCC-LCNN stands in for the distilled student until the teacher is trained |
+| Student efficiency (RTF, params, RAM) | 10 | MEASURED (inside budget) | lcnn8_aug: RTF 0.0050, 170,401 params, 143 MB | measured on lcnn8_aug (shipped); the distilled lcnn8_distil has the same architecture and budget and does not improve on it on held-out codecs (34.63% vs 34.42% EER) |
 | End-to-end flow: ASR <= 5%, genuine >= 90% | 10 | PARTIAL (CM gate only, English proxy) | g711u @ far1: genuine 32.5%, attack 11.0%; g711u @ min_dcf: genuine 88.5%, attack 62.5%; g711u @ eer: genuine 84.5%, attack 49.0%; amrnb_4k75 @ far1: genuine 4.5%, attack 1.0%; amrnb_4k75 @ min_dcf: genuine 75.5%, attack 55.5%; amrnb_4k75 @ eer: genuine 57.5%, attack 33.5% | python -m ivr_demo.trials: real ASVspoof clips through verify(), echo STT, identity gate bypassed; Gnani-clone trials PENDING |
 | Replay / injection detection (G5, G6 EER) | 5 | PENDING | n/a | G5 simulator in factory/replay_sim.py; G6 needs G2 audio |
 | Rigor: shortcut audit, ablations, failure analysis, ITW / 2021 LA | 10 | PARTIAL | shortcut audit passes; codec-aug ablation done | failure cases, In-the-Wild and 2021 LA sanity checks pending |

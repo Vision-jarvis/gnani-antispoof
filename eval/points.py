@@ -41,6 +41,15 @@ def ivr_trials() -> tuple[str, str]:
         f"{r['source'].split()[-1]} @ {r['operating_point']}: genuine {r['genuine_success_pct']}%, attack {r['attack_success_pct']}%" for r in rows)
 
 
+def student_note(models: dict[str, Any]) -> str:
+    if "lcnn8_distil" not in models or "lcnn8_aug" not in models:
+        return "LFCC-LCNN (lcnn8_aug) stands in for the distilled student until python -m cm.distil has run"
+    d, a = (models[n]["pools"]["heldout"]["eer"] for n in ("lcnn8_distil", "lcnn8_aug"))
+    verdict = "improves on" if d < a else "does not improve on"
+    return (f"measured on lcnn8_aug (shipped); the distilled lcnn8_distil has the same architecture and budget and "
+            f"{verdict} it on held-out codecs ({100 * d:.2f}% vs {100 * a:.2f}% EER)")
+
+
 def points_matrix(res: dict[str, Any]) -> list[dict[str, Any]]:
     models: dict[str, Any] = res["models"]
     ho = _best(models, lambda m: m["pools"]["heldout"]["eer"])
@@ -60,7 +69,7 @@ def points_matrix(res: dict[str, Any]) -> list[dict[str, Any]]:
          "value": f"{st[0]}: {pct(st[1])} held-out pool" if st else "n/a",
          "note": "causal prefix scoring, clips with >= 2 s of trimmed speech only (346 bona fide in the clean pool)"},
         {"kpi": "Student efficiency (RTF, params, RAM)", "weight": 10, "status": eff_status, "value": eff_value,
-         "note": "LFCC-LCNN stands in for the distilled student until the teacher is trained"},
+         "note": student_note(models)},
         {"kpi": "End-to-end flow: ASR <= 5%, genuine >= 90%", "weight": 10, "status": ivr_trials()[0], "value": ivr_trials()[1],
          "note": "python -m ivr_demo.trials: real ASVspoof clips through verify(), echo STT, identity gate bypassed; Gnani-clone trials PENDING"},
         {"kpi": "Replay / injection detection (G5, G6 EER)", "weight": 5, "status": "PENDING", "value": "n/a",

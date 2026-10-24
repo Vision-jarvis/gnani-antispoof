@@ -80,11 +80,11 @@ def wav_trials(bona_dir: Path, spoof_dir: Path) -> list[tuple[str, str, np.ndarr
     return out
 
 
-def run(trials: list[tuple[str, str, np.ndarray]], source: str, ops: tuple[str, ...]) -> list[dict[str, object]]:
+def run(trials: list[tuple[str, str, np.ndarray]], source: str, ops: tuple[str, ...], model: str = "lcnn8_aug") -> list[dict[str, object]]:
     asv = BypassASV()
     rows = []
     for op in ops:
-        cm = CMScorer.load(operating_point=op)
+        cm = CMScorer.load(model, operating_point=op)
         res = []
         for i, (u, label, x) in enumerate(trials):
             ch = new_challenge("hi-IN", seed=i)
@@ -114,16 +114,21 @@ def main() -> None:
     ap.add_argument("--spoof-dir", type=Path)
     ap.add_argument("--tag", default="asvspoof")
     ap.add_argument("--pack", action="store_true", help="use the committed 60 + 60 clip G.711 pack in release/demo_pack")
+    ap.add_argument("--model", default="lcnn8_aug", help="CM checkpoint name in artifacts/models (needs <name>_calibration.json)")
     a = ap.parse_args()
     ops = tuple(a.operating_points)
     if a.pack:
         pack = ROOT / "release" / "demo_pack"
-        rows = run(asvspoof_trials("g711u", 60, a.seed, pack), "ASVspoof19 eval g711u (release pack)", ops)
+        rows = run(asvspoof_trials("g711u", 60, a.seed, pack), "ASVspoof19 eval g711u (release pack)", ops, a.model)
         a.tag = "pack"
     elif a.bona_dir and a.spoof_dir:
-        rows = run(wav_trials(a.bona_dir, a.spoof_dir), f"wav:{a.bona_dir.name} vs {a.spoof_dir.name}", ops)
+        rows = run(wav_trials(a.bona_dir, a.spoof_dir), f"wav:{a.bona_dir.name} vs {a.spoof_dir.name}", ops, a.model)
     else:
-        rows = [r for c in a.conditions for r in run(asvspoof_trials(c, a.n, a.seed), f"ASVspoof19 eval {c}", ops)]
+        rows = [r for c in a.conditions for r in run(asvspoof_trials(c, a.n, a.seed), f"ASVspoof19 eval {c}", ops, a.model)]
+    if a.model != "lcnn8_aug":
+        a.tag = f"{a.tag}_{a.model}"
+        for r in rows:
+            r["model"] = a.model
     OUT.parent.mkdir(parents=True, exist_ok=True)
     Path(f"{OUT}_{a.tag}.json").write_text(json.dumps(rows, indent=2))
     md = ["# IVR flow on real audio, CM gate only (echo STT, identity gate bypassed)", "",

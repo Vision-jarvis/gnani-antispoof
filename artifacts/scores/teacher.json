@@ -1,0 +1,63 @@
+{
+  "model": "teacher",
+  "front_end": "facebook/wav2vec2-xls-r-300m",
+  "back_end": "AASIST (TakHemlata/SSL_Anti-spoofing)",
+  "init": "LA_model.pth",
+  "lr": 1e-06,
+  "head_lr": 1e-06,
+  "class_weights": [
+    0.5,
+    0.5
+  ],
+  "best_epoch": 9,
+  "history": [
+    {
+      "epoch": -1,
+      "dev_eer": 0.08421108291032149
+    },
+    {
+      "epoch": 0,
+      "dev_eer": 0.054345549738219895
+    },
+    {
+      "epoch": 1,
+      "dev_eer": 0.04945426762715565
+    },
+    {
+      "epoch": 2,
+      "dev_eer": 0.046311849552674825
+    },
+    {
+      "epoch": 3,
+      "dev_eer": 0.041643816835755416
+    },
+    {
+      "epoch": 4,
+      "dev_eer": 0.03829715631835773
+    },
+    {
+      "epoch": 5,
+      "dev_eer": 0.032792207792207796
+    },
+    {
+      "epoch": 6,
+      "dev_eer": 0.031807580174927116
+    },
+    {
+      "epoch": 7,
+      "dev_eer": 0.022980182926829268
+    },
+    {
+      "epoch": 8,
+      "dev_eer": 0.024752475247524754
+    },
+    {
+      "epoch": 9,
+      "dev_eer": 0.02276214833759591
+    }
+  ],
+  "n_train": 10320,
+  "device": "cuda",
+  "wall_hours": 0.5200399225287967,
+  "smoke": false
+}

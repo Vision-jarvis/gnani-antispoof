@@ -1,0 +1,8 @@
+{"source": "ASVspoof19 eval g711u", "operating_point": "far1", "tau_llr": 3.365, "n_bona": 200, "n_spoof": 200, "genuine_success_pct": 35.5, "attack_success_pct": 9.0, "short_audio": 29, "median_latency_ms": 38.4}
+{"source": "ASVspoof19 eval g711u", "operating_point": "min_dcf", "tau_llr": -1.044, "n_bona": 200, "n_spoof": 200, "genuine_success_pct": 89.0, "attack_success_pct": 61.5, "short_audio": 29, "median_latency_ms": 38.4}
+{"source": "ASVspoof19 eval g711u", "operating_point": "eer", "tau_llr": 0.113, "n_bona": 200, "n_spoof": 200, "genuine_success_pct": 86.5, "attack_success_pct": 49.0, "short_audio": 29, "median_latency_ms": 37.0}
+{"source": "ASVspoof19 eval amrnb_4k75", "operating_point": "far1", "tau_llr": 3.365, "n_bona": 200, "n_spoof": 200, "genuine_success_pct": 5.0, "attack_success_pct": 2.0, "short_audio": 33, "median_latency_ms": 36.1}
+{"source": "ASVspoof19 eval amrnb_4k75", "operating_point": "min_dcf", "tau_llr": -1.044, "n_bona": 200, "n_spoof": 200, "genuine_success_pct": 76.5, "attack_success_pct": 50.0, "short_audio": 33, "median_latency_ms": 33.9}
+{"source": "ASVspoof19 eval amrnb_4k75", "operating_point": "eer", "tau_llr": 0.113, "n_bona": 200, "n_spoof": 200, "genuine_success_pct": 56.5, "attack_success_pct": 29.5, "short_audio": 33, "median_latency_ms": 38.5}
+DONE
+done
