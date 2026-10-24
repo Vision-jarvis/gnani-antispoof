@@ -57,17 +57,37 @@ def train(epochs: int = 20, patience: int = 4, eval: str = "all") -> float:
     subprocess.run(["python", "-m", "cm.teacher.train", "--device", "cuda", "--epochs", str(epochs), "--out", "/vol/artifacts_teacher_v2",
                     "--patience", str(patience), "--eval", eval],
                    cwd="/repo", check=True, env={**os.environ, "CM_THREADS": "8"})
-    volume.commit()
-    return (time.time() - t0) / 3600
-
-
-@app.local_entrypoint()
-def main(epochs: int = 20, patience: int = 4, eval: str = "all") -> None:
-    hours = train.remote(epochs, patience, eval)
+    hours = (time.time() - t0) / 3600
     cost = {"gpu": GPU, "epochs_max": epochs, "wall_hours": round(hours, 3), "usd": round(hours * PRICE_PER_H, 2)}
-    print(f"teacher done: {cost}")
+    Path("/vol/artifacts_teacher_v2/teacher_cost.json").write_text(json.dumps(cost, indent=2))
+    volume.commit()
+    return hours
+
+
+def _fetch(eval: str) -> None:
+    """Copy the teacher's scores, weights and cost from the volume into artifacts/."""
     for f in ("teacher.csv", "teacher_dev.csv", "teacher_train.csv", "teacher.json")[eval == "none":]:
         subprocess.run(["modal", "volume", "get", "--force", "gnani-cm-data", f"/artifacts_teacher_v2/scores/{f}", f"artifacts/scores/{f}"], check=True)
     subprocess.run(["modal", "volume", "get", "--force", "gnani-cm-data", "/artifacts_teacher_v2/models/teacher_ssl_aasist_8k.pt",
                     "artifacts/models/teacher_ssl_aasist_8k.pt"], check=True)
-    Path("artifacts/scores/teacher_cost.json").write_text(json.dumps(cost, indent=2))
+    subprocess.run(["modal", "volume", "get", "--force", "gnani-cm-data", "/artifacts_teacher_v2/teacher_cost.json",
+                    "artifacts/scores/teacher_cost.json"], check=True)
+
+
+@app.local_entrypoint()
+def main(epochs: int = 20, patience: int = 4, eval: str = "all", wait: bool = False) -> None:
+    """Spawn the training call so it survives a dropped local connection (run with `modal run --detach`).
+
+    Results land on the volume; fetch them later with `modal run cm/teacher/modal_train.py::fetch`.
+    `--wait` blocks until done and fetches (only on a stable connection)."""
+    call = train.spawn(epochs, patience, eval)
+    print(f"teacher spawned: call id {call.object_id}; fetch later with: modal run cm/teacher/modal_train.py::fetch --eval {eval}")
+    if wait:
+        call.get()
+        _fetch(eval)
+
+
+@app.local_entrypoint()
+def fetch(eval: str = "all") -> None:
+    _fetch(eval)
+    print("teacher artifacts fetched:", Path("artifacts/scores/teacher_cost.json").read_text())
