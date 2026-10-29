@@ -20,3 +20,4 @@ uvicorn==0.54.0
 websockets==17.2
 tabulate==0.10.0
 webrtcvad-wheels==2.0.14.post1  # independent VAD for the shortcut audit
+matplotlib==3.11.2  # DET curves (eval/det.py) and the own-voice chart (scripts/day30_outputs.py)

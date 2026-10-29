@@ -7,34 +7,45 @@ my machine, and can walk through any module.
 A countermeasure (CM) stack for catching TTS and voice-conversion clones after the audio has gone
 through an 8 kHz phone line, plus a random-phrase voice-auth IVR flow built on Gnani Prisma STT and
 Timbre TTS that returns Armour365's decision codes. Built for the Great Indian AI Internship Challenge.
+
+**Headline** (from `artifacts/results.md`). On four phone codecs held out from training, the published SSL+AASIST
+reaches 20.97% EER and the same model fine-tuned here at 8 kHz with codec augmentation 21.63% (the intervals
+overlap), but the fine-tune is the only channel-flat model (delta-NB -1.71 points) and has the best minDCF (0.381).
+At the dev FAR 1% threshold the published AASIST and AASIST-L reject 92 to 97% of genuine callers on those codecs.
+The small CPU models sit at about 34% EER, and distilling the fine-tune into one gave no gain.
+
+- **English proxy:** every number above is ASVspoof 2019 LA (English) through simulated codecs, not real calls.
+- **No Indic claim:** the one Indic set (FLEURS vs IndicSynth) fails its own shortcut audit (clip duration alone
+  separates real from fake at 16.6% EER), so it supports no model ranking.
+- **Links:** demo Space (the small CPU model; upload a clip, pick a codec):
+  https://huggingface.co/spaces/rhansri/gnani-antispoof-demo ; full write-up: [REPORT.md](REPORT.md) ;
+  what is done and pending: [STATUS.md](STATUS.md).
+
 The LFCC models, the distilled student and every table ran on CPU; the published SOTA models and the
 XLS-R teacher ran on Modal GPUs (about $9.58 in total, REPORT.md section 8).
 
 ## Quickstart (Windows, PowerShell)
 
 ```powershell
-.
-un.ps1 setup        # .venv, CPU torch, requirements, clones clovaai/aasist and SSL_Anti-spoofing into third_party/
-.
-un.ps1 quick        # under 5 minutes: unit tests + teacher smoke + IVR demo (real clips) + tables, works on a fresh clone via release/
-.
-un.ps1 trials       # IVR flow on real ASVspoof clips at the dev-fixed operating points
-.
-un.ps1 report       # rebuild artifacts/results.md (restores release/ first on a fresh clone)
-.
-un.ps1 pipeline     # full CPU pipeline from raw data (hours; resumable)
-.
-un.ps1 serve        # FastAPI on :8000 (/v1/cm/score, WS /v1/cm/stream, /v1/auth/*)
-.
-un.ps1 gpu-pretrained   # Modal: AASIST, AASIST-L, SSL+AASIST on every condition (about $1, cap $2.84)
-.
-un.ps1 gpu-teacher      # Modal: XLS-R + AASIST teacher at 8 kHz (about $4 to $6.50, cap $15.50)
+.\run.ps1 setup        # .venv, CPU torch, requirements, clones clovaai/aasist and SSL_Anti-spoofing into third_party/
+.\run.ps1 quick        # under 5 minutes: unit tests + teacher smoke + IVR demo (real clips) + tables, works on a fresh clone via release/
+.\run.ps1 trials       # IVR flow on real ASVspoof clips at the dev-fixed operating points
+.\run.ps1 report       # rebuild artifacts/results.md (restores release/ first on a fresh clone)
+.\run.ps1 pipeline     # full CPU pipeline from raw data (hours; resumable)
+.\run.ps1 serve        # FastAPI on :8000 (/v1/cm/score, WS /v1/cm/stream, /v1/auth/*)
+.\run.ps1 gpu-pretrained   # Modal: AASIST, AASIST-L, SSL+AASIST on every condition (about $1, cap $2.84)
+.\run.ps1 gpu-teacher      # Modal: XLS-R + AASIST teacher at 8 kHz (about $4 to $6.50, cap $15.50)
 ```
 `release/` (14.5 MB, committed) holds the trained CPU models, calibration, gzipped scores (GPU rows included), manifests and a
 120-clip G.711 eval pack, so a fresh clone reproduces `artifacts/results.md` exactly. Raw data:
 `bash scripts/download_data.sh`; gated sets in `data/README.md`; licences in `DATA.md`. The Gnani key is
-read from `.env` (git-ignored). No test touches the network; `.
-un.ps1 live-test` makes 2 real calls.
+read from `.env` (git-ignored). No test touches the network; `.\run.ps1 live-test` makes 2 real calls.
+
+Licences: code MIT (`LICENSE`). The manifests and the 120-clip pack in `release/` are ASVspoof 2019 LA data,
+redistributed under ODC-By 1.0 (ASVspoof 2019 LA, Wang et al. 2020, University of Edinburgh); the models in
+`release/models/` were trained on it here. clovaai/aasist and TakHemlata/SSL_Anti-spoofing (both MIT) are cloned
+into `third_party/` at setup, not vendored. No Kathbath, IndicVoices, IndicSynth, MLAAD or Gnani audio, and no
+recording or clone of anyone's voice, is in this repo (`DATA.md`).
 
 ## Results so far (real runs in this repo)
 
@@ -140,6 +151,8 @@ teacher streaming rows, own-voice red team.
 | `docs/gnani_api_notes.md` | live-verified API shapes and where they differ from the docs |
 | `cm/score_pretrained.py`, `cm/ssl_pretrained.py`, `cm/modal_pretrained.py` | published SOTA scoring (fairseq-free SSL+AASIST loader), Modal job |
 | `cm/distil.py`, `cm/release.py`, `ivr_demo/trials.py` | distilled student, committed release slice, IVR trials on real audio |
+| `docs/RECORDING.md`, `scripts/prep_own_voice.py`, `factory/manifests/own_voice_takes.csv` | own-voice red team: what to record, the converter (any recorder format to mono 16/8 kHz, -23 LUFS, checks) and trial sets through G.711 / AMR-NB |
+| `cm/teacher/score_folder.py`, `ivr_demo/phrase_check.py`, `scripts/day30_outputs.py`, `docs/DEMO_RUNBOOK.md` | teacher scoring of own-voice trials (Modal or CPU), Prisma v2.5 vs v3.0 phrase check, run summary and chart, the live-run sheet |
 | `STATUS.md`, `UNDERSTAND.md`, `REPORT.md`, `MODEL_CARD.md`, `DATA_CARD.md`, `DATA.md` | status per critique finding and challenge checklist, interview prep, report, cards, licences |
 
 Layout note: the statement's `gnani-armour-cm/` deliverable tree maps onto this repo as `factory/`,

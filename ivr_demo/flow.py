@@ -57,13 +57,21 @@ def prompt_audio(client: GnaniClient, challenge: Challenge, voice: str) -> np.nd
 
 
 def prisma_stt(api_key: str | None = None, **kwargs: object) -> SttFn:
-    """Realtime Prisma STT at 8 kHz as an ``SttFn``; extra kwargs go to ``stt_stream`` (e.g. a mock connect)."""
+    """Realtime Prisma STT at 8 kHz as an ``SttFn``; extra kwargs go to ``stt_stream`` (e.g. a mock connect).
+
+    ``run.stats`` keeps the last session's ``final_delay_s`` (end of caller audio to the last transcript, the
+    server VAD silence window included) and ``segments``, so the demo can report Prisma's share of the latency.
+    """
     from gnani_api.stream import IVR_VAD_8K, stt_stream
 
+    stats: dict[str, float] = {}
+
     async def run(pcm16: bytes, language: str) -> str:
-        transcripts, _ = await stt_stream(pcm16, language_code=language, api_key=api_key, sample_rate=SR, vad=IVR_VAD_8K, **kwargs)  # type: ignore[arg-type]
+        transcripts, delay = await stt_stream(pcm16, language_code=language, api_key=api_key, sample_rate=SR, vad=IVR_VAD_8K, **kwargs)  # type: ignore[arg-type]
+        stats.update(final_delay_s=float(delay), segments=float(len(transcripts)))
         return " ".join(t.text for t in transcripts)
 
+    run.stats = stats  # type: ignore[attr-defined]
     return run
 
 

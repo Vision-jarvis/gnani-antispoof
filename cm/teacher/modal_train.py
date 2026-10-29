@@ -130,3 +130,45 @@ def indic_fetch() -> None:
                      ("/artifacts_teacher_v2/teacher_indic_cost.json", "artifacts/scores/teacher_indic_cost.json")):
         subprocess.run(["modal", "volume", "get", "--force", "gnani-cm-data", src, dst], check=True)
     print("teacher indic scores fetched:", Path("artifacts/scores/teacher_indic_cost.json").read_text())
+
+
+# ---------------------------------------------------------------------------------------------
+# Own-voice red team (cm/teacher/score_folder.py): the builder's genuine takes and their Gnani clones through
+# G.711 and AMR-NB 4.75k (scripts/prep_own_voice.py trialsets), scored by the best checkpoint on the volume.
+# The WAVs are uploaded explicitly (the image never ships data/), and deleted from the volume afterwards:
+#   modal volume put gnani-cm-data data/own_voice/trials /ownvoice/trials --force   # 8 kHz WAVs, a few MB
+#   modal run --detach cm/teacher/modal_train.py::ownvoice_main                     # spawns and returns
+#   modal run cm/teacher/modal_train.py::ownvoice_fetch                             # -> artifacts/ownvoice_teacher_scores.csv
+#   modal volume rm -r gnani-cm-data /ownvoice
+OWNVOICE_TIMEOUT_MIN = 20  # expected about 5 min (start-up and model load dominate); caps the worst case at about $0.47
+
+
+@app.function(gpu=INDIC_GPU, cpu=4, memory=16384, image=image, volumes={"/vol": volume}, timeout=OWNVOICE_TIMEOUT_MIN * 60)
+def score_ownvoice() -> float:
+    t0 = time.time()
+    if not Path("/vol/ownvoice/trials").is_dir():
+        raise RuntimeError("no /vol/ownvoice/trials: upload first (modal volume put gnani-cm-data data/own_voice/trials /ownvoice/trials)")
+    subprocess.run("ln -sfn /opt/third_party /repo/third_party", shell=True, check=True)
+    subprocess.run(["python", "-m", "cm.teacher.score_folder", "--device", "cuda", "--root", "/vol/ownvoice/trials",
+                    "--ckpt", "/vol/artifacts_teacher_v2/models/teacher_ssl_aasist_8k.pt",
+                    "--out", "/vol/artifacts_teacher_v2/scores/ownvoice_teacher_scores.csv"],
+                   cwd="/repo", check=True, env={**os.environ, "CM_THREADS": "4"})
+    hours = (time.time() - t0) / 3600
+    cost = {"gpu": INDIC_GPU, "wall_hours": round(hours, 3), "usd": round(hours * INDIC_PRICE_PER_H, 2)}
+    Path("/vol/artifacts_teacher_v2/teacher_ownvoice_cost.json").write_text(json.dumps(cost, indent=2))
+    volume.commit()
+    return hours
+
+
+@app.local_entrypoint()
+def ownvoice_main() -> None:
+    call = score_ownvoice.spawn()
+    print(f"teacher own-voice scoring spawned: call id {call.object_id}; fetch later with: modal run cm/teacher/modal_train.py::ownvoice_fetch")
+
+
+@app.local_entrypoint()
+def ownvoice_fetch() -> None:
+    for src, dst in (("/artifacts_teacher_v2/scores/ownvoice_teacher_scores.csv", "artifacts/ownvoice_teacher_scores.csv"),
+                     ("/artifacts_teacher_v2/teacher_ownvoice_cost.json", "artifacts/scores/teacher_ownvoice_cost.json")):
+        subprocess.run(["modal", "volume", "get", "--force", "gnani-cm-data", src, dst], check=True)
+    print("teacher own-voice scores fetched:", Path("artifacts/scores/teacher_ownvoice_cost.json").read_text())

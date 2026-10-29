@@ -13,6 +13,11 @@ What is and is not measured: the CM gate is real. The phrase check uses an echo 
 the challenge phrase), and the identity gate is bypassed because the ASV stand-in is not a speaker verifier
 (ECAPA is PENDING), so these numbers are the CM's contribution to the end-to-end KPI, nothing more.
 Usage: python -m ivr_demo.trials --conditions g711u amrnb_4k75 --n 200
+Own voice: python -m ivr_demo.trials --bona-dir data/own_voice/trials/g711u/bona --spoof-dir data/own_voice/trials/g711u/spoof --tag ownvoice_g711u
+Outputs: <out-dir>/ivr_trials_<tag>.json and .md (rates per operating point) and, for --bona-dir runs,
+<out-dir>/ivr_trials_<tag>_scores.csv (one row per trial: utt_id, label, cm_llr, the DecisionCode at each point).
+``--out-dir`` defaults to artifacts/; a rehearsal on stand-in audio must point it elsewhere so stand-in numbers
+never land in artifacts/.
 """
 
 from __future__ import annotations
@@ -80,7 +85,8 @@ def wav_trials(bona_dir: Path, spoof_dir: Path) -> list[tuple[str, str, np.ndarr
     return out
 
 
-def run(trials: list[tuple[str, str, np.ndarray]], source: str, ops: tuple[str, ...], model: str = "lcnn8_aug") -> list[dict[str, object]]:
+def run(trials: list[tuple[str, str, np.ndarray]], source: str, ops: tuple[str, ...], model: str = "lcnn8_aug",
+        per_trial: dict[str, pd.DataFrame] | None = None) -> list[dict[str, object]]:
     asv = BypassASV()
     rows = []
     for op in ops:
@@ -89,8 +95,11 @@ def run(trials: list[tuple[str, str, np.ndarray]], source: str, ops: tuple[str, 
         for i, (u, label, x) in enumerate(trials):
             ch = new_challenge("hi-IN", seed=i)
             r = verify(x, ch, asv.embed(x), cm, asv, echo_stt(ch))
-            res.append({"utt_id": u, "label": label, "DecisionCode": r.DecisionCode, "reason": r.reason, "latency_ms": r.latency_ms})
+            res.append({"utt_id": u, "label": label, "DecisionCode": r.DecisionCode, "reason": r.reason, "latency_ms": r.latency_ms,
+                        "cm_llr": r.cm_llr})
         df = pd.DataFrame(res)
+        if per_trial is not None:
+            per_trial[op] = df
         bona, spoof = df[df.label == "bonafide"], df[df.label == "spoof"]
         rows.append({
             "source": source, "operating_point": op, "tau_llr": round(cm.tau, 3),
@@ -115,26 +124,36 @@ def main() -> None:
     ap.add_argument("--tag", default="asvspoof")
     ap.add_argument("--pack", action="store_true", help="use the committed 60 + 60 clip G.711 pack in release/demo_pack")
     ap.add_argument("--model", default="lcnn8_aug", help="CM checkpoint name in artifacts/models (needs <name>_calibration.json)")
+    ap.add_argument("--out-dir", type=Path, default=OUT.parent, help="where the JSON, markdown and per-trial CSV go (default artifacts/)")
     a = ap.parse_args()
     ops = tuple(a.operating_points)
+    per_trial: dict[str, pd.DataFrame] = {}
     if a.pack:
         pack = ROOT / "release" / "demo_pack"
         rows = run(asvspoof_trials("g711u", 60, a.seed, pack), "ASVspoof19 eval g711u (release pack)", ops, a.model)
         a.tag = "pack"
     elif a.bona_dir and a.spoof_dir:
-        rows = run(wav_trials(a.bona_dir, a.spoof_dir), f"wav:{a.bona_dir.name} vs {a.spoof_dir.name}", ops, a.model)
+        rows = run(wav_trials(a.bona_dir, a.spoof_dir), f"wav:{a.bona_dir.parent.name}/{a.bona_dir.name} vs {a.spoof_dir.name}", ops,
+                   a.model, per_trial)
     else:
         rows = [r for c in a.conditions for r in run(asvspoof_trials(c, a.n, a.seed), f"ASVspoof19 eval {c}", ops, a.model)]
     if a.model != "lcnn8_aug":
         a.tag = f"{a.tag}_{a.model}"
         for r in rows:
             r["model"] = a.model
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    Path(f"{OUT}_{a.tag}.json").write_text(json.dumps(rows, indent=2))
+    out = a.out_dir / OUT.name
+    a.out_dir.mkdir(parents=True, exist_ok=True)
+    Path(f"{out}_{a.tag}.json").write_text(json.dumps(rows, indent=2))
     md = ["# IVR flow on real audio, CM gate only (echo STT, identity gate bypassed)", "",
           "Operating points are fixed on ASVspoof dev scores (`cm.calibrate`); nothing is tuned on these trials.", "",
           pd.DataFrame(rows).to_markdown(index=False)]
-    Path(f"{OUT}_{a.tag}.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+    Path(f"{out}_{a.tag}.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+    if per_trial:  # one row per trial: the LLR (the same at every point) and the decision at each point
+        scores = next(iter(per_trial.values()))[["utt_id", "label", "cm_llr"]].copy()
+        for op, df in per_trial.items():
+            scores[f"code_{op}"] = df["DecisionCode"].to_numpy()
+            scores[f"tau_{op}"] = next(r["tau_llr"] for r in rows if r["operating_point"] == op)
+        scores.to_csv(f"{out}_{a.tag}_scores.csv", index=False)
 
 
 if __name__ == "__main__":

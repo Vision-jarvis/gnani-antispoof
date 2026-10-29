@@ -133,19 +133,26 @@ class GnaniClient:
 
     # Prisma STT (REST) ---------------------------------------------------------------------------
     def stt(
-        self, audio: bytes, language_code: str, *, format: str = "verbatim", filename: str = "audio.wav"
+        self, audio: bytes, language_code: str, *, format: str = "verbatim", filename: str = "audio.wav",
+        model: str | None = None,
     ) -> STTResult:
-        if language_code not in STT_LANGUAGE_CODES:
-            raise ValueError(f"language_code must be one of {STT_LANGUAGE_CODES}")
+        """``model=None`` leaves the server default (Prisma v2.5); ``model="prisma-v3.0"`` opts in to Prisma v3.0
+        (form field ``model``, docs.gnani.ai/api/STT/models/prisma-v3, 2026-10-22). Check ``raw["model"]`` in the
+        response to confirm which model actually served the request."""
+        if language_code not in STT_LANGUAGE_CODES and not (model == "prisma-v3.0" and language_code == "indic-auto"):
+            raise ValueError(f"language_code must be one of {STT_LANGUAGE_CODES} (indic-auto only with model=prisma-v3.0)")
         if format not in STT_FORMATS:
             raise ValueError(f"format must be one of {STT_FORMATS}")
+        data = {"language_code": language_code, "format": format}
+        if model is not None:
+            data["model"] = model
         t0 = time.perf_counter()
         resp = self._http.post(
             STT_PATH,
             files={"audio_file": (filename, audio, "application/octet-stream")},
-            data={"language_code": language_code, "format": format},
+            data=data,
         )
-        self._log(STT_PATH, "prisma-v2.5", 0, len(audio), len(resp.content), resp.status_code, t0)
+        self._log(STT_PATH, model or "prisma-v2.5", 0, len(audio), len(resp.content), resp.status_code, t0)
         _raise_for_status(resp)
         payload = resp.json()
         return STTResult(

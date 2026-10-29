@@ -18,7 +18,8 @@ def setup(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[list[gc.Job]
     monkeypatch.setattr(gc, "fleurs_sentences", lambda lang, n, offset=0: [f"{lang} sentence {offset + i}" for i in range(n)])
     ref = tmp_path / "ref.wav"
     sf.write(ref, (0.1 * np.random.default_rng(0).standard_normal(8000 * 10)).astype(np.float32), 8000)
-    jobs = gc.plan([{"speaker": "spk1", "language": "kn-IN", "reference_wav": str(ref), "consent": "self"}], per_speaker=6, g1_per_voice=3)
+    jobs = gc.plan([{"speaker": "spk1", "language": "kn-IN", "reference_wav": str(ref), "consent": "self"}], per_speaker=6, g1_per_voice=3,
+                   languages=("kn-IN",))  # G1 is planned only for languages asked for explicitly
     return jobs, MockGnaniBackend(api_key="k")
 
 

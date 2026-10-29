@@ -1,6 +1,6 @@
-C:\Users\rrsri\desktop\peakalways\xjob\builds\gnani-antispoof\.venv\Lib\site-packages\sklearn\mixture\_base.py:293: ConvergenceWarning: Best performing initialization did not converge. Try different init parameters, or increase max_iter, tol, or check for degenerate data.
+<repo>\.venv\Lib\site-packages\sklearn\mixture\_base.py:293: ConvergenceWarning: Best performing initialization did not converge. Try different init parameters, or increase max_iter, tol, or check for degenerate data.
   warnings.warn(
-C:\Users\rrsri\desktop\peakalways\xjob\builds\gnani-antispoof\.venv\Lib\site-packages\sklearn\mixture\_base.py:293: ConvergenceWarning: Best performing initialization did not converge. Try different init parameters, or increase max_iter, tol, or check for degenerate data.
+<repo>\.venv\Lib\site-packages\sklearn\mixture\_base.py:293: ConvergenceWarning: Best performing initialization did not converge. Try different init parameters, or increase max_iter, tol, or check for degenerate data.
   warnings.warn(
 [gmm16_clean] scored eval/clean16k
 [gmm16_clean] scored eval/nb_pcm

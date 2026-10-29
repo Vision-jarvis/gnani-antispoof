@@ -23,3 +23,21 @@ artifacts/smoke_pretrained/
 artifacts/logs/gdown_la.log
 artifacts_teacher/
 artifacts/scores_dryrun/
+
+# Audio never goes into git: own-voice recordings (data/own_voice/), Gnani clones and prompts (artifacts/gnani_cache/),
+# stand-ins. The only committed audio is the ASVspoof pack inside release/demo_pack/g711u.npz (ODC-By, DATA.md).
+*.wav
+*.m4a
+*.mp3
+*.mp4
+*.aac
+*.flac
+*.ogg
+*.opus
+*.amr
+*.webm
+*.wma
+*.3gp
+*.mulaw
+*.alaw
+*.pcm

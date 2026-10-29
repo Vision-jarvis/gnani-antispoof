@@ -1,4 +1,4 @@
-# Status (2026-10-24)
+# Status (2026-10-24; own-voice kit and Nov 1 run sheet added 2026-10-29)
 
 Legend: DONE = built and verified in this repo; PARTIAL = built, part of it blocked; PENDING = blocked, with
 the blocker and the exact command; DEFERRED = deliberately not done now, with the reason.
@@ -14,7 +14,7 @@ the blocker and the exact command; DEFERRED = deliberately not done now, with th
 | M1 weak baselines | PARTIAL | Bootstrap 95% CIs on every pooled EER. Run on CPU: ablation `lcnn8_noaug` (held-out EER 41.84%, delta-NB +15.25 vs +6.78 with codec aug) and wideband `gmm16_clean` (held-out 44.73%, delta-NB +20.63 vs clean 16 kHz). DEFERRED: official-size GMM (512 components, all frames; CPU overnight: edit `cm/gmm.py` defaults, delete `artifacts/models/gmm8_aug.npz`, `python -m cm.run_baselines --models gmm8_aug`). |
 | M2 causality | FIXED | `causal_cm_input` on the prefix only; `CMScorer.prefix_llr` used by batch partials and the WebSocket; streaming eval recomputed with prefix-first processing; test pins batch == WS and future-independence. |
 | M3 teacher script | FIXED (measured) | v1 (2026-10-23, $4.16) did not learn (dev EER 42 to 45%: random back end at lr 1e-6, class weights for a 9:1 pool, SpecAugment on); fixed in 501d698. v2 (2026-10-24, L40S, three segments after local network drops, $4.62): dev EER 8.42% (init) to 2.28% (epoch 9). Eval: clean 8 kHz 23.34%, held-out 21.63% [20.03, 22.71], delta-NB -1.71, minDCF 0.381; not distinguishable from SSL+AASIST on held-out EER; lost unseen attacks A07/A10/A11. Distilled student `lcnn8_distil`: held-out 34.63% vs 34.42% for `lcnn8_aug` (no gain). Weights `artifacts/models/teacher_ssl_aasist_8k.pt` (1.26 GB, git-ignored). PENDING: teacher streaming cells (`--eval all`, about $1.50). |
-| M4 reproducibility | FIXED | `release/` (14.5 MB): ONNX, LCNN, distilled student, GMM, calibration, gzipped scores of every model including the GPU rows (SOTA, teacher), manifests, audit, 120-clip G.711 pack. A fresh `git clone` + `.un.ps1 report` reproduces `artifacts/results.md`; the demo and `ivr_demo.trials --pack` run from a clone. REPORT.md rewritten 2026-10-24. |
+| M4 reproducibility | FIXED | `release/` (14.5 MB): ONNX, LCNN, distilled student, GMM, calibration, gzipped scores of every model including the GPU rows (SOTA, teacher), manifests, audit, 120-clip G.711 pack. A fresh `git clone` + `.\run.ps1 report` reproduces `artifacts/results.md`; the demo and `ivr_demo.trials --pack` run from a clone. REPORT.md rewritten 2026-10-24. |
 | M5 Indic / Gnani gap | PARTIAL | Indic pilot measured (`artifacts/indic_pilot.md`): published models and LCNNs near chance (45 to 50% EER), GMM 18 to 33%, but the set FAILS its shortcut audit (duration alone 16.6% raw, 20.0% on the CM input; rule >= 35%), so no model claim. Needs duration-matched bona fide. Teacher scored 2026-10-29 (A10, $0.16, `modal run --detach cm/teacher/modal_train.py::indic_main`): EER 32.0 to 47.1% (nb_pcm 34.39 [31.94, 36.84], GSM-FR 32.04 [29.22, 34.04]), FAR at its dev threshold 28 to 100%; no model claim (duration alone 16.6%). G1/G3 Timbre plan: 240 calls (dry run). Own-voice G2: needs the student's 15 s recording. |
 | M6 schedule | FIXED | Statement header: Nov 1-3, submit by Nov 5 to 8 (deadline Nov 10, 11:59 PM IST). |
 | M7 challenge rules | PARTIAL | Checklist below. Live run needs `GNANI_MODE=live` and 2 to 4 live calls; Evon not used (no public API page). |
@@ -39,7 +39,7 @@ the blocker and the exact command; DEFERRED = deliberately not done now, with th
 | Kathbath Hindi + Kannada | PENDING | gated (accept terms on HF) | `data/README.md` step 2 (bona fide only; cloning DEFERRED) |
 | IndicSynth slice | DONE | | |
 | `gnani_clone.py` G1/G3 Timbre stock voices | PENDING (credits) | student decision on the spend | `python -m factory.gnani_clone --languages kn-IN hi-IN --execute --max-calls 240` |
-| `gnani_clone.py` G2/G3 own voice | PENDING (recording) | 15 s consented recording at `data/own_voice/builder_15s.wav` | `python -m factory.gnani_clone --speakers factory/manifests/demo_builder_voice.csv --execute --max-calls 16` |
+| `gnani_clone.py` G2/G3 own voice | PENDING (recording, Nov 1) | the takes of `docs/RECORDING.md` (reference at `data/own_voice/builder_15s.wav`); the clone says the 15 answer texts, text-matched to the genuine takes | `python -m factory.gnani_clone --speakers factory/manifests/demo_builder_voice.csv --execute --max-calls 16` (dry run: 16 calls, 644 characters) |
 | `gnani_clone.py` Kathbath G2 | DEFERRED | consent clearance from Gnani | none until Gnani answers in writing |
 | Channel simulator | DONE | 14 conditions, about 30 test cases | |
 | Normalisation and audit | DONE | | `python -m eval.report` |
@@ -48,8 +48,8 @@ the blocker and the exact command; DEFERRED = deliberately not done now, with th
 | Distilled student, ONNX, RTF | DONE (no gain) | | `lcnn8_distil` held-out 34.63% vs 34.42%; same architecture as `lcnn8_aug`, so the ONNX budget is unchanged; not exported because it did not win |
 | Eval grid, ablation, DET | DONE | | `python -m eval.report`, `python -m eval.det` |
 | FastAPI + WebSocket | DONE | | `.\run.ps1 serve` |
-| IVR demo with stated operating point | DONE (mock Gnani, real audio) | live run needs 2 to 4 calls | see the checklist below |
-| Red-team own-voice clone | PENDING (recording) | | own-voice row above, then `python -m ivr_demo.trials --bona-dir <own takes> --spoof-dir <clones> --tag ownvoice` |
+| IVR demo with stated operating point | DONE (mock Gnani, real audio); own-voice live path rehearsed in mock | live run needs 4 calls | `docs/DEMO_RUNBOOK.md`, 18:00 |
+| Red-team own-voice clone | PENDING (recording, Nov 1) | | own-voice row above, `python scripts/prep_own_voice.py trialsets`, `python -m ivr_demo.trials --bona-dir data/own_voice/trials/g711u/bona --spoof-dir data/own_voice/trials/g711u/spoof --tag ownvoice_g711u` (and `amrnb_4k75`), teacher via `cm/teacher/modal_train.py::ownvoice_main` or `python -m cm.teacher.score_folder --device cpu` |
 | REPORT.md, model and data cards | DONE | | REPORT.md rewritten 2026-10-24 with SOTA, teacher, student, Indic pilot caveat and actual GPU cost |
 
 ## GPU runs (Modal; prices checked 2026-10-20 on modal.com/pricing)
@@ -66,11 +66,11 @@ and manifests only; never `.env`). Then:
 | Teacher v2, streaming cells | same with `--eval all` (reuses epochs and cells) | same | about 0.5 to 0.7 h, $1.30 to $1.80 (re-scores dev per reused epoch, then 26 min of 1/2/4 s cells) | same |
 | Teacher v2, full recipe | `.\run.ps1 gpu-teacher` (patience 4, every cell) | same | 1.9 to 2.5 h, $5 to $6.50 | same |
 | Plain VM (one GCE GPU) | `python gce_run.py score` then `python gce_run.py teacher --epochs 1` and `python gce_run.py teacher` | any CUDA GPU | same work as above; estimates above are for A10 / L40S | none (VM billed until deleted) |
+| Teacher v2 on own-voice trials | PENDING (Nov 1): `modal volume put gnani-cm-data data/own_voice/trials /ownvoice/trials`, `modal run --detach cm/teacher/modal_train.py::ownvoice_main`, `::ownvoice_fetch`, then `modal volume rm -r gnani-cm-data /ownvoice` | A10 | about 5 to 10 min, $0.10 to $0.20 (CPU alternative: 44 s for 60 clips on the laptop) | 20 min = $0.47 |
 | Teacher v2 on the Indic pilot | DONE 2026-10-29 (`modal run --detach cm/teacher/modal_train.py::indic_main`, then `::indic_fetch` and `python -m eval.indic_report`) | A10 | measured 0.084 h, $0.12 by its clock, $0.16 billed | 40 min = $0.95 |
 | Distil (CPU) | DONE (`python -m cm.distil`) | none | measured 34 min training + about 30 min scoring at 4 threads | |
 
 Actual Modal spend for this build: about $9.58 (SOTA $0.64, teacher v1 $4.16 superseded, teacher v2 $4.62, teacher Indic pilot $0.16), inside the $30 Starter credit and the statement's $50 budget.
-and save wall hours and dollars (`artifacts/scores/*_cost.json`); put them in REPORT.md.
 
 ## Great Indian AI Internship Challenge checklist (deadline Nov 10, 2026, 11:59 PM IST; submit by Nov 5 to 8)
 
@@ -86,10 +86,10 @@ What is real today:
 Exact remaining steps, in order:
 1. Rotate the Gnani API key (it has been in agent sessions); put the new one in `.env`.
 2. DONE: SOTA scoring, Indic pilot report, teacher v2, distillation; README/REPORT refreshed (2026-10-24). Teacher row on the Indic pilot (2026-10-29).
-3. Record 15 s of your own voice at `data/own_voice/builder_15s.wav` (and 5 or more short answers at 8 kHz for genuine trials). Run the 16-call own-voice plan (STATUS row above) after reading the credit balance.
+3. Oct 30: 2-minute test recording (`docs/RECORDING.md`), full mock rehearsal (`docs/DEMO_RUNBOOK.md`). Nov 1: record the real takes, then the timed run sheet in `docs/DEMO_RUNBOOK.md` (clone 16 calls, teacher scoring, trials on G.711 and AMR-NB, Prisma v2.5 vs v3.0 on 10 Hinglish answers (20 calls), live IVR (4 calls)), reading the credit balance before and after.
 4. Optional, credits permitting: the 240-call Timbre G1/G3 plan, then score it.
 5. Optional: teacher streaming rows (`modal run --detach cm/teacher/modal_train.py --epochs 10 --patience 2 --eval all`), and a duration-matched Indic set before quoting any Indic number.
-6. Live demo: `$env:GNANI_MODE="live"; python -m ivr_demo.demo --live --caller <answer_8k.wav> --enrol <enrol_8k.wav> --operating-point min_dcf` (2 calls). Record it with the key masked; say the operating point on screen; keep the real outcome.
+6. Live demo (Nov 1, 18:00): `python -m ivr_demo.demo --live --new-challenge --language hi-IN` (1 Timbre call), record the answer to that phrase, `python scripts/prep_own_voice.py --only live_answer`, then `python -m ivr_demo.demo --live --caller data/own_voice/16k/live_answer.wav --clone --operating-point min_dcf` (1 VC TTS + 2 Prisma sessions). Record it with the key masked; the operating point is printed on screen; keep the real outcome. The identity gate is bypassed (ECAPA PENDING), so posts must not say a speaker model checks the caller.
 7. Post (X + LinkedIn, both hashtags), then submit on gnani.ai/internship with the video, post link, write-up and API list. Award fit: Noise Canceller (telephony audio) or Main Character (regional language); one award per entrant.
 
 Gnani models and APIs used (for the write-up): Timbre v2.5 TTS REST (`POST /api/v1/tts/inference`), Prisma v2.5

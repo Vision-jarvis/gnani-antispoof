@@ -17,8 +17,8 @@ redistributed under ODC-By 1.0 with the attribution below, plus models and score
 | TakHemlata/SSL_Anti-spoofing code + `LA_model.pth` | MIT (code); checkpoint published by the authors on Google Drive | `git clone`; `python -m gdown 11vFBNKzYUtWqdK358_JEygawFzmmaZjO -O third_party/ssl_ckpt/LA_model.pth` | pretrained SOTA scoring, teacher back-end | no |
 | facebook/wav2vec2-xls-r-300m | Apache-2.0 | downloaded by `transformers` on the GPU box | teacher front-end | no |
 | speechbrain/spkrec-ecapa-voxceleb | Apache-2.0 | optional, not installed | PENDING ASV | no |
-| Gnani Timbre v2.5, Prisma v2.5, voice-clone API | proprietary, challenge credits | `.env` key (git-ignored) | IVR flow, G1/G3 Timbre stock voices, G2 of the builder's own consented voice | no Gnani audio is ever committed or published; scores only |
-| Builder's own voice recording (`data/own_voice/`) | the author's, consented | recorded by the author | G2/G3 red-team, demo | no (not committed) |
+| Gnani Timbre v2.5, Prisma v2.5 (and an opt-in Prisma v3.0 phrase check), voice-clone API | proprietary, challenge credits | `.env` key (git-ignored) | IVR flow, G1/G3 Timbre stock voices, G2/G3 of the builder's own consented voice | no Gnani audio is ever committed (`artifacts/gnani_cache/` is git-ignored); no cloned audio is ever published; scores, transcripts of the builder's own answers and decision codes only. The only Gnani audio public material may contain is the Timbre stock-voice IVR prompt in the demo video |
+| Builder's own voice recordings (`data/own_voice/`) | the author's, consented (`consent=self`) | recorded by the author (`docs/RECORDING.md`; fixed phrases, no personal data) | G2/G3 red team, Prisma phrase check, live demo | no: `data/` and every audio file type are git-ignored; the Modal copy used for teacher scoring is deleted after the run |
 
 Models in `release/models/` (`lcnn8_aug.pt`, `cm_student.onnx`, `gmm8_aug.npz`) were trained here on ASVspoof
 2019 LA only (ODC-By), so they carry no non-commercial restriction; anything later trained on IndicSynth or

@@ -130,6 +130,7 @@ class MockGnaniBackend:
                 "request_id": f"mock_{len(self.calls)}",
                 "timestamp": now.strftime("%Y%m%d_%H%M%S.") + f"{now.microsecond // 1000:03d}",
                 "transcript": self.stt_transcript_fn(form["audio_file"], lang),
+                "model": form["model"].decode() if "model" in form else "mock-default",  # the live API reports the serving model
             },
         )
 

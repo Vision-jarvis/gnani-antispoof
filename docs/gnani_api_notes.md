@@ -7,7 +7,8 @@ from `docs/gnani_api_snapshots/armour365_README.md` (GitHub Gnani-AI/voicebiomet
 ## Live probe, 18 Oct 2026 (`python scripts/gnani_live_probe.py --yes`)
 
 Exactly 5 real calls were made with the student's challenge key (loaded from `.env`, never logged).
-Raw results: `artifacts/gnani_probe.json`; per-call ledger: `artifacts/gnani_usage.jsonl` (both git-ignored).
+Raw results: `artifacts/gnani_probe.json` (tracked on purpose: shapes, request ids, header names and the Timbre
+transcript; no key, no audio, no embedding values); per-call ledger: `artifacts/gnani_usage.jsonl` (git-ignored).
 
 | # | Endpoint | Request | Result | Latency |
 |---|---|---|---|---|
@@ -32,6 +33,16 @@ Raw results: `artifacts/gnani_probe.json`; per-call ledger: `artifacts/gnani_usa
 - VC REST docs list containers `raw, mp3, wav, mulaw, ogg` (no `alaw`); `AudioConfig.validate_for_vc`
   rejects `alaw` so G3 A-law variants are made by requesting mu-law and transcoding (documented in
   `factory/gnani_clone.py`).
+
+## Prisma v3.0 (opt-in since 2026-10-22; read from the docs on 2026-10-29, not called yet)
+
+From https://docs.gnani.ai/api/STT/models/prisma-v3.md: on REST (`POST /stt/v3`) the opt-in is the form field
+`model=prisma-v3.0`; `language_code` stays required (a normal code such as `hi-IN`, or `indic-auto`, v3.0 only); the
+response adds `detected_language_code` and reports the serving model in `model`; REST takes at most 30 s per
+request. The page shows a 16 kHz realtime example and does not state 8 kHz support, so the 8 kHz phrase check
+(`ivr_demo/phrase_check.py`, REST) records any rejection per clip, and treats the comparison as void unless every
+v3.0 response reports `prisma-v3.0`. `GnaniClient.stt(..., model="prisma-v3.0")` sends the field; v2.5 calls send
+no `model` field (server default).
 
 ## Budget rules in this repo
 
