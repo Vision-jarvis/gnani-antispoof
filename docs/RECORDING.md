@@ -18,8 +18,8 @@ against it).
 - Your recordings stay on this laptop in `data/own_voice/` (git-ignored). Clone audio stays in
   `artifacts/gnani_cache/` (git-ignored). `.gitignore` also ignores every audio file type repo-wide. Only scores
   and decision codes are committed or posted; no audio, real or cloned, is ever published.
-- Teacher scoring on Modal uploads the 8 kHz trial WAVs to your private Modal volume and deletes them right after
-  (`docs/DEMO_RUNBOOK.md`); the CPU alternative uploads nothing.
+- The 300M teacher scores your takes on this laptop's CPU (about 45 s), so nothing is uploaded for that step. A
+  Modal fallback exists only for a CPU failure (`docs/DEMO_RUNBOOK.md`).
 - No personal data in any take: every phrase is fixed, the digits come from the IVR's own random generator, and
   nothing below is a real name, account or phone number. Do not add any.
 
