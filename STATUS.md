@@ -15,7 +15,7 @@ the blocker and the exact command; DEFERRED = deliberately not done now, with th
 | M2 causality | FIXED | `causal_cm_input` on the prefix only; `CMScorer.prefix_llr` used by batch partials and the WebSocket; streaming eval recomputed with prefix-first processing; test pins batch == WS and future-independence. |
 | M3 teacher script | FIXED (measured) | v1 (2026-10-23, $4.16) did not learn (dev EER 42 to 45%: random back end at lr 1e-6, class weights for a 9:1 pool, SpecAugment on); fixed in 501d698. v2 (2026-10-24, L40S, three segments after local network drops, $4.62): dev EER 8.42% (init) to 2.28% (epoch 9). Eval: clean 8 kHz 23.34%, held-out 21.63% [20.03, 22.71], delta-NB -1.71, minDCF 0.381; not distinguishable from SSL+AASIST on held-out EER; lost unseen attacks A07/A10/A11. Distilled student `lcnn8_distil`: held-out 34.63% vs 34.42% for `lcnn8_aug` (no gain). Weights `artifacts/models/teacher_ssl_aasist_8k.pt` (1.26 GB, git-ignored). PENDING: teacher streaming cells (`--eval all`, about $1.50). |
 | M4 reproducibility | FIXED | `release/` (14.5 MB): ONNX, LCNN, distilled student, GMM, calibration, gzipped scores of every model including the GPU rows (SOTA, teacher), manifests, audit, 120-clip G.711 pack. A fresh `git clone` + `.un.ps1 report` reproduces `artifacts/results.md`; the demo and `ivr_demo.trials --pack` run from a clone. REPORT.md rewritten 2026-10-24. |
-| M5 Indic / Gnani gap | PARTIAL | Indic pilot measured (`artifacts/indic_pilot.md`): published models and LCNNs near chance (45 to 50% EER), GMM 18 to 33%, but the set FAILS its shortcut audit (duration alone 16.6% raw, 20.0% on the CM input; rule >= 35%), so no model claim. Needs duration-matched bona fide. Teacher not scored on it (GPU). G1/G3 Timbre plan: 240 calls (dry run). Own-voice G2: needs the student's 15 s recording. |
+| M5 Indic / Gnani gap | PARTIAL | Indic pilot measured (`artifacts/indic_pilot.md`): published models and LCNNs near chance (45 to 50% EER), GMM 18 to 33%, but the set FAILS its shortcut audit (duration alone 16.6% raw, 20.0% on the CM input; rule >= 35%), so no model claim. Needs duration-matched bona fide. Teacher scored 2026-10-29 (A10, $0.16, `modal run --detach cm/teacher/modal_train.py::indic_main`): EER 32.0 to 47.1% (nb_pcm 34.39 [31.94, 36.84], GSM-FR 32.04 [29.22, 34.04]), FAR at its dev threshold 28 to 100%; no model claim (duration alone 16.6%). G1/G3 Timbre plan: 240 calls (dry run). Own-voice G2: needs the student's 15 s recording. |
 | M6 schedule | FIXED | Statement header: Nov 1-3, submit by Nov 5 to 8 (deadline Nov 10, 11:59 PM IST). |
 | M7 challenge rules | PARTIAL | Checklist below. Live run needs `GNANI_MODE=live` and 2 to 4 live calls; Evon not used (no public API page). |
 | M8 streaming trials | FIXED | Streaming rows only on clips with >= t s of trimmed speech, with the full-clip EER on the same trials; the 4 s row has 4 bona fide clips and is flagged unreadable. |
@@ -66,9 +66,10 @@ and manifests only; never `.env`). Then:
 | Teacher v2, streaming cells | same with `--eval all` (reuses epochs and cells) | same | about 0.5 to 0.7 h, $1.30 to $1.80 (re-scores dev per reused epoch, then 26 min of 1/2/4 s cells) | same |
 | Teacher v2, full recipe | `.\run.ps1 gpu-teacher` (patience 4, every cell) | same | 1.9 to 2.5 h, $5 to $6.50 | same |
 | Plain VM (one GCE GPU) | `python gce_run.py score` then `python gce_run.py teacher --epochs 1` and `python gce_run.py teacher` | any CUDA GPU | same work as above; estimates above are for A10 / L40S | none (VM billed until deleted) |
+| Teacher v2 on the Indic pilot | DONE 2026-10-29 (`modal run --detach cm/teacher/modal_train.py::indic_main`, then `::indic_fetch` and `python -m eval.indic_report`) | A10 | measured 0.084 h, $0.12 by its clock, $0.16 billed | 40 min = $0.95 |
 | Distil (CPU) | DONE (`python -m cm.distil`) | none | measured 34 min training + about 30 min scoring at 4 threads | |
 
-Actual Modal spend for this build: about $9.42 (SOTA $0.64, teacher v1 $4.16 superseded, teacher v2 $4.62), inside the $30 Starter credit and the statement's $50 budget.
+Actual Modal spend for this build: about $9.58 (SOTA $0.64, teacher v1 $4.16 superseded, teacher v2 $4.62, teacher Indic pilot $0.16), inside the $30 Starter credit and the statement's $50 budget.
 and save wall hours and dollars (`artifacts/scores/*_cost.json`); put them in REPORT.md.
 
 ## Great Indian AI Internship Challenge checklist (deadline Nov 10, 2026, 11:59 PM IST; submit by Nov 5 to 8)
@@ -84,7 +85,7 @@ What is real today:
 
 Exact remaining steps, in order:
 1. Rotate the Gnani API key (it has been in agent sessions); put the new one in `.env`.
-2. DONE: SOTA scoring, Indic pilot report, teacher v2, distillation; README/REPORT refreshed (2026-10-24).
+2. DONE: SOTA scoring, Indic pilot report, teacher v2, distillation; README/REPORT refreshed (2026-10-24). Teacher row on the Indic pilot (2026-10-29).
 3. Record 15 s of your own voice at `data/own_voice/builder_15s.wav` (and 5 or more short answers at 8 kHz for genuine trials). Run the 16-call own-voice plan (STATUS row above) after reading the credit balance.
 4. Optional, credits permitting: the 240-call Timbre G1/G3 plan, then score it.
 5. Optional: teacher streaming rows (`modal run --detach cm/teacher/modal_train.py --epochs 10 --patience 2 --eval all`), and a duration-matched Indic set before quoting any Indic number.

@@ -38,7 +38,7 @@ How much does an 8 kHz phone channel hurt a voice anti-spoofing countermeasure, 
 Shortcut audit (ASVspoof): raw silence 17.54%; on the CM input every cue >= 37.0% (silence at trim gate 36.95, at 25 dB 38.24, WebRTC VAD silence 43.64, non-speech fraction 40.10, loudness 42.24, duration 40.53). Defects found and fixed: circular audit gate, optimistic EER ties (docs/results_v2_audit_ties.md), and a first teacher that did not learn (2026-10-23, dev EER 42 to 45%: random back end at lr 1e-6, wrong class weights, SpecAugment on; fixed in commit 501d698, CPU test added). Causal streaming shared by batch and WebSocket (tested). Thresholds fixed on dev.
 
 ## 6. Indic pilot (artifacts/indic_pilot.md): no model claim possible
-FLEURS Hindi + Kannada bona fide (600) vs IndicSynth FreeVC spoofs (600), through 6 codecs. Every published model and the LCNNs are near chance (EER about 45 to 50%; SSL+AASIST 27.38 on AMR-NB 4.75k is the one exception). The distilled student is also near chance (42.7 to 49.4%). The LFCC-GMM looks better (18 to 33%), but the set fails the shortcut audit: duration alone separates the classes at 16.6% EER on raw audio and 20.0% on the CM input (rule: >= 35%), silence 27.7% and loudness 28.3%. A model can score well here by measuring length, so this set supports no ranking; it needs duration-matched bona fide before any Indic number is quoted. The teacher was not scored on the pilot (that is a GPU job and was not run).
+FLEURS Hindi + Kannada bona fide (600) vs IndicSynth FreeVC spoofs (600), through 6 codecs. Every published model and the LCNNs are near chance (EER about 45 to 50%; SSL+AASIST 27.38 on AMR-NB 4.75k is the one exception). The distilled student is also near chance (42.7 to 49.4%). The LFCC-GMM looks better (18 to 33%), but the set fails the shortcut audit: duration alone separates the classes at 16.6% EER on raw audio and 20.0% on the CM input (rule: >= 35%), silence 27.7% and loudness 28.3%. A model can score well here by measuring length, so this set supports no ranking; it needs duration-matched bona fide before any Indic number is quoted. The fine-tuned 8 kHz teacher (scored 2026-10-29, Modal A10, $0.16) is at 32.0 to 47.1% EER on the six telephony conditions (nb_pcm 34.39 [31.94, 36.84], G.711 36.87 [34.48, 39.53], GSM-FR 32.04 [29.22, 34.04], AMR-NB 12.2k 43.55, AMR-NB 4.75k 47.08, chain 46.89; 95% utterance-bootstrap intervals) and, at its ASVspoof-dev threshold, accepts 28 to 100% of the spoofs; this is no model claim either, because a duration cue alone (16.6%) beats it.
 
 ## 7. Efficiency
 LCNN in ONNX: 170,401 params, RTF 0.0050 on one thread, 143 MB peak RAM. The distilled student has the identical architecture, so the same budget applies; it was not exported because it did not beat `lcnn8_aug`.
@@ -49,7 +49,8 @@ LCNN in ONNX: 170,401 params, RTF 0.0050 on one thread, 143 MB peak RAM. The dis
 | Published SOTA scoring, 2026-10-23 (plus a 20-clip dry run) | A10 | 0.40 h | $0.60 + $0.04 |
 | Teacher v1, 2026-10-23 (did not learn, superseded) | L40S | about 1.6 h | $4.16 |
 | Teacher v2, 2026-10-24, three segments after local network drops (last segment 0.52 h, $1.35) | L40S | about 1.8 h | $4.62 |
-| Total | | about 3.8 GPU-hours | about $9.42 |
+| Teacher v2 on the Indic pilot (`cm/teacher/score_indic.py`), 2026-10-29 | A10 | 0.08 h | $0.16 |
+| Total | | about 3.9 GPU-hours | about $9.58 |
 
 Costs are from `modal billing report` for the two days (2026-10-24 read the same day, so it may still move by cents); wall hours for multi-segment runs are cost divided by the hourly price. Distillation, all LFCC models and every table ran on CPU.
 

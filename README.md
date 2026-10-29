@@ -8,7 +8,7 @@ A countermeasure (CM) stack for catching TTS and voice-conversion clones after t
 through an 8 kHz phone line, plus a random-phrase voice-auth IVR flow built on Gnani Prisma STT and
 Timbre TTS that returns Armour365's decision codes. Built for the Great Indian AI Internship Challenge.
 The LFCC models, the distilled student and every table ran on CPU; the published SOTA models and the
-XLS-R teacher ran on Modal GPUs (about $9.42 in total, REPORT.md section 8).
+XLS-R teacher ran on Modal GPUs (about $9.58 in total, REPORT.md section 8).
 
 ## Quickstart (Windows, PowerShell)
 
@@ -105,7 +105,10 @@ What this shows (and does not):
 
 - Indic pilot (`artifacts/indic_pilot.md`, FLEURS Hindi/Kannada vs IndicSynth FreeVC): the published models
   and the LCNNs are near chance (45 to 50% EER); the GMM looks better (18 to 33%) but the set fails its shortcut
-  audit (duration alone: 16.6% EER, rule >= 35%), so it supports no model claim. The teacher was not scored on it.
+  audit (duration alone: 16.6% EER, rule >= 35%), so it supports no model claim.
+  The fine-tuned 8 kHz teacher (scored 2026-10-29, Modal A10, $0.16) is at 32.0 to 47.1% EER on the six telephony conditions (nb_pcm 34.39 [31.94, 36.84], G.711 36.87 [34.48, 39.53], GSM-FR 32.04 [29.22, 34.04], AMR-NB 12.2k 43.55, AMR-NB 4.75k 47.08, chain 46.89;
+  95% utterance-bootstrap intervals)
+  and, at its ASVspoof-dev threshold, accepts 28 to 100% of the spoofs; this is no model claim either, because a duration cue alone (16.6%) beats it.
 
 Limitations and related work (checked 2026-10-29): channels are simulated, not real calls; RealComm
 (arXiv:2610.27459, 2026-10-20) is the closest real-mobile-call benchmark and is not Indic; arXiv:2610.07216

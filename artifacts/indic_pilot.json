@@ -148,6 +148,48 @@
       "far_at_dev_tau": 0.9833333333333333
     },
     {
+      "model": "teacher",
+      "condition": "amrnb_12k2",
+      "eer": 0.43554952510176387,
+      "frr_at_dev_far1": 0.06833333333333333,
+      "far_at_dev_tau": 0.9616666666666667
+    },
+    {
+      "model": "teacher",
+      "condition": "amrnb_4k75",
+      "eer": 0.47079162875341224,
+      "frr_at_dev_far1": 0.6916666666666667,
+      "far_at_dev_tau": 0.28
+    },
+    {
+      "model": "teacher",
+      "condition": "chain_amrnb_g711u",
+      "eer": 0.4689480354879595,
+      "frr_at_dev_far1": 0.12166666666666667,
+      "far_at_dev_tau": 0.9916666666666667
+    },
+    {
+      "model": "teacher",
+      "condition": "g711u",
+      "eer": 0.36873015873015874,
+      "frr_at_dev_far1": 0.016666666666666666,
+      "far_at_dev_tau": 1.0
+    },
+    {
+      "model": "teacher",
+      "condition": "gsm_fr",
+      "eer": 0.3204166666666666,
+      "frr_at_dev_far1": 0.09833333333333333,
+      "far_at_dev_tau": 0.6483333333333333
+    },
+    {
+      "model": "teacher",
+      "condition": "nb_pcm",
+      "eer": 0.3439269406392694,
+      "frr_at_dev_far1": 0.03166666666666667,
+      "far_at_dev_tau": 0.9833333333333333
+    },
+    {
       "model": "gmm16_clean",
       "condition": "amrnb_12k2",
       "eer": 0.49916527545909845,

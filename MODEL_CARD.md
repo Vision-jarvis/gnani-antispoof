@@ -11,7 +11,7 @@
 | Calibration | affine LLR map fitted on dev; named dev-fixed operating points far1 (default, tau 3.027), min_dcf (-0.715), eer (0.490), bayes (-0.642) in `release/models/lcnn8_aug_calibration.json` |
 | Never seen in training | held-out codecs (AMR-NB 4.75k, GSM-FR, two-hop chains), ASVspoof eval attacks A07 to A19, any Indic speech, any Gnani audio |
 | Export | ONNX (`release/models/cm_student.onnx`), measured by `python -m cm.export_onnx` |
-| Results | `artifacts/results.md` (ASVspoof proxy) and `artifacts/ivr_trials_asvspoof.md` (IVR flow on real clips), summarised in README.md. Held-out codecs: EER 34.42% [33.04, 35.60], delta-NB +6.78. Indic pilot (`artifacts/indic_pilot.md`): 40 to 50% EER, and the pilot fails its shortcut audit (duration alone 16.6%), so it is not evidence either way |
+| Results | `artifacts/results.md` (ASVspoof proxy) and `artifacts/ivr_trials_asvspoof.md` (IVR flow on real clips), summarised in README.md. Held-out codecs: EER 34.42% [33.04, 35.60], delta-NB +6.78. Indic pilot (`artifacts/indic_pilot.md`): 40 to 50% EER (the XLS-R teacher: 32 to 47%), and the pilot fails its shortcut audit (duration alone 16.6%), so it is not evidence either way |
 
 ## Intended use
 A research baseline that shows how much an 8 kHz-native, codec-augmented countermeasure recovers

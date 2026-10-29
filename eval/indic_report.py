@@ -31,12 +31,14 @@ SCORES = ROOT / "artifacts" / "scores"
 OUT = ROOT / "artifacts" / "indic_pilot.md"
 CONDS = ("clean16k", *CONDITIONS)
 PRETRAINED = ("aasist", "aasist_l", "ssl_aasist")
+GPU_SCORED = (*PRETRAINED, "teacher")  # scored on a GPU, read from artifacts/scores/indic/<name>.csv
 
 
 def score_model(name: str) -> pd.DataFrame | None:
     pre = SCORES / "indic" / f"{name}.csv"
-    if name in PRETRAINED:
-        # Published models are scored on the GPU by cm.score_pretrained (modal run cm/modal_pretrained.py).
+    if name in GPU_SCORED:
+        # Published models: cm.score_pretrained (modal run cm/modal_pretrained.py). Teacher (8 kHz conditions only):
+        # cm.teacher.score_indic (modal run --detach cm/teacher/modal_train.py::indic_main).
         return pd.read_csv(pre)[["utt_id", "condition", "score"]] if pre.exists() else None
     recs = []
     if name.startswith("gmm") and (MODELS / f"{name}.npz").exists():
@@ -68,7 +70,7 @@ def main() -> None:
     man = pd.read_csv(PILOT / "manifest.csv")
     torch.set_num_threads(4)
     rows, lang_rows = [], []
-    for name in (*PRETRAINED, "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug", "lcnn8_distil"):
+    for name in (*GPU_SCORED, "gmm16_clean", "gmm8_aug", "lcnn8_noaug", "lcnn8_aug", "lcnn8_distil"):
         df = score_model(name)
         if df is None:
             continue

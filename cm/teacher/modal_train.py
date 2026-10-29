@@ -91,3 +91,42 @@ def main(epochs: int = 20, patience: int = 4, eval: str = "all", wait: bool = Fa
 def fetch(eval: str = "all") -> None:
     _fetch(eval)
     print("teacher artifacts fetched:", Path("artifacts/scores/teacher_cost.json").read_text())
+
+
+# ---------------------------------------------------------------------------------------------
+# Indic pilot row for the teacher (cm/teacher/score_indic.py): best checkpoint on the volume, 6 telephony
+# conditions x 1,200 clips. A10 is enough (inference only, one clip per forward). Same image, so no rebuild.
+#   modal run --detach cm/teacher/modal_train.py::indic_main      # spawns and returns
+#   modal run cm/teacher/modal_train.py::indic_fetch               # then: python -m eval.indic_report
+INDIC_GPU, INDIC_PRICE_PER_H = "A10", 1.1016 + 4 * 0.04716 + 16 * 0.007992
+INDIC_TIMEOUT_MIN = 40  # expected about 10 min; caps the worst case at about $0.95
+
+
+@app.function(gpu=INDIC_GPU, cpu=4, memory=16384, image=image, volumes={"/vol": volume}, timeout=INDIC_TIMEOUT_MIN * 60)
+def score_indic(limit: int = 0) -> float:
+    t0 = time.time()
+    subprocess.run("mkdir -p /repo/data/proc && ln -sfn /opt/third_party /repo/third_party && "
+                   "ln -sfn /vol/indic_pilot /repo/data/proc/indic_pilot", shell=True, check=True)
+    cmd = ["python", "-m", "cm.teacher.score_indic", "--device", "cuda", "--ckpt",
+           "/vol/artifacts_teacher_v2/models/teacher_ssl_aasist_8k.pt", "--out", "/vol/artifacts_teacher_v2/scores"]
+    subprocess.run(cmd + (["--limit", str(limit)] if limit else []), cwd="/repo", check=True, env={**os.environ, "CM_THREADS": "4"})
+    hours = (time.time() - t0) / 3600
+    cost = {"gpu": INDIC_GPU, "wall_hours": round(hours, 3), "usd": round(hours * INDIC_PRICE_PER_H, 2), "limit": limit}
+    Path("/vol/artifacts_teacher_v2/teacher_indic_cost.json").write_text(json.dumps(cost, indent=2))
+    volume.commit()
+    return hours
+
+
+@app.local_entrypoint()
+def indic_main(limit: int = 0) -> None:
+    call = score_indic.spawn(limit)
+    print(f"teacher indic scoring spawned: call id {call.object_id}; fetch later with: modal run cm/teacher/modal_train.py::indic_fetch")
+
+
+@app.local_entrypoint()
+def indic_fetch() -> None:
+    Path("artifacts/scores/indic").mkdir(parents=True, exist_ok=True)
+    for src, dst in (("/artifacts_teacher_v2/scores/indic/teacher.csv", "artifacts/scores/indic/teacher.csv"),
+                     ("/artifacts_teacher_v2/teacher_indic_cost.json", "artifacts/scores/teacher_indic_cost.json")):
+        subprocess.run(["modal", "volume", "get", "--force", "gnani-cm-data", src, dst], check=True)
+    print("teacher indic scores fetched:", Path("artifacts/scores/teacher_indic_cost.json").read_text())
