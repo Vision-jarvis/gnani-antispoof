@@ -69,8 +69,7 @@ and `day30_outputs.py` refuses to write a mock chart into `posts/img/`.
 | 10:10 | student | listen privately | play 2 or 3 of `artifacts\gnani_cache\G2\*.wav` for the [3 WORDS] verdict; read the balance again | 5 min | none |
 | 10:15 | agent | trial sets | `.\.venv\Scripts\python scripts\prep_own_voice.py trialsets` | 10 s | `data/own_voice/trials/{g711u,amrnb_4k75}/{bona,spoof}/*.wav` (15 + 15 each), `data/own_voice/trials/index.csv` |
 | 10:20 | agent | update 2 numbers | `.\.venv\Scripts\python scripts\day30_outputs.py --credits-before <B> --credits-after <A>` | 5 s | prints [N] and [CREDITS] |
-| 12:30 | agent | teacher (Modal, A10) | `modal volume put gnani-cm-data data/own_voice/trials /ownvoice/trials --force`, then `modal run --detach cm/teacher/modal_train.py::ownvoice_main` | spawn 1 min, job 5 to 10 min | the job writes to the volume |
-| 12:45 | agent | fetch, clean up | `modal run cm/teacher/modal_train.py::ownvoice_fetch`, then `modal volume rm -r gnani-cm-data /ownvoice` | 1 min | `artifacts/ownvoice_teacher_scores.csv`, `artifacts/scores/teacher_ownvoice_cost.json` (about $0.10 to $0.20) |
+| 12:30 | agent | teacher (CPU, default) | `.\.venv\Scripts\python -m cm.teacher.score_folder --root data/own_voice/trials --device cpu --out artifacts/ownvoice_teacher_scores.csv` | about 45 s | `artifacts/ownvoice_teacher_scores.csv` (no upload of your voice, no cost; the "$9.58 on Modal" line stays true) |
 | 13:00 | student | update 2 | post | | |
 | 14:00 | agent | trials, small CPU model | `.\.venv\Scripts\python -m ivr_demo.trials --bona-dir data/own_voice/trials/g711u/bona --spoof-dir data/own_voice/trials/g711u/spoof --tag ownvoice_g711u` and the same with `amrnb_4k75` | 10 s each | `artifacts/ivr_trials_ownvoice_{g711u,amrnb_4k75}.{json,md}` and `_scores.csv` |
 | 14:10 | agent | update 3 numbers + chart | `.\.venv\Scripts\python scripts\day30_outputs.py --credits-before <B> --credits-after <A>` | 5 s | prints both [RESULT] lines, writes `posts/img/gnani_ownvoice.png` |
@@ -83,7 +82,7 @@ and `day30_outputs.py` refuses to write a mock chart into `posts/img/`.
 | 18:30 | student | update 5 | post with a screenshot of the decision lines | | |
 | 20:30 | agent | wrap | `day30_outputs.py` (all sections), then commit the result files only (below) | 10 min | |
 
-Teacher alternative (no upload, no cost): `.\.venv\Scripts\python -m cm.teacher.score_folder --device cpu` writes
+Teacher on Modal instead (only if the CPU run fails): `modal volume put gnani-cm-data data/own_voice/trials /ownvoice/trials --force`, `modal run --detach cm/teacher/modal_train.py::ownvoice_main`, then `ownvoice_fetch` and `modal volume rm -r gnani-cm-data /ownvoice` (about $0.10 to $0.20; update the Modal cost line in the posts). The CPU path writes
 the same `artifacts/ownvoice_teacher_scores.csv`; it took 44 s for 60 clips on this laptop in the rehearsal. In
 Git Bash, set `export MSYS_NO_PATHCONV=1` before any `modal volume` command. The Modal job reuses the teacher image
 and the best checkpoint already on the volume; its 20-minute timeout caps the cost at about $0.47.

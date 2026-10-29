@@ -1,6 +1,6 @@
 # Report: telephony-native anti-spoofing for Armour365 (state on 2026-10-24)
 
-Built with AI coding agents from my problem statement (problems/05-gnani.md); every number here was produced by code in this repo. CPU tables reproduce from `release/` (`.\run.ps1 report`); the GPU rows (published SOTA, teacher) were measured on Modal and their score files are in `release/scores/`. Main results are an English proxy (ASVspoof 2019 LA). The one Indic set (section 6) fails its shortcut audit, so it supports no model ranking. No Gnani-clone result exists yet.
+Built with AI coding agents from my problem statement ([docs/PROBLEM_STATEMENT.md](docs/PROBLEM_STATEMENT.md)); every number here was produced by code in this repo. CPU tables reproduce from `release/` (`.\run.ps1 report`); the GPU rows (published SOTA, teacher) were measured on Modal and their score files are in `release/scores/`. Main results are an English proxy (ASVspoof 2019 LA). The one Indic set (section 6) fails its shortcut audit, so it supports no model ranking. No Gnani-clone result exists yet.
 
 ## 1. Question
 How much does an 8 kHz phone channel hurt a voice anti-spoofing countermeasure, does a dev-fixed threshold survive it, and can an IVR flow on Gnani Prisma + Timbre state an honest operating point?

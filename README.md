@@ -1,6 +1,6 @@
 # Telephony-native voice anti-spoofing for Armour365 (Gnani.ai problem 05)
 
-**How this was built.** I wrote the problem statement (problems/05-gnani.md), the metrics and the honesty
+**How this was built.** I wrote the problem statement ([docs/PROBLEM_STATEMENT.md](docs/PROBLEM_STATEMENT.md)), the metrics and the honesty
 rules. AI coding agents (Claude Code) wrote the code to that spec; I reviewed it, re-ran the numbers below on
 my machine, and can walk through any module.
 
