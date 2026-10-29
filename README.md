@@ -107,6 +107,11 @@ What this shows (and does not):
   and the LCNNs are near chance (45 to 50% EER); the GMM looks better (18 to 33%) but the set fails its shortcut
   audit (duration alone: 16.6% EER, rule >= 35%), so it supports no model claim. The teacher was not scored on it.
 
+Limitations and related work (checked 2026-10-29): channels are simulated, not real calls; RealComm
+(arXiv:2610.27459, 2026-10-20) is the closest real-mobile-call benchmark and is not Indic; arXiv:2610.07216
+(2026-10-05) reports the same codec-induced false rejects of bona fide speech. The phrase check uses Prisma v2.5;
+an opt-in Prisma v3.0 run (`model=prisma-v3.0`, docs 2026-10-22) is not done yet. Details in REPORT.md section 9.
+
 PENDING (STATUS.md): a shortcut-clean Indic set, the Gnani clone set (G1 to G3), replay/injection trials,
 teacher streaming rows, own-voice red team.
 
