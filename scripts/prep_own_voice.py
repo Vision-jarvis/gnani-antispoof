@@ -35,7 +35,7 @@ import shutil
 import subprocess
 import sys
 import zlib
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
 import numpy as np
@@ -45,7 +45,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from factory.channel_sim import CONDITIONS, apply_condition, resample  # noqa: E402
-from factory.normalise import frame_energy_db, normalise  # noqa: E402
+from factory.normalise import DEFAULT_POLICY, frame_energy_db, normalise  # noqa: E402
 from gnani_api.g711 import decode_mulaw  # noqa: E402
 
 TAKES = ROOT / "factory" / "manifests" / "own_voice_takes.csv"
@@ -75,6 +75,7 @@ class TakeReport:
     channels: int = 0
     raw_s: float = 0.0
     trimmed_s: float = 0.0
+    noise_floor_dbfs: float = 0.0
     peak_dbfs: float = 0.0
     clipped_pct: float = 0.0
     warnings: list[str] = field(default_factory=list)
@@ -153,7 +154,15 @@ def prepare(path: Path, kind: str, take: str, out_root: Path) -> TakeReport:
     if sr < 16000:
         rep.warnings.append(f"source is {sr} Hz: the 16 kHz output is upsampled; record at 16 kHz or more if you can")
     x16 = resample(x, sr, 16000)
-    y16 = normalise(x16, 16000)
+    # Phone and laptop mics leave a hiss floor (about -37 dBFS here) that sits inside the default 40 dB window
+    # below the loudest frame, so the default trim keeps seconds of hiss as "speech". Clones from an API are
+    # silent there, so that padding would be a duration shortcut. Trim at 10 dB above this take's own noise
+    # floor (10th percentile of 20 ms frame energies) instead, never wider than the default window.
+    e = frame_energy_db(x16, 16000)
+    noise_db = float(np.percentile(e, 10))
+    rel_db = float(min(DEFAULT_POLICY.rel_db, max(12.0, e.max() - (noise_db + 10.0))))
+    rep.noise_floor_dbfs = round(noise_db, 1)
+    y16 = normalise(x16, 16000, replace(DEFAULT_POLICY, rel_db=rel_db, margin_s=0.15))
     rep.trimmed_s = round(len(y16) / 16000, 2)
     lo, hi, rec_lo, rec_hi = DURATION[kind]
     if not lo <= rep.trimmed_s <= hi:

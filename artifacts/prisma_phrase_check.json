@@ -1,0 +1,268 @@
+{
+  "mode": "live",
+  "date": "2026-11-01T04:55:08.047160+00:00",
+  "channel": "g711u",
+  "language_code": "hi-IN",
+  "v3_language_code": "hi-IN",
+  "threshold": 0.25,
+  "n_answers": 8,
+  "calls_made": 0,
+  "stopped": null,
+  "v3_opt_in_confirmed": true,
+  "summary": {
+    "v2.5": {
+      "n_scored": 8,
+      "match": 8,
+      "digits_ok": 6,
+      "mean_distance": 0.041,
+      "errors": 0,
+      "served_by": [
+        "prisma-v2.5"
+      ]
+    },
+    "v3.0": {
+      "n_scored": 8,
+      "match": 8,
+      "digits_ok": 7,
+      "mean_distance": 0.021,
+      "errors": 0,
+      "served_by": [
+        "prisma-v3.0"
+      ]
+    }
+  },
+  "per_take": [
+    {
+      "take": "hinglish_01",
+      "expected": "दो नौ एक पाँच मेरी voice ही मेरा password है",
+      "alt_text": "दो नौ एक पाँच मेरी वॉइस ही मेरा पासवर्ड है",
+      "v2.5": {
+        "model_param": null,
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "दो नौ एक पाँच मेरी वॉइस ही मेरा पासवर्ड है",
+        "served_by": "prisma-v2.5",
+        "processing_time": 0.05794930458068848,
+        "end_to_end_latency": 0.05976057052612305,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      },
+      "v3.0": {
+        "model_param": "prisma-v3.0",
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "दो नौ एक पाँच, मेरी वाइफ ही मेरा पासवर्ड है।",
+        "served_by": "prisma-v3.0",
+        "processing_time": 0.3207993507385254,
+        "end_to_end_latency": 0.32273101806640625,
+        "distance": 0.048,
+        "match": true,
+        "digits_ok": true
+      }
+    },
+    {
+      "take": "hinglish_02",
+      "expected": "एक तीन चार चार please मेरा account verify कीजिए",
+      "alt_text": "एक तीन चार चार प्लीज़ मेरा अकाउंट वेरिफाई कीजिए",
+      "v2.5": {
+        "model_param": null,
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "एक तीन चार चार प्लीज मेरा अकाउंट वेरीफाई कीजिए",
+        "served_by": "prisma-v2.5",
+        "processing_time": 0.08190727233886719,
+        "end_to_end_latency": 0.08333063125610352,
+        "distance": 0.043,
+        "match": true,
+        "digits_ok": true
+      },
+      "v3.0": {
+        "model_param": "prisma-v3.0",
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "एक तीन चार चार, प्लीज मेरा अकाउंट वेरिफाई कीजिए।",
+        "served_by": "prisma-v3.0",
+        "processing_time": 0.3170959949493408,
+        "end_to_end_latency": 0.31838536262512207,
+        "distance": 0.021,
+        "match": true,
+        "digits_ok": true
+      }
+    },
+    {
+      "take": "hinglish_03",
+      "expected": "तीन सात नौ तीन मुझे अपना balance check करना है",
+      "alt_text": "तीन सात नौ तीन मुझे अपना बैलेंस चेक करना है",
+      "v2.5": {
+        "model_param": null,
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "तीन सात नौ तीन, मुझे अपना बैलेंस चेक करना है।",
+        "served_by": "prisma-v2.5",
+        "processing_time": 0.13448047637939453,
+        "end_to_end_latency": 0.13568711280822754,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      },
+      "v3.0": {
+        "model_param": "prisma-v3.0",
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "तीन सात नौ तीन, मुझे अपना बैलेंस चेक करना है।",
+        "served_by": "prisma-v3.0",
+        "processing_time": 0.5007240772247314,
+        "end_to_end_latency": 0.5019168853759766,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      }
+    },
+    {
+      "take": "hinglish_06",
+      "expected": "पाँच आठ छह तीन मेरी last transaction cancel कर दीजिए",
+      "alt_text": "पाँच आठ छह तीन मेरी लास्ट ट्रांजैक्शन कैंसल कर दीजिए",
+      "v2.5": {
+        "model_param": null,
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "पाँच आठ चार तीन मेरी लास्ट ट्रांजैक्शन कैंसिल कर दीजिए",
+        "served_by": "prisma-v2.5",
+        "processing_time": 0.07774758338928223,
+        "end_to_end_latency": 0.07927346229553223,
+        "distance": 0.077,
+        "match": true,
+        "digits_ok": false
+      },
+      "v3.0": {
+        "model_param": "prisma-v3.0",
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "पाँच आठ चार तीन मेरी लास्ट ट्रांजेक्शन कैंसिल कर दीजिए।",
+        "served_by": "prisma-v3.0",
+        "processing_time": 0.2935600280761719,
+        "end_to_end_latency": 0.29500794410705566,
+        "distance": 0.096,
+        "match": true,
+        "digits_ok": false
+      }
+    },
+    {
+      "take": "hinglish_07",
+      "expected": "एक दो दो चार मुझे new cheque book चाहिए",
+      "alt_text": "एक दो दो चार मुझे न्यू चेक बुक चाहिए",
+      "v2.5": {
+        "model_param": null,
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "एक दो दो चार मुझे न्यू चेक बुक चाहिए",
+        "served_by": "prisma-v2.5",
+        "processing_time": 0.07545018196105957,
+        "end_to_end_latency": 0.07695674896240234,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      },
+      "v3.0": {
+        "model_param": "prisma-v3.0",
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "एक दो दो चार, मुझे न्यू चेक बुक चाहिए।",
+        "served_by": "prisma-v3.0",
+        "processing_time": 0.36751842498779297,
+        "end_to_end_latency": 0.36887335777282715,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      }
+    },
+    {
+      "take": "hinglish_08",
+      "expected": "आठ नौ आठ छह मेरा mobile number update करना है",
+      "alt_text": "आठ नौ आठ छह मेरा मोबाइल नंबर अपडेट करना है",
+      "v2.5": {
+        "model_param": null,
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "आठ नौ आठ छह मेरा मोबाइल नंबर अपडेट करना है",
+        "served_by": "prisma-v2.5",
+        "processing_time": 0.05494952201843262,
+        "end_to_end_latency": 0.05623793601989746,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      },
+      "v3.0": {
+        "model_param": "prisma-v3.0",
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "आठ नौ आठ छह, मेरा मोबाइल नंबर अपडेट करना है।",
+        "served_by": "prisma-v3.0",
+        "processing_time": 0.43259716033935547,
+        "end_to_end_latency": 0.43386363983154297,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      }
+    },
+    {
+      "take": "hinglish_09",
+      "expected": "सात दो छह पाँच customer care से बात करनी है",
+      "alt_text": "सात दो छह पाँच कस्टमर केयर से बात करनी है",
+      "v2.5": {
+        "model_param": null,
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "सात जो छह पाँच कस्टमर केयर से बात करनी है",
+        "served_by": "prisma-v2.5",
+        "processing_time": 0.07738518714904785,
+        "end_to_end_latency": 0.07886600494384766,
+        "distance": 0.024,
+        "match": true,
+        "digits_ok": false
+      },
+      "v3.0": {
+        "model_param": "prisma-v3.0",
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "सात दो छह पाँच कस्टमर केयर से बात करनी है।",
+        "served_by": "prisma-v3.0",
+        "processing_time": 0.2641410827636719,
+        "end_to_end_latency": 0.2658522129058838,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      }
+    },
+    {
+      "take": "hinglish_10",
+      "expected": "दो सात छह छह मेरा loan EMI कब due है",
+      "alt_text": "दो सात छह छह मेरा लोन ईएमआई कब ड्यू है",
+      "v2.5": {
+        "model_param": null,
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "दो सात छह छह मेरा लोन इ एम आई कब दुए है",
+        "served_by": "prisma-v2.5",
+        "processing_time": 0.11107039451599121,
+        "end_to_end_latency": 0.11228585243225098,
+        "distance": 0.184,
+        "match": true,
+        "digits_ok": true
+      },
+      "v3.0": {
+        "model_param": "prisma-v3.0",
+        "language_code": "hi-IN",
+        "cached": true,
+        "transcript": "दो सात छह छह मेरा लोन ईएमआई कब ड्यू है?",
+        "served_by": "prisma-v3.0",
+        "processing_time": 0.3549976348876953,
+        "end_to_end_latency": 0.3568229675292969,
+        "distance": 0.0,
+        "match": true,
+        "digits_ok": true
+      }
+    }
+  ]
+}

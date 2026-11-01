@@ -47,6 +47,28 @@ redistributed under ODC-By 1.0 (ASVspoof 2019 LA, Wang et al. 2020, University o
 into `third_party/` at setup, not vendored. No Kathbath, IndicVoices, IndicSynth, MLAAD or Gnani audio, and no
 recording or clone of anyone's voice, is in this repo (`DATA.md`).
 
+## Own-voice test (Nov 1, 2026, live Gnani API)
+
+I cloned my own voice with Gnani's voice-cloning API (`vachana-vc-v1`, embedding from 25.5 s of my speech; 15 clones:
+10 at 16 kHz, 5 synthesized straight to 8 kHz mu-law) and scored 13 of my real answers against the 15 clones after
+simulated phone codecs. Every clip was cut to 2.3 s (the clones speak faster, 2.6 s vs 6.2 s on average, so the uncut
+run was length-confounded; it gave the same picture). Thresholds were fixed on ASVspoof 2019 dev, never tuned here.
+
+| Channel | Detector, dev FAR 1% threshold | Clones let in | My real answers accepted |
+|---|---|---|---|
+| G.711 mu-law | XLS-R + AASIST teacher (8 kHz fine-tune) | 15/15 | 13/13 |
+| G.711 mu-law | LFCC-LCNN (small CPU model) | 10/15 | 6/13 |
+| G.711 A-law | XLS-R + AASIST teacher | 15/15 | 13/13 |
+| G.711 A-law | LFCC-LCNN | 9/15 | 6/13 |
+| AMR-NB 4.75k (held out) | XLS-R + AASIST teacher | 9/15 | 6/13 |
+| AMR-NB 4.75k (held out) | LFCC-LCNN | 2/15 | 2/13 |
+
+Live IVR call (Timbre prompt, Prisma realtime phrase check, LFCC-LCNN at min_dcf, identity gate bypassed): my answer
+DecisionCode 0 (score 1.35), the clone saying the same fresh phrase DecisionCode 0 (score 4.27); at the dev FAR 1%
+threshold my answer is rejected as spoof and the clone is accepted (`artifacts/ivr_live.json`). Prisma v2.5 and v3.0 on
+8 of my Hinglish answers over 8 kHz G.711: 8/8 phrase matches each, digits 6/8 and 7/8 (`artifacts/prisma_phrase_check.json`).
+One speaker, small sample: a demonstration, not a benchmark. No audio is in this repo.
+
 ## Results so far (real runs in this repo)
 
 From `artifacts/results.md` (`python -m eval.report`). Setting: ASVspoof 2019 LA subsets (train 5,160 utts,

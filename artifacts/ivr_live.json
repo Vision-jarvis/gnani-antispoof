@@ -1,0 +1,122 @@
+{
+  "mode": "live",
+  "date": "2026-11-01T05:12:47.226043+00:00",
+  "challenge": "शून्य छह चार चार मेरी आवाज़ ही मेरी पहचान है",
+  "language": "hi-IN",
+  "operating_point": "min_dcf",
+  "tau_llr": -0.715,
+  "channel": "g711u",
+  "asv": "bypass",
+  "gnani_calls_this_step": {
+    "vc_tts": 1,
+    "prisma_realtime": 2
+  },
+  "measured_rates_at_point": [
+    {
+      "source": "ASVspoof19 eval g711u",
+      "operating_point": "min_dcf",
+      "tau_llr": -0.715,
+      "n_bona": 200,
+      "n_spoof": 200,
+      "genuine_success_pct": 88.5,
+      "attack_success_pct": 62.5,
+      "short_audio": 29,
+      "median_latency_ms": 29.6
+    },
+    {
+      "source": "ASVspoof19 eval amrnb_4k75",
+      "operating_point": "min_dcf",
+      "tau_llr": -0.715,
+      "n_bona": 200,
+      "n_spoof": 200,
+      "genuine_success_pct": 75.5,
+      "attack_success_pct": 55.5,
+      "short_audio": 33,
+      "median_latency_ms": 29.15
+    }
+  ],
+  "callers": [
+    {
+      "caller": "genuine",
+      "source": "data/own_voice/16k/live_answer.wav",
+      "operating_point": "min_dcf",
+      "StatusCode": 0,
+      "DecisionCode": 0,
+      "reason": "accepted",
+      "phrase_match": true,
+      "phrase_distance": 0.068,
+      "transcript": "0 6 4 हाँ मेरी आवाज ही मेरी पहचान है",
+      "cm_llr": 1.354,
+      "cm_partial": [
+        {
+          "t": 1.0,
+          "llr": 0.876
+        },
+        {
+          "t": 2.0,
+          "llr": 1.939
+        },
+        {
+          "t": 4.0,
+          "llr": 1.155
+        }
+      ],
+      "latency_ms": 269.3,
+      "stt_ms": 16938.8,
+      "stt_final_delay_ms": 0.0,
+      "decision": "Success",
+      "status": "Success",
+      "other_operating_points": {
+        "far1": {
+          "DecisionCode": 1,
+          "reason": "cm_spoof",
+          "tau_llr": 3.027
+        },
+        "eer": {
+          "DecisionCode": 0,
+          "reason": "accepted",
+          "tau_llr": 0.49
+        }
+      }
+    },
+    {
+      "caller": "clone",
+      "source": "vachana-vc-v1, 8 kHz mu-law, embedding artifacts/gnani_cache/G2/fcb86ee16c80149cc4728fda.json",
+      "operating_point": "min_dcf",
+      "StatusCode": 0,
+      "DecisionCode": 0,
+      "reason": "accepted",
+      "phrase_match": true,
+      "phrase_distance": 0.0,
+      "transcript": "0 6 4 4 मेरी आवाज़ ही मेरी पहचान है।",
+      "cm_llr": 4.269,
+      "cm_partial": [
+        {
+          "t": 1.0,
+          "llr": 5.162
+        },
+        {
+          "t": 2.0,
+          "llr": 4.909
+        }
+      ],
+      "latency_ms": 120.5,
+      "stt_ms": 10915.8,
+      "stt_final_delay_ms": 740.4,
+      "decision": "Success",
+      "status": "Success",
+      "other_operating_points": {
+        "far1": {
+          "DecisionCode": 0,
+          "reason": "accepted",
+          "tau_llr": 3.027
+        },
+        "eer": {
+          "DecisionCode": 0,
+          "reason": "accepted",
+          "tau_llr": 0.49
+        }
+      }
+    }
+  ]
+}

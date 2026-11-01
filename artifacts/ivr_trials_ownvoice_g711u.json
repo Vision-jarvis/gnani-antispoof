@@ -1,0 +1,35 @@
+[
+  {
+    "source": "wav:g711u/bona vs spoof",
+    "operating_point": "far1",
+    "tau_llr": 3.027,
+    "n_bona": 13,
+    "n_spoof": 15,
+    "genuine_success_pct": 15.4,
+    "attack_success_pct": 73.3,
+    "short_audio": 0,
+    "median_latency_ms": 177.5
+  },
+  {
+    "source": "wav:g711u/bona vs spoof",
+    "operating_point": "min_dcf",
+    "tau_llr": -0.715,
+    "n_bona": 13,
+    "n_spoof": 15,
+    "genuine_success_pct": 100.0,
+    "attack_success_pct": 100.0,
+    "short_audio": 0,
+    "median_latency_ms": 101.8
+  },
+  {
+    "source": "wav:g711u/bona vs spoof",
+    "operating_point": "eer",
+    "tau_llr": 0.49,
+    "n_bona": 13,
+    "n_spoof": 15,
+    "genuine_success_pct": 100.0,
+    "attack_success_pct": 100.0,
+    "short_audio": 0,
+    "median_latency_ms": 104.0
+  }
+]
